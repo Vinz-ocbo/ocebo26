@@ -648,6 +648,115 @@
   }
 
   /* ============================================
+     SCROLL-DRIVEN LACES (cyan + magenta)
+     ============================================ */
+  function initScrollLace() {
+    var wrap = document.getElementById("lace-wrap");
+    var svg = document.getElementById("lace-svg");
+    var cyanPath = document.getElementById("lace-cyan");
+    var cyanGlow = document.getElementById("lace-cyan-glow");
+    var magPath  = document.getElementById("lace-magenta");
+    var magGlow  = document.getElementById("lace-magenta-glow");
+    if (!wrap || !svg || !cyanPath || !magPath) return;
+
+    var allPaths = [cyanPath, cyanGlow, magPath, magGlow];
+    var totalLen = 0;
+    var OFFSET_X = 12; // small gap between the two laces
+
+    function buildBezier(points) {
+      var d = "M " + points[0].x + " " + points[0].y;
+      for (var i = 1; i < points.length; i++) {
+        var prev = points[i - 1];
+        var curr = points[i];
+        var dy = (curr.y - prev.y) * 0.5;
+        d += " C " + prev.x + " " + (prev.y + dy) + " " + curr.x + " " + (curr.y - dy) + " " + curr.x + " " + curr.y;
+      }
+      return d;
+    }
+
+    function buildPath() {
+      var pageH = document.documentElement.scrollHeight;
+      var pageW = document.documentElement.clientWidth;
+      var cx = pageW / 2;
+      var margin = 60; // min distance from viewport edges
+
+      wrap.style.height = pageH + "px";
+      svg.setAttribute("viewBox", "0 0 " + pageW + " " + pageH);
+
+      // Update gradient y2 to match page height
+      var grads = svg.querySelectorAll("linearGradient[gradientUnits]");
+      grads.forEach(function (g) { g.setAttribute("y2", pageH); });
+
+      // Collect section midpoints
+      var sects = document.querySelectorAll(".section");
+      var sections = [];
+      sects.forEach(function (s) {
+        var rect = s.getBoundingClientRect();
+        sections.push({ mid: rect.top + window.scrollY + rect.height / 2 });
+      });
+
+      // Max 200px beyond the widest content block (1090px / 2 + 200 = 745px)
+      var maxAmplitude = 745;
+      var amplitude = Math.min(maxAmplitude, (pageW / 2) - margin);
+
+      // Build waypoints for cyan
+      var cyanPts = [{ x: cx, y: 0 }];
+      for (var i = 0; i < sections.length; i++) {
+        var side = (i % 2 === 0) ? -1 : 1;
+        cyanPts.push({ x: cx + side * amplitude, y: sections[i].mid });
+      }
+      cyanPts.push({ x: cx, y: pageH });
+
+      // Magenta: same shape, slight horizontal offset
+      var magPts = cyanPts.map(function (p) {
+        return { x: p.x + OFFSET_X, y: p.y };
+      });
+
+      var dCyan = buildBezier(cyanPts);
+      var dMag  = buildBezier(magPts);
+
+      cyanPath.setAttribute("d", dCyan);
+      cyanGlow.setAttribute("d", dCyan);
+      magPath.setAttribute("d", dMag);
+      magGlow.setAttribute("d", dMag);
+
+      // Set up dash — include a fade gap for progressive tip
+      totalLen = cyanPath.getTotalLength();
+      allPaths.forEach(function (p) {
+        // dash = solid + transparent gap (for fade effect the gradient mask handles it)
+        p.style.strokeDasharray = totalLen;
+        p.style.strokeDashoffset = totalLen;
+      });
+    }
+
+    function onScroll() {
+      var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll <= 0) return;
+
+      var progress = window.scrollY / maxScroll;
+      var offset = totalLen * (1 - progress);
+
+      allPaths.forEach(function (p) {
+        p.style.strokeDashoffset = offset;
+      });
+    }
+
+    buildPath();
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        buildPath();
+        onScroll();
+      }, 200);
+    });
+  }
+
+  /* ============================================
      INIT
      ============================================ */
   function init() {
@@ -661,6 +770,7 @@
     initCounters();
     initParallax();
     initLogosSlider();
+    initScrollLace();
   }
 
   if (document.readyState === "loading") {
