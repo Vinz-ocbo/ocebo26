@@ -467,7 +467,7 @@
     var BASE_RADIUS = 0.5;
     var PROXIMITY   = 250;
     var GROWTH      = SPACING / 2 - BASE_RADIUS; // 3.5 — dots never overlap
-    var EASE        = 0.08;
+    var EASE        = 0.04;
     var BASE_ALPHA  = 0.12;
     var ACTIVE_EXTRA_ALPHA = 0.35;
 
