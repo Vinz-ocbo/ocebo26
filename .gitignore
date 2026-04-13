@@ -37,6 +37,9 @@ Thumbs.db
 node_modules/
 app/public/wp-content/themes/ocebo26/node_modules/
 
+# Secrets
+SOURCES/figmaToken.md
+
 # Misc
 .vercel
 .claude/
