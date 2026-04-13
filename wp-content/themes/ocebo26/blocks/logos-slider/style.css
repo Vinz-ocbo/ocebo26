@@ -1,0 +1,35 @@
+/* Logos Slider — Block styles */
+.logos-slider {
+  overflow: hidden;
+  position: relative;
+  cursor: grab;
+  padding: var(--wp--preset--spacing--30, 24px) 0;
+  mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.logos-slider:active {
+  cursor: grabbing;
+}
+
+.logos-slider__track {
+  display: flex;
+  gap: var(--wp--preset--spacing--50, 40px);
+  align-items: center;
+  will-change: transform;
+}
+
+.logos-slider__slide {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity var(--wp--custom--transition--base, 300ms ease);
+  filter: grayscale(1) brightness(2);
+}
+
+.logos-slider__slide.is-center {
+  opacity: 1;
+}
+
+.logos-slider__slide.is-near {
+  opacity: 0.75;
+}

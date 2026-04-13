@@ -1,0 +1,240 @@
+/* ============================================
+   SECTIONS — Page-specific layout per block
+   ============================================ */
+
+/* ---- HERO ---- */
+.hero {
+  padding-top: calc(82px + var(--section-gap) + 40px);
+}
+
+.hero__inner {
+  display: flex;
+  align-items: flex-start;
+}
+
+.hero__content {
+  max-width: 780px;
+}
+
+.hero__title {
+  margin-bottom: var(--space-3);
+}
+
+.hero .section-header {
+  margin-bottom: var(--space-3);
+}
+
+.hero__body {
+  padding-left: calc(56px + var(--space-3));
+}
+
+.hero__text {
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.hero__ctas {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .hero {
+    min-height: auto;
+    padding-top: calc(70px + var(--space-5));
+  }
+
+  .hero__ctas {
+    flex-direction: column;
+  }
+
+  .hero__ctas .btn {
+    width: 100%;
+  }
+}
+
+/* ---- BLOC LISTE (Ce qu'on fait) ---- */
+.bloc-liste {
+  display: flex;
+  gap: var(--space-10);
+  align-items: flex-start;
+}
+
+.bloc-liste__header {
+  flex-shrink: 0;
+  max-width: 380px;
+}
+
+.bloc-liste__header .section-header {
+  margin-bottom: 0;
+}
+
+.bloc-liste__body {
+  flex: 1;
+}
+
+@media (max-width: 767px) {
+  .bloc-liste {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .bloc-liste__header {
+    max-width: none;
+  }
+}
+
+/* ---- ACCES DIRECT (Services) ---- */
+.acces-direct__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 767px) {
+  .acces-direct__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .acces-direct__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- POURQUOI OCEBO ---- */
+
+/* ---- CHIFFRES CLEFS ---- */
+.section--chiffres {
+  position: relative;
+}
+
+.chiffres__grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .chiffres__grid {
+    gap: var(--space-3);
+  }
+
+  .card-chiffre__inner {
+    width: 100%;
+    max-width: 330px;
+  }
+
+  .card-chiffre--tall .card-chiffre__inner {
+    height: 250px;
+  }
+}
+
+/* ---- LOGOS ---- */
+.logos__desc {
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+
+/* ---- FAQ ---- */
+.faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ---- CONTACT ---- */
+.section--contact {
+  position: relative;
+}
+
+.contact__inner {
+  display: flex;
+  gap: var(--space-7);
+  align-items: flex-start;
+}
+
+.contact__inner > h2 {
+  flex-shrink: 0;
+  max-width: 380px;
+  color: var(--color-text-primary);
+}
+
+.contact-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.contact-form .btn--submit {
+  align-self: flex-start;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contact-form__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.form-group--full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 767px) {
+  .contact__inner {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .contact__inner > h2 {
+    max-width: none;
+  }
+
+  .contact-form__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- FOOTER ---- */
+.site-footer {
+  padding: var(--space-3) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footer__copy,
+.footer__legal,
+.footer__credits {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-primary);
+}
+
+.footer__legal a,
+.footer__credits a {
+  transition: color var(--transition-fast);
+}
+
+.footer__legal a:hover,
+.footer__credits a:hover {
+  color: var(--color-accent-cyan);
+}
+
+@media (max-width: 767px) {
+  .footer__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+}

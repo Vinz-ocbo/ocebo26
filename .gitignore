@@ -1,0 +1,42 @@
+# WordPress core (managed by LocalWP)
+app/public/wp-admin/
+app/public/wp-includes/
+app/public/wp-*.php
+app/public/index.php
+app/public/license.txt
+app/public/readme.html
+app/public/xmlrpc.php
+
+# WordPress uploads
+app/public/wp-content/uploads/
+
+# WordPress plugins (track separately if needed)
+app/public/wp-content/plugins/
+
+# Default themes (keep only ocebo26)
+app/public/wp-content/themes/twentytwenty*/
+app/public/wp-content/themes/index.php
+
+# LocalWP / server config
+conf/
+logs/
+
+# MySQL data
+app/sql/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Node (theme build tools)
+node_modules/
+app/public/wp-content/themes/ocebo26/node_modules/
+
+# Misc
+.vercel
+.claude/

@@ -1,0 +1,589 @@
+/* ============================================
+   OCEBO 2026 — Editor CSS
+   Makes the Gutenberg editor canvas match the
+   frontend rendering as closely as possible.
+   ============================================ */
+
+/* --- Editor canvas: dark background like frontend --- */
+.editor-styles-wrapper {
+  background-color: #000000 !important;
+  color: #ffffff;
+  font-family: "Cabin", sans-serif;
+}
+
+/* --- Background texture (same as body::before on front) --- */
+.editor-styles-wrapper::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../img/bg-dots.png");
+  background-repeat: repeat;
+  background-size: auto;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* --- Reset em to non-italic (like front) --- */
+.editor-styles-wrapper em {
+  font-style: normal;
+}
+
+/* --- Color utility classes --- */
+.editor-styles-wrapper .text-cyan {
+  color: #15ffd6;
+}
+
+.editor-styles-wrapper .text-magenta {
+  color: #d74ed7;
+}
+
+/* --- Section number badge --- */
+.editor-styles-wrapper .section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  font-family: "Kanit", sans-serif;
+  font-size: 38px;
+  line-height: 1;
+  color: #ffffff;
+  background: #ffffff1a;
+  border-radius: 8px;
+}
+
+/* Black section-number on white-10% sections */
+.editor-styles-wrapper .section--acces-direct .section-number,
+.editor-styles-wrapper .section--faq .section-number {
+  background: #000000;
+}
+
+/* --- Section header (number + title inline) --- */
+.editor-styles-wrapper .section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+/* --- Section spacing --- */
+.editor-styles-wrapper .section {
+  padding-block: 80px;
+}
+
+/* --- Containers --- */
+.editor-styles-wrapper .container {
+  width: 100%;
+  max-width: 1024px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+.editor-styles-wrapper .container--wide {
+  max-width: 1090px;
+}
+
+/* --- Typography --- */
+.editor-styles-wrapper .display-xl {
+  font-family: "bookmania", Georgia, serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .display-lg {
+  font-family: "bookmania", Georgia, serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .heading-md {
+  font-family: "Kanit", sans-serif;
+  font-size: 26px;
+  line-height: 1.38;
+}
+
+.editor-styles-wrapper .heading-sm {
+  font-family: "Kanit", sans-serif;
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+.editor-styles-wrapper .body-lg {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.editor-styles-wrapper .body-md {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.editor-styles-wrapper .number-xl {
+  font-family: "Kanit", sans-serif;
+  font-size: 100px;
+  line-height: 1;
+}
+
+/* --- HERO --- */
+.editor-styles-wrapper .hero {
+  padding-top: calc(82px + 80px + 40px);
+}
+
+.editor-styles-wrapper .hero__content {
+  max-width: 780px;
+}
+
+.editor-styles-wrapper .hero__body {
+  padding-left: calc(56px + 24px);
+}
+
+.editor-styles-wrapper .hero__text {
+  color: #ffffff;
+  margin-bottom: 32px;
+}
+
+.editor-styles-wrapper .hero__ctas {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* --- Buttons --- */
+.editor-styles-wrapper .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-family: "Kanit", sans-serif;
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.editor-styles-wrapper .btn--primary {
+  background-color: #15ffd6;
+  color: #030217;
+}
+
+.editor-styles-wrapper .btn--secondary {
+  background-color: #ffffff1a;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .btn--sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.editor-styles-wrapper .btn__icon-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: #030217;
+  color: #15ffd6;
+  margin-left: 8px;
+}
+
+.editor-styles-wrapper .btn__icon-right--accent {
+  background: #15ffd6;
+  color: #030217;
+}
+
+/* --- Bloc Liste (Ce qu'on fait) --- */
+.editor-styles-wrapper .bloc-liste {
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+}
+
+.editor-styles-wrapper .bloc-liste__header {
+  flex-shrink: 0;
+  max-width: 380px;
+}
+
+.editor-styles-wrapper .bloc-liste__header .section-header {
+  margin-bottom: 0;
+}
+
+.editor-styles-wrapper .bloc-liste__body {
+  flex: 1;
+}
+
+.editor-styles-wrapper .check-list {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff1a;
+  border-radius: 8px;
+  padding: 16px 24px;
+}
+
+.editor-styles-wrapper .check-list__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .check-list__separator {
+  border: none;
+  border-top: 1px solid #ffffff26;
+  margin: 0;
+}
+
+.editor-styles-wrapper .check-list__icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  padding: 8px;
+  margin-top: 2px;
+}
+
+/* --- Accès Direct (Services) — white 10% bg --- */
+.editor-styles-wrapper .section--acces-direct > .container {
+  background: #ffffff1a;
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.editor-styles-wrapper .acces-direct__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.editor-styles-wrapper .card-service {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-styles-wrapper .card-service__title {
+  font-family: "Kanit", sans-serif;
+  font-size: 26px;
+  line-height: 1.38;
+  color: #d74ed7;
+  font-weight: 400;
+}
+
+.editor-styles-wrapper .card-service__separator {
+  border: none;
+  border-top: 1px solid #d74ed7;
+  margin: 24px 0;
+}
+
+.editor-styles-wrapper .card-service__text {
+  color: #ffffff;
+  margin-bottom: 24px;
+  flex: 1;
+}
+
+.editor-styles-wrapper .card-service__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 16px;
+  background: #ffffff1a;
+  color: #ffffff;
+  font-family: "Kanit", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+}
+
+.editor-styles-wrapper .card-service__cta-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #15ffd6;
+  color: #030217;
+  border-radius: 4px;
+}
+
+/* --- Pourquoi --- */
+.editor-styles-wrapper .pourquoi__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-styles-wrapper .pourquoi__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  padding: 32px 72px;
+  border-radius: 8px;
+}
+
+.editor-styles-wrapper .pourquoi__item:nth-of-type(even) {
+  background: #ffffff1a;
+}
+
+.editor-styles-wrapper .pourquoi__title {
+  font-family: "Kanit", sans-serif;
+  font-size: 26px;
+  line-height: 1.38;
+  color: #d74ed7;
+  font-weight: 400;
+  flex-shrink: 0;
+  width: 280px;
+  text-align: right;
+}
+
+.editor-styles-wrapper .pourquoi__text {
+  flex: 1;
+  color: #ffffff;
+}
+
+/* --- Chiffres clefs --- */
+.editor-styles-wrapper .chiffres__grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 24px;
+  justify-content: center;
+}
+
+.editor-styles-wrapper .card-chiffre__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 32px;
+  border-radius: 8px;
+  background: #ffffff1a;
+  width: 330px;
+}
+
+.editor-styles-wrapper .card-chiffre--tall .card-chiffre__inner {
+  height: 350px;
+}
+
+.editor-styles-wrapper .card-chiffre--short .card-chiffre__inner {
+  height: 250px;
+}
+
+.editor-styles-wrapper .card-chiffre__number--cyan {
+  color: #15ffd6;
+}
+
+.editor-styles-wrapper .card-chiffre__number--magenta {
+  color: #d74ed7;
+}
+
+.editor-styles-wrapper .card-chiffre__label {
+  font-family: "Kanit", sans-serif;
+  font-size: 20px;
+  line-height: 1.3;
+  color: #ffffff;
+  margin-top: 8px;
+}
+
+/* --- Logos Slider --- */
+.editor-styles-wrapper .section-body-indent {
+  padding-left: calc(56px + 24px);
+}
+
+.editor-styles-wrapper .logos__desc {
+  color: #ffffff;
+  margin-bottom: 32px;
+}
+
+.editor-styles-wrapper .logos-slider {
+  overflow: hidden;
+  padding: 24px 0;
+}
+
+.editor-styles-wrapper .logos-slider__track {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.editor-styles-wrapper .logos-slider__slide {
+  flex-shrink: 0;
+  opacity: 0.5;
+  filter: grayscale(1) brightness(2);
+}
+
+/* --- FAQ — white 10% bg --- */
+.editor-styles-wrapper .section--faq > .container {
+  background: #ffffff1a;
+  border-radius: 8px;
+  padding: 32px;
+}
+
+.editor-styles-wrapper .faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.editor-styles-wrapper .accordion {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #000000;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.editor-styles-wrapper .accordion:last-child {
+  border-bottom: none;
+}
+
+.editor-styles-wrapper .accordion__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+}
+
+.editor-styles-wrapper .accordion__title {
+  flex: 1;
+  padding-right: 16px;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .accordion__icon {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.editor-styles-wrapper .accordion__icon::before,
+.editor-styles-wrapper .accordion__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: #15ffd6;
+  border-radius: 2px;
+}
+
+.editor-styles-wrapper .accordion__icon::before {
+  width: 16px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+
+.editor-styles-wrapper .accordion__icon::after {
+  width: 2px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+}
+
+.editor-styles-wrapper .accordion__body {
+  padding: 0 0 24px;
+  color: #d74ed7;
+}
+
+/* --- Contact CTA --- */
+.editor-styles-wrapper .contact__inner {
+  display: flex;
+  gap: 56px;
+  align-items: flex-start;
+}
+
+.editor-styles-wrapper .contact__inner > h2,
+.editor-styles-wrapper .contact__inner > [data-rich-text-placeholder] {
+  flex-shrink: 0;
+  max-width: 380px;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .contact-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.editor-styles-wrapper .contact-form__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.editor-styles-wrapper .form-group--full {
+  grid-column: 1 / -1;
+}
+
+.editor-styles-wrapper .form-label {
+  font-size: 13px;
+  color: #ffffff;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.editor-styles-wrapper .form-input {
+  padding: 10px 16px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #383b4d;
+  width: 100%;
+}
+
+.editor-styles-wrapper .form-select {
+  appearance: none;
+  padding-right: 40px;
+}
+
+.editor-styles-wrapper .form-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.editor-styles-wrapper .form-checkbox__mark {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  margin-top: 1px;
+}
+
+.editor-styles-wrapper .form-checkbox__text {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #ffffff;
+}
+
+.editor-styles-wrapper .btn--submit {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: flex-start;
+}
+
+/* --- Footer in editor --- */
+.editor-styles-wrapper .site-footer {
+  border-top: 1px solid #ffffff0d;
+  padding: 24px 0;
+}
+
+/* --- RichText placeholder color --- */
+.editor-styles-wrapper [data-rich-text-placeholder]::after {
+  color: #697077 !important;
+}
+
+/* --- Neutralise WP block spacing in our blocks --- */
+.editor-styles-wrapper [class*="wp-block-ocebo26"] .is-layout-flow > * + * {
+  margin-block-start: 0;
+}

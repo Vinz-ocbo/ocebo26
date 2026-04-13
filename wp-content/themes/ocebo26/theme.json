@@ -1,0 +1,173 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.7/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "useRootPaddingAwareAlignments": true,
+    "layout": {
+      "contentSize": "1024px",
+      "wideSize": "1090px"
+    },
+    "color": {
+      "defaultPalette": false,
+      "defaultGradients": false,
+      "palette": [
+        { "slug": "bg", "color": "#000000", "name": "Background" },
+        { "slug": "surface-dark", "color": "#030217", "name": "Surface dark" },
+        { "slug": "surface-light", "color": "#f2f2f2", "name": "Surface light" },
+        { "slug": "surface-input", "color": "#f5f5f5", "name": "Surface input" },
+        { "slug": "text-primary", "color": "#ffffff", "name": "Texte principal" },
+        { "slug": "text-secondary", "color": "#697077", "name": "Texte secondaire" },
+        { "slug": "text-body", "color": "#383b4d", "name": "Texte body" },
+        { "slug": "accent-cyan", "color": "#15ffd6", "name": "Accent cyan" },
+        { "slug": "accent-magenta", "color": "#d74ed7", "name": "Accent magenta" },
+        { "slug": "accent-yellow", "color": "#ffee00", "name": "Accent jaune" },
+        { "slug": "accent-red", "color": "#ed3a31", "name": "Accent rouge" },
+        { "slug": "border-default", "color": "#e0e0e0", "name": "Bordure" },
+        { "slug": "border-light", "color": "#dde1e6", "name": "Bordure claire" },
+        { "slug": "white-10", "color": "#ffffff1a", "name": "Blanc 10%" },
+        { "slug": "white-15", "color": "#ffffff26", "name": "Blanc 15%" }
+      ],
+      "gradients": [
+        {
+          "slug": "glow-cyan",
+          "gradient": "radial-gradient(circle, #66edd866, transparent 70%)",
+          "name": "Glow cyan"
+        },
+        {
+          "slug": "glow-magenta",
+          "gradient": "radial-gradient(circle, #d74ed74d, transparent 70%)",
+          "name": "Glow magenta"
+        },
+        {
+          "slug": "glow-yellow",
+          "gradient": "radial-gradient(circle, #ffee0033, transparent 70%)",
+          "name": "Glow yellow"
+        }
+      ]
+    },
+    "typography": {
+      "fluid": false,
+      "defaultFontSizes": false,
+      "fontFamilies": [
+        {
+          "slug": "display",
+          "name": "Display (Bookmania)",
+          "fontFamily": "\"bookmania\", Georgia, serif"
+        },
+        {
+          "slug": "heading",
+          "name": "Heading (Kanit)",
+          "fontFamily": "\"Kanit\", sans-serif",
+          "fontFace": [
+            {
+              "fontFamily": "Kanit",
+              "fontWeight": "400",
+              "fontStyle": "normal",
+              "src": ["https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&display=swap"]
+            }
+          ]
+        },
+        {
+          "slug": "body",
+          "name": "Body (Cabin)",
+          "fontFamily": "\"Cabin\", sans-serif",
+          "fontFace": [
+            {
+              "fontFamily": "Cabin",
+              "fontWeight": "400 600",
+              "fontStyle": "normal",
+              "src": ["https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&display=swap"]
+            }
+          ]
+        }
+      ],
+      "fontSizes": [
+        { "slug": "small", "size": "11px", "name": "Small" },
+        { "slug": "caption", "size": "13px", "name": "Caption" },
+        { "slug": "body-sm", "size": "14px", "name": "Body SM" },
+        { "slug": "body-md", "size": "16px", "name": "Body MD" },
+        { "slug": "body-lg", "size": "18px", "name": "Body LG" },
+        { "slug": "heading-sm", "size": "20px", "name": "Heading SM" },
+        { "slug": "heading-md", "size": "26px", "name": "Heading MD" },
+        { "slug": "number-lg", "size": "38px", "name": "Number LG" },
+        { "slug": "display-lg", "size": "56px", "name": "Display LG" },
+        { "slug": "display-xl", "size": "56px", "name": "Display XL" },
+        { "slug": "number-xl", "size": "100px", "name": "Number XL" }
+      ]
+    },
+    "spacing": {
+      "defaultSpacingSizes": false,
+      "spacingSizes": [
+        { "slug": "10", "size": "8px", "name": "1 (8px)" },
+        { "slug": "15", "size": "10px", "name": "1.5 (10px)" },
+        { "slug": "20", "size": "16px", "name": "2 (16px)" },
+        { "slug": "30", "size": "24px", "name": "3 (24px)" },
+        { "slug": "40", "size": "32px", "name": "4 (32px)" },
+        { "slug": "50", "size": "40px", "name": "5 (40px)" },
+        { "slug": "70", "size": "56px", "name": "7 (56px)" },
+        { "slug": "80", "size": "64px", "name": "8 (64px)" },
+        { "slug": "100", "size": "80px", "name": "10 (80px)" }
+      ],
+      "units": ["px", "em", "rem", "%", "vw", "vh"]
+    },
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "shadow": {
+      "defaultPresets": false,
+      "presets": [
+        { "slug": "card", "name": "Card", "shadow": "0 0 3px #00000099" },
+        { "slug": "hard", "name": "Hard", "shadow": "2px 2px 0 #030217" },
+        { "slug": "drop", "name": "Drop", "shadow": "0 3px 3px #00000040" },
+        { "slug": "glow-cyan", "name": "Glow cyan", "shadow": "0 0 14px #15ffd64d" }
+      ]
+    },
+    "custom": {
+      "radius": {
+        "sm": "8px",
+        "md": "12px",
+        "lg": "16px",
+        "xl": "24px",
+        "pill": "9999px"
+      },
+      "transition": {
+        "fast": "150ms ease",
+        "base": "300ms ease",
+        "slow": "500ms ease-out"
+      },
+      "lineHeight": {
+        "display": "1",
+        "heading-md": "1.38",
+        "heading-sm": "1.3",
+        "body": "1.6",
+        "caption": "1.54",
+        "small": "1.45"
+      },
+      "sectionGap": "80px",
+      "gridViewport": "1440px"
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var(--wp--preset--color--bg)",
+      "text": "var(--wp--preset--color--text-primary)"
+    },
+    "typography": {
+      "fontFamily": "var(--wp--preset--font-family--body)",
+      "fontSize": "var(--wp--preset--font-size--body-md)",
+      "lineHeight": "1.6"
+    },
+    "spacing": {
+      "padding": {
+        "left": "0",
+        "right": "0"
+      }
+    },
+    "elements": {},
+    "blocks": {}
+  }
+}

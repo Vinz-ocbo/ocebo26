@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/chiffres",
+  "version": "1.0.0",
+  "title": "Chiffres clefs",
+  "category": "ocebo26",
+  "icon": "chart-bar",
+  "description": "Grille de chiffres animés avec compteur au scroll et effet parallax au survol.",
+  "keywords": ["chiffres", "stats", "compteur", "counter"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "items": {
+      "type": "array",
+      "default": [
+        { "number": 20, "suffix": "+", "prefix": "", "label": "années<br>d'expérience", "color": "magenta", "size": "tall" },
+        { "number": 10, "prefix": "~", "suffix": "", "label": "experts<br>dans l'équipe", "color": "cyan", "size": "short" },
+        { "number": 3, "prefix": "", "suffix": "", "label": "implantations :<br>Lyon, Lille, Nancy", "color": "cyan", "size": "short" },
+        { "number": 999, "suffix": "+", "prefix": "", "label": "Des milliers<br>de projets livrés", "color": "magenta", "size": "tall" }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": {
+      "padding": true,
+      "margin": true
+    }
+  },
+  "editorScript": "file:../../build/blocks/chiffres/index.js",
+  "render": "file:./render.php",
+  "style": "file:./style.css",
+  "viewScript": "file:./view.js"
+}

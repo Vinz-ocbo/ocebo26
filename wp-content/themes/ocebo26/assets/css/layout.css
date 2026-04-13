@@ -1,0 +1,129 @@
+/* ============================================
+   LAYOUT — Grid, containers, structure
+   ============================================ */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body-md);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+  overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../img/bg-dots.png");
+  background-repeat: repeat;
+  background-size: auto;
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* --- Skip link --- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 1000;
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-accent-cyan);
+  color: var(--color-bg);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* --- Containers --- */
+.container {
+  width: 100%;
+  max-width: var(--grid-content);
+  margin-inline: auto;
+  padding-inline: var(--space-3);
+}
+
+.container--wide {
+  max-width: var(--grid-content-wide);
+}
+
+.container--full {
+  max-width: var(--grid-viewport);
+}
+
+/* --- Sections --- */
+.section {
+  padding-block: var(--section-gap);
+}
+
+/* --- Background effects (glows only, no SVG waves) --- */
+.bg-effects {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-effects__glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.5;
+}
+
+.bg-effects__glow--cyan {
+  background: var(--gradient-glow-cyan);
+  top: -10%;
+  right: -5%;
+}
+
+.bg-effects__glow--magenta {
+  background: var(--gradient-glow-magenta);
+  top: 30%;
+  left: -10%;
+}
+
+.bg-effects__glow--yellow {
+  background: var(--gradient-glow-yellow);
+  bottom: 10%;
+  right: 10%;
+  width: 400px;
+  height: 400px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 767px) {
+  :root {
+    --text-display-xl: 36px;
+    --text-display-lg: 36px;
+    --text-number-xl: 56px;
+    --text-number-lg: 28px;
+    --text-heading-md: 22px;
+    --text-heading-sm: 18px;
+    --section-gap: 48px;
+  }
+
+  .container {
+    padding-inline: var(--space-2);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --text-display-xl: 44px;
+    --text-display-lg: 44px;
+    --text-number-xl: 72px;
+    --section-gap: 64px;
+  }
+}

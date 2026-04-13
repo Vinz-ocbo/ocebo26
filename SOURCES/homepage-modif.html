@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ocebo — Homepage Gabarit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500&family=Cabin:wght@400;500&family=Noto+Sans:wght@400&family=Montserrat:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ========================================
+   DESIGN TOKENS — Ocebo 2026
+   ======================================== */
+:root {
+  /* Couleurs */
+  --color-bg:          #0d0e0e;
+  --color-surface:     #21272a;
+  --color-surface-alt: #383b4d;
+  --color-gray-100:    #f2f2f2;
+  --color-gray-200:    #e0e0e0;
+  --color-gray-300:    #dde1e6;
+  --color-gray-500:    #697077;
+  --color-dark:        #030217;
+  --color-text:        #f2f2f2;
+  --color-text-muted:  #697077;
+  --color-text-dark:   #333333;
+  --color-white:       #ffffff;
+  --color-black:       #000000;
+
+  --color-green:       #ed3a31;
+  --color-green-alt:   #8fb657;
+  --color-green-dark:  #278903;
+  --color-lime:        #ed3a31;
+  --color-yellow:      rgba(239, 236, 83, 0.1);
+  --color-yellow-soft: rgba(239, 236, 83, 0.1);
+  --color-red:         rgba(237, 58, 49,0.2);
+  --color-red-soft:    #d15f54;
+  --color-orange:      #ff4100;
+  --color-indigo:      rgb(102, 237, 216,0.1);
+
+  /* Typographies */
+  --font-display:  'Kanit', sans-serif;
+  --font-body:     'Cabin', sans-serif;
+  --font-ui:       'Noto Sans', sans-serif;
+  --font-small:    'Montserrat', sans-serif;
+
+  /* Espacements */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+  --space-5xl: 124px;
+
+  /* Grille */
+  --grid-columns: 12;
+  --grid-gutter:  16px; /* 1rem */
+  --grid-max:     1280px;
+
+  /* Border-radius */
+  --radius-sm:   2px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 72px;
+
+  /* Ombres */
+  --shadow-hard:  2px 2px 0px rgba(3, 2, 23, 1);
+  --shadow-soft:  0px 0px 4px rgba(0, 0, 0, 1);
+  --shadow-drop:  0px 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-glow:  0px 0px 18px rgba(209, 238, 65, 0.7);
+}
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--color-lime); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ========================================
+   GRILLE 12 COLONNES
+   ======================================== */
+.container {
+  width: 100%;
+  max-width: var(--grid-max);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(var(--grid-gutter) / -2);
+}
+
+.col { padding: 0 calc(var(--grid-gutter) / 2); }
+
+.col-1  { flex: 0 0 calc(100% *  1 / 12); max-width: calc(100% *  1 / 12); }
+.col-2  { flex: 0 0 calc(100% *  2 / 12); max-width: calc(100% *  2 / 12); }
+.col-3  { flex: 0 0 calc(100% *  3 / 12); max-width: calc(100% *  3 / 12); }
+.col-4  { flex: 0 0 calc(100% *  4 / 12); max-width: calc(100% *  4 / 12); }
+.col-5  { flex: 0 0 calc(100% *  5 / 12); max-width: calc(100% *  5 / 12); }
+.col-6  { flex: 0 0 calc(100% *  6 / 12); max-width: calc(100% *  6 / 12); }
+.col-7  { flex: 0 0 calc(100% *  7 / 12); max-width: calc(100% *  7 / 12); }
+.col-8  { flex: 0 0 calc(100% *  8 / 12); max-width: calc(100% *  8 / 12); }
+.col-9  { flex: 0 0 calc(100% *  9 / 12); max-width: calc(100% *  9 / 12); }
+.col-10 { flex: 0 0 calc(100% * 10 / 12); max-width: calc(100% * 10 / 12); }
+.col-11 { flex: 0 0 calc(100% * 11 / 12); max-width: calc(100% * 11 / 12); }
+.col-12 { flex: 0 0 100%; max-width: 100%; }
+
+/* ========================================
+   TYPOGRAPHIE
+   ======================================== */
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 72px;
+  line-height: 1;
+}
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1;
+}
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1;
+}
+h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.4;
+}
+h4, .h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.4;
+}
+.body-lg {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.6;
+}
+.body-md {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.caption {
+  font-family: var(--font-small);
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+.text-accent { color: var(--color-lime); }
+.text-muted  { color: var(--color-text-muted); }
+.text-green  { color: var(--color-green); }
+
+/* ========================================
+   COMPOSANTS
+   ======================================== */
+
+/* --- Section numbering --- */
+.section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: var(--color-white);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+}
+
+/* --- Section title bar --- */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+.section-header__title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 400;
+  padding: var(--space-md) var(--space-lg);
+  color: var(--color-white);
+  flex: 1;
+}
+.section-header__title--lime {
+  background: var(--color-lime);
+  color: var(--color-bg);
+}
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  line-height: 1;
+}
+.btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.btn--primary {
+  background: var(--color-green-dark);
+  color: var(--color-white);
+}
+.btn--outline {
+  background: transparent;
+  border: 1px solid var(--color-gray-500);
+  color: var(--color-text);
+}
+.btn--lime {
+  background: var(--color-lime);
+  color: var(--color-bg);
+  box-shadow: var(--shadow-hard);
+}
+.btn--full { width: 100%; }
+
+/* --- Cards --- */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition: transform 0.2s;
+}
+.card:hover { transform: translateY(-2px); }
+
+.card--service {
+  text-align: center;
+  padding: var(--space-xl);
+}
+.card--service .card__icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-md);
+  background: var(--color-gray-500);
+  border-radius: var(--radius-md);
+}
+
+/* --- Stat card --- */
+.stat {
+  text-align: center;
+}
+.stat__number {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-lime);
+}
+.stat__label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-sm);
+}
+
+/* --- Image placeholder --- */
+.img-placeholder {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  overflow: hidden;
+}
+.img-placeholder--hero   { aspect-ratio: 1 / 1; }
+.img-placeholder--wide   { aspect-ratio: 16 / 9; }
+.img-placeholder--square { aspect-ratio: 1 / 1; }
+
+/* --- Tags / pills --- */
+.tag {
+  display: inline-block;
+  padding: 6px 8px;
+  background: var(--color-lime);
+  color: var(--color-bg);
+  font-family: var(--font-small);
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* --- Form --- */
+.form-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-gray-500);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-field::placeholder { color: var(--color-text-muted); }
+.form-field:focus { border-color: var(--color-lime); }
+
+.form-row {
+  display: flex;
+  gap: var(--grid-gutter);
+}
+
+/* --- Logo grid --- */
+.logo-placeholder {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-small);
+  font-size: 12px;
+}
+
+/* --- FAQ --- */
+.faq-item {
+  border-bottom: 1px solid var(--color-surface);
+  padding: var(--space-lg) 0;
+}
+.faq-item__question {
+  font-family: var(--font-body);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-item__question::after {
+  content: '+';
+  font-size: 24px;
+  color: var(--color-text-muted);
+}
+.faq-item__answer {
+  display: none;
+  padding-top: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.faq-item.is-open .faq-item__answer { display: block; }
+.faq-item.is-open .faq-item__question::after { content: '−'; }
+
+/* --- Footer bar --- */
+.footer-bar {
+  display: flex;
+  gap: 0;
+}
+.footer-bar__col {
+  flex: 1;
+  padding: var(--space-xs) 0;
+  text-align: center;
+  font-family: var(--font-small);
+  font-size: 12px;
+  color: var(--color-white);
+  border-right: 1px solid var(--color-surface);
+}
+.footer-bar__col:last-child { border-right: none; }
+
+/* ========================================
+   DECORATIVE — particules
+   ======================================== */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.particles span {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* ========================================
+   SECTIONS
+   ======================================== */
+section {
+  position: relative;
+  padding: var(--space-4xl) 0;
+}
+section .container { position: relative; z-index: 1; }
+
+/* --- Hero --- */
+.hero {
+  padding: var(--space-2xl) 0 var(--space-4xl);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-3xl);
+}
+.nav__logo {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--color-white);
+}
+.nav__links {
+  display: flex;
+  gap: var(--space-xl);
+  list-style: none;
+}
+.nav__links a {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  transition: color 0.2s;
+}
+.nav__links a:hover { color: var(--color-white); text-decoration: none; }
+
+.hero__content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xl);
+  flex: 1;
+}
+.hero__text { flex: 1; }
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: var(--space-lg);
+}
+.hero__subtitle {
+  font-family: var(--font-body);
+  font-size: 20px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xl);
+  max-width: 420px;
+  line-height: 1.6;
+}
+.hero__actions {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.hero__visual {
+  flex: 0 0 auto;
+  width: 524px;
+  height: 524px;
+  position: relative;
+  opacity: 0;
+}
+
+.hero__badges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  margin-top: auto;
+  padding-top: var(--space-2xl);
+}
+.hero__badges .badge-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.badge-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--color-surface);
+  border-radius: 50%;
+}
+.badge-label {
+  font-family: var(--font-small);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* --- Services (Ce qu'on fait) --- */
+.services { /*background: var(--color-bg);*/ }
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+}
+
+/* --- Offres (Chaque projet est unique) --- */
+.offres { /*background: var(--color-bg);*/ }
+
+.offres__cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+.offre-card {
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(147, 182, 81, 0.1) 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.offre-card__title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin-bottom: var(--space-sm);
+  color: var(--color-lime);
+}
+.offre-card__text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* --- Pourquoi Ocebo --- */
+.why { /*background: var(--color-bg);*/ }
+
+.why__features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-3xl);
+}
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+}
+.feature-item__icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+}
+.feature-item__label {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.why__stats {
+  padding: var(--space-2xl) 0;
+}
+
+/* --- Showcase (bento grid) --- */
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto;
+  gap: var(--space-md);
+  align-items: center;
+}
+.bento__item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+.bento__item--a { grid-column: 1 / 7; grid-row: 1 / 2; aspect-ratio: 4/3; background: var(  --color-indigo);  }
+.bento__item--b { grid-column: 8 / 12; grid-row: 1 / 2; background: var(--color-red); }
+.bento__item--c { grid-column: 2 / 6;  grid-row: 2 / 3; background: var(--color-yellow); }
+.bento__item--d { grid-column: 7 / 13; grid-row: 2 / 3; aspect-ratio: 4/3; background: var(--color-indigo); }
+
+.bento__item .img-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  min-height: 280px;
+  background: none; 
+
+}
+.petit{
+     max-height: 250px;
+}
+/* --- Trust (Ils nous font confiance) --- */
+.trust { /*background: var(--color-bg);*/ }
+
+.trust__logos {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+/* --- FAQ --- */
+.faq { /*background: var(--color-bg);*/ }
+
+.faq__list { max-width: 100%; }
+
+/* --- CTA --- */
+.cta {
+  /*background: var(--color-bg);*/
+  padding: var(--space-4xl) 0;
+}
+.cta__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3xl);
+}
+.cta__title {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1;
+  flex: 0 0 auto;
+  max-width: 440px;
+}
+.cta__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ========================================
+   RESPONSIVE — Tablet (1024)
+   ======================================== */
+@media (max-width: 1024px) {
+  .hero__visual { width: 360px; height: 360px; }
+  .hero__title { font-size: 40px; }
+  .h-display, .stat__number { font-size: 56px; }
+  .section-header__title { font-size: 36px; }
+
+  .services__grid { grid-template-columns: repeat(2, 1fr); }
+  .offres__cols   { grid-template-columns: repeat(2, 1fr); }
+  .why__stats     { grid-template-columns: repeat(2, 1fr); }
+  .trust__logos   { grid-template-columns: repeat(3, 1fr); }
+
+  .bento {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bento__item--a { grid-column: 1 / 2; grid-row: 1; }
+  .bento__item--b { grid-column: 2 / 3; grid-row: 1; }
+  .bento__item--c { grid-column: 1 / 2; grid-row: 2; }
+  .bento__item--d { grid-column: 2 / 3; grid-row: 2; }
+
+  .cta__inner { flex-direction: column; }
+  .cta__title { max-width: 100%; font-size: 40px; }
+}
+
+/* ========================================
+   RESPONSIVE — Mobile (390)
+   ======================================== */
+@media (max-width: 480px) {
+  :root { --grid-gutter: 12px; }
+
+  .container { padding: 0 var(--space-md); }
+
+  .nav__links { display: none; }
+
+  .hero { min-height: auto; padding: var(--space-xl) 0; }
+  .hero__content { flex-direction: column; gap: var(--space-xl); }
+  .hero__visual { width: 100%; height: auto; aspect-ratio: 1; }
+  .hero__title { font-size: 32px; }
+  .hero__subtitle { font-size: 16px; }
+  .hero__actions { flex-direction: column; }
+  .hero__badges { flex-direction: column; align-items: flex-start; }
+
+  .h-display, .stat__number { font-size: 48px; }
+  h1, .h1, .section-header__title { font-size: 32px; }
+  h2, .h2 { font-size: 24px; }
+
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .section-number { width: 56px; height: 56px; font-size: 24px; }
+
+  .services__grid   { grid-template-columns: 1fr; }
+  .offres__cols     { grid-template-columns: 1fr; }
+  .why__features    { grid-template-columns: 1fr; }
+  .why__stats       { grid-template-columns: repeat(2, 1fr); }
+  .trust__logos     { grid-template-columns: repeat(2, 1fr); }
+
+  .bento {
+    grid-template-columns: 1fr;
+  }
+  .bento__item--a,
+  .bento__item--b,
+  .bento__item--c,
+  .bento__item--d { grid-column: 1; grid-row: auto; }
+
+  .form-row { flex-direction: column; }
+
+  section { padding: var(--space-2xl) 0; }
+}
+</style>
+<style>
+.svg-drawing-container {
+  width: 100%;
+  height:6500px;/* Prend toute la hauteur du body (DOM) */
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+#svg-root {
+  margin-top: -25%;
+  height: 6500px; /* S'étire sur toute la page */
+  width: 2000px;
+  left:50%;
+  transform: translateX(-50%);
+  display: block;
+  overflow: visible;
+  filter: blur(8px);
+}
+
+.path-anim {
+  stroke-width: 3;
+  fill: none;
+  visibility: hidden; 
+}
+
+
+canvas {
+  position: fixed;
+
+  width: 100%;
+  height: 100%;
+  filter: blur(0px);
+  background-color: #0D0E0E;
+  pointer-events: none;
+  z-index: -1;
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script></head>
+<body>
+
+  <canvas id="canvas"></canvas>
+
+<div class="svg-drawing-container">
+  <svg id="svg-root" preserveAspectRatio="none">
+    <path id="path-rose" class="path-anim" d="M1735.03 328.636C1782.42 423.01 1829.92 546.138 1845.06 649.105C1845.28 650.539 1845.5 651.973 1845.71 653.405C1851.78 695.251 1855.22 738.561 1850.52 790.126C1849.89 796.688 1849.12 803.321 1848.15 810.182C1847.19 816.918 1846.06 823.772 1844.71 830.749C1833.55 887.444 1813.57 955.749 1767 1035.04C1584.7 1323.48 1305.12 1412.18 1228.66 1472.75C1225.72 1474.86 1222.87 1476.89 1220.17 1478.82C1082.66 1579.5 909.021 1691.19 820.05 1938.55C812.769 1961.09 806.711 1984.74 802.255 2009.12C798.583 2029.07 796.469 2045.48 795.887 2045.96C795.366 2046.31 796.55 2030.41 800.161 2010.41C804.481 1986.38 810.295 1963.26 817.325 1941.05C817.357 1940.95 817.389 1940.85 817.421 1940.75C906.569 1690.84 1077.49 1581.76 1211.47 1482.74C1215.89 1479.59 1221.91 1475.32 1227.58 1471.25C1312.5 1406.55 1592.19 1315.93 1769.38 1027.29C1812.81 951.374 1832.08 885.498 1842.89 830.405C1844.91 819.955 1846.45 809.719 1847.61 799.873C1848.4 793.23 1849.02 786.705 1849.49 780.322C1849.5 780.172 1849.51 780.022 1849.53 779.871C1853.07 728.041 1848.99 686.784 1842.84 646.847C1842.7 645.999 1842.57 645.149 1842.43 644.3C1826.31 540.58 1778.95 420.233 1733.07 328.807C1724.38 311.274 1717.44 297.192 1717.98 297.116C1718.52 297.088 1726.34 311.079 1735.03 328.636ZM336.909 4173.22C335.787 4214.23 340.759 4261.03 355.339 4307.5C377.146 4378.69 417.301 4449.67 467.432 4503.97C550.572 4595.98 656.278 4641.06 704.75 4658.8C752.724 4676.47 807.598 4691.08 874.583 4700.71C890.243 4702.94 905.644 4704.78 922.492 4706.4C977.158 4711.62 1038.28 4713.16 1105.04 4709.76C1194.19 4705.15 1271.97 4693.37 1339.27 4680.42C1456.77 4657.8 1546.85 4649.96 1618.9 4647.15C1641.63 4646.29 1664.25 4645.97 1684.03 4646.1C1684.07 4646.1 1684.1 4646.1 1684.13 4646.1C1760.62 4646.67 1817.78 4652.39 1869.69 4660.38C1961.74 4675.27 2036.15 4695.82 2119.85 4732.77C2237.04 4780.85 2381.77 4897.73 2436.95 5001.56C2440.2 5007.15 2443.35 5012.81 2446.38 5018.56C2449.72 5024.9 2452.9 5031.3 2455.92 5037.78C2487.58 5111.57 2538.83 5205.08 2535.14 5348.89C2528.07 5479.51 2463.61 5581.15 2404.22 5660.88C2386.96 5683.68 2369.12 5705.33 2351.88 5725.18C2307.87 5775.73 2265.61 5818.02 2224.22 5857.49C2096.21 5978.26 1986.82 6062.97 1898.93 6130.85C1811.53 6197.23 1739.12 6237.52 1683.28 6267.54C1596.8 6313.07 1546.15 6334.08 1510.05 6349.66C1499.09 6354.31 1489.21 6358.41 1480.15 6362.14C1398.36 6395.7 1322.26 6423.67 1229.47 6454.13C1208.85 6460.88 1187.39 6467.71 1164.89 6474.68C1089.57 6497.93 1033.05 6513.83 988.65 6526.15C969.194 6531.53 952.104 6536.17 936.019 6540.47C935.722 6540.55 935.428 6540.63 935.128 6540.71C932.864 6541.32 930.619 6541.92 928.391 6542.51C926.71 6542.96 925.033 6543.4 923.354 6543.85C922.694 6544.03 922.103 6544.19 921.662 6544.31C921.312 6544.41 921.04 6544.48 920.865 6544.53C920.832 6544.54 920.799 6544.55 920.766 6544.56C917.59 6545.42 914.855 6546.14 914.293 6546.29C913.314 6546.55 912.445 6546.78 912.002 6546.9C909.657 6547.51 906.636 6548.3 904.629 6548.82C899.469 6550.15 890.5 6552.47 876.677 6555.97C864.721 6559.02 852.95 6562.01 838.43 6565.65C837.514 6565.88 836.599 6566.11 835.683 6566.33C821.443 6569.89 805.172 6573.92 784.12 6578.99C765.051 6583.59 747.564 6587.27 744.916 6587.37C742.28 6587.47 755.434 6583.97 774.456 6579.41C794.241 6574.67 809.66 6570.89 823.818 6567.38C824.714 6567.15 825.612 6566.93 826.509 6566.71C841.255 6563.04 855.379 6559.48 870.422 6555.66C875.44 6554.39 880.62 6553.07 885.463 6551.83C894.178 6549.59 904.105 6547.01 916.006 6543.87C918.395 6543.24 920.861 6542.59 923.382 6541.92C939.638 6537.6 958.195 6532.61 979.38 6526.79C1028.88 6513.14 1091.38 6495.61 1173.26 6470.15C1194.72 6463.46 1215.45 6456.81 1235.68 6450.15C1328.72 6419.44 1410.52 6389.27 1496.96 6353.1C1508.86 6348.1 1520.21 6343.26 1532.27 6338.02C1567.88 6322.25 1611.09 6303.85 1690.73 6261.47C1743.27 6232.89 1812.92 6193.89 1897.81 6129.39C1984.01 6062.82 2092.64 5978.81 2220.53 5858.47C2263.88 5817.27 2308.95 5772.06 2353.46 5720.56C2370.12 5701.25 2387.34 5680.2 2403.51 5658.77C2461.84 5580.4 2523.54 5482.11 2532.8 5357.09C2539.23 5208.34 2486.45 5114.27 2454.21 5038.56C2453.32 5036.64 2452.41 5034.73 2451.49 5032.82C2450.24 5030.25 2448.96 5027.67 2447.64 5025.09C2446.01 5021.88 2444.3 5018.63 2442.68 5015.62C2387.72 4903.44 2233.68 4778.1 2103.43 4727.66C2022.52 4693.85 1951.37 4674.81 1860.11 4660.79C1814.92 4654.29 1766.16 4649.01 1691.22 4647.99C1670.53 4647.76 1646.87 4647.97 1621.5 4648.89C1548.61 4651.61 1457.74 4659.48 1339.62 4682.22C1270.92 4695.43 1191.48 4707.41 1100.53 4711.82C1035.78 4714.88 977.154 4713.41 922.739 4708.26C905.508 4706.62 889.551 4704.71 873.033 4702.34C805.683 4692.63 744.009 4676.54 688.907 4654.76C644.484 4637.38 542.411 4591.7 462.363 4501.09C411.976 4445.25 374.178 4375.15 353.585 4308.04C340.765 4267.15 335.613 4227.1 334.95 4192.4C334.76 4182.82 334.899 4173.2 335.372 4163.56C338.786 4080.29 371.069 3998.71 410.441 3942.83C466.564 3856.99 579.955 3776.49 718.28 3746.02C897.643 3696.41 1118.43 3693.47 1295.2 3767.39C1380.01 3799.97 1460.43 3832.27 1534.04 3856.74C1538.54 3858.25 1542.87 3859.69 1547.32 3861.15C1741.73 3926.16 1923.37 3950.74 2055.49 3913.6C2189.02 3877.84 2252.09 3791.25 2278.59 3751.06C2281.18 3747.08 2283.46 3743.44 2285.38 3740.31C2287.11 3737.47 2288.67 3734.86 2290.02 3732.54C2303.29 3709.81 2313.36 3688.75 2322.78 3665.83C2328.06 3652.9 2333.02 3640.19 2337.75 3627.41C2338.47 3625.48 2339.18 3623.55 2339.88 3621.63C2353.81 3583.21 2366.58 3543 2377.53 3494.29C2419.93 3312.32 2384.29 3153.78 2308.9 3048.31C2295.24 3028.55 2280.57 3010.37 2265.15 2993.48C2265.1 2993.43 2265.06 2993.38 2265.01 2993.33C2197.02 2919.52 2119.28 2871.78 2042.71 2835.02C1990.76 2810.37 1942.92 2792.99 1899.76 2779.28C1826.65 2756.38 1766.88 2742.75 1716.39 2731.25C1691.09 2725.56 1667.93 2720.58 1645.82 2715.89C1598.26 2705.81 1556.52 2697.25 1513.55 2688.05C1432.68 2670.72 1358.33 2653.73 1285.87 2632.78C1279.39 2630.91 1272.94 2629 1266.53 2627.07C1188.53 2603.35 1111.56 2575.14 1036.57 2531.29C1019.31 2521.16 1005.58 2511.38 1005.52 2510.74C1005.45 2510.07 1019.04 2518.81 1036.19 2528.94C1108.83 2571.62 1183.38 2599.58 1261.37 2623.58C1267.79 2625.54 1274.27 2627.48 1280.79 2629.39C1353.03 2650.53 1428.59 2667.95 1510.96 2685.62C1552.4 2694.51 1591.74 2702.59 1638.47 2712.45C1660.79 2717.18 1684.6 2722.26 1711.33 2728.23C1763.28 2740 1824.89 2753.92 1900.31 2777.53C1943.3 2791.19 1990.79 2808.45 2042.22 2832.76C2118.04 2869.06 2195.22 2915.9 2263.9 2989.41C2279.59 3006.37 2294.6 3024.69 2308.59 3044.66C2385.18 3150.25 2422.12 3310.25 2379.56 3493.63C2369.28 3539.63 2357.31 3578.28 2343.76 3616.3C2342.99 3618.45 2342.19 3620.65 2341.42 3622.78C2336.23 3636.99 2330.63 3651.47 2324.48 3666.53C2315.37 3688.7 2305.5 3709.49 2292.44 3732.05C2289.51 3737.08 2286.02 3742.92 2281.04 3750.64C2254.55 3791.14 2191.26 3878.88 2056.7 3915.17C1923.58 3952.82 1740.86 3927.92 1545.63 3862.53C1544.42 3862.13 1543.21 3861.73 1542 3861.33C1444.13 3828.8 1364.01 3795.5 1294.5 3769.26C1176.11 3724.81 1084.62 3712.75 1009.67 3710.9C915.048 3709.21 845.191 3722.39 788.881 3733.35C778.134 3735.51 767.987 3737.66 758.333 3739.76C744.263 3742.82 731.235 3745.78 718.879 3748.63C694.048 3754.38 672.553 3760.67 651.143 3768.17C554.364 3803.36 490.37 3847.79 432.791 3916.5C383.744 3974.75 345.197 4063.19 338.65 4144.5C338.638 4144.62 338.627 4144.74 338.615 4144.86C337.707 4154.5 337.151 4163.93 336.909 4173.22ZM508.281 6640.85C488.92 6644.79 473.615 6647.44 473.682 6646.91C473.781 6646.37 489.248 6642.86 508.623 6638.91C554.829 6629.5 600.533 6619.91 646.405 6609.89C665.923 6605.63 681.059 6602.67 681.065 6603.19C680.917 6603.74 665.61 6607.57 646.089 6611.83C600.221 6621.84 554.513 6631.44 508.281 6640.85ZM356.728 4092.87C352.378 4111.41 349.46 4130.2 348.444 4134.45C347.482 4138.69 348.12 4126.65 351.663 4107.84C353.573 4097.91 356.93 4081.59 363.686 4060.21C383.941 3977.63 494.869 3804.81 720.918 3757.5C887.049 3713.06 1097.48 3697.98 1291.66 3776.81C1304.6 3781.65 1318.74 3787.07 1331.99 3792.18C1370.55 3807.07 1404.95 3820.4 1438.1 3832.67C1579.57 3877.11 1694.55 3946.58 1981.73 3935.06C2137.73 3923.5 2275.61 3815.31 2330 3668.8C2403.28 3492.38 2440.28 3284.09 2353.59 3107.8C2268.1 2931.37 2084.75 2828.16 1902.55 2770.47C1687.34 2703.45 1460.97 2678.19 1245.25 2609.47C1033.26 2550.17 809.908 2392.2 804.461 2152.25C782.742 1931.06 917.711 1728.37 1082.91 1593.85C1131.22 1553.08 1182.8 1516.49 1234.05 1480.31C1480.17 1344.74 1749.58 1185.24 1834.88 903.289C1841.66 881.424 1847.72 857.73 1852.54 832.224C1910.57 523.131 1626.08 115.947 1560.66 29.8387C1548.8 13.9937 1539.28 1.38058 1539.92 1.37126C1540.32 1.06818 1550.66 13.4014 1562.57 29.3365C1627.82 115.222 1912.64 523.307 1854.34 832.563C1849.7 857.072 1843.96 879.812 1837.51 900.961C1753.06 1185.22 1481.64 1346.12 1235.11 1481.8C1185.3 1516.99 1135.06 1552.58 1087.99 1592C921.325 1726.63 784.514 1929.81 806.476 2152.09C812.1 2391 1034.1 2547.89 1245.94 2607.07C1461.41 2675.53 1687.77 2700.55 1903.49 2767.5C2086.16 2825.18 2270.56 2928.55 2356.87 3106.3C2444.32 3283.95 2407.03 3493.43 2333.65 3670.3C2278.97 3818.37 2138.23 3928.21 1980.6 3939.26C1694.34 3949.97 1584.83 3880.74 1443.54 3836.64C1410.33 3824.41 1375.81 3811.09 1336.88 3796.03C1321.49 3790.09 1305.83 3784.07 1291.01 3778.53C1096.57 3699.65 886.763 3715.11 721.336 3759.32C506.415 3804.71 395.388 3963.44 371.19 4044.05C363.298 4065.71 359.146 4082.45 356.728 4092.87ZM892.79 4693.33C1018.3 4709.53 1177.08 4701.89 1337.3 4670.28C1455.64 4647.23 1578.39 4634.3 1694.19 4636.06C1827.73 4637.55 1951.25 4660.04 2045.56 4691.99C2191.56 4742.29 2272.82 4801.19 2342.61 4866.42C2343.35 4867.14 2344.06 4867.82 2344.82 4868.56C2389.51 4912.6 2430.88 4961.74 2464.66 5033.77C2482.07 5072.15 2500.86 5115.29 2517.15 5166.95C2580.51 5316.22 2523.77 5552.11 2372.55 5714.12C2372.44 5714.25 2372.33 5714.38 2372.23 5714.51C2230.91 5881.22 2055.36 6021.51 1930.29 6119.44C1921.93 6125.92 1913.52 6132.39 1905.08 6138.86C1458.45 6448.46 1109.11 6496.48 949.701 6548.48C655.086 6626.9 315.15 6684.84 9.6429 6748.13C-22.6737 6755.69 31.494 6740.2 94.2457 6728.04C96.5297 6727.58 98.8315 6727.13 101.151 6726.67C121.935 6722.55 142.025 6718.66 167.328 6713.81C206.205 6706.31 234.07 6701.02 259.868 6696.08C327.947 6684.48 799.584 6590.25 962.849 6543.13C1113.51 6492.82 1455.25 6445.23 1902.62 6135.65C1911.48 6128.86 1920.3 6122.06 1929.07 6115.25C2051.57 6019.2 2225.27 5883.69 2367.89 5716.82C2368.27 5716.37 2368.65 5715.91 2369.03 5715.46C2519.12 5555.36 2579.9 5319.45 2515.47 5167.69C2499.3 5116.37 2480.49 5073.09 2462.99 5034.53C2426.98 4957.92 2382.24 4906.83 2335.6 4862.32C2334.91 4861.68 2334.23 4861.04 2333.54 4860.4C2263.27 4796.9 2185.52 4742.27 2045.17 4693.79C1949.03 4661.2 1824.1 4638.93 1689.82 4637.83C1575.28 4636.45 1454.21 4649.38 1337.65 4672.08C1178.36 4703.48 1020.83 4711.26 895.651 4695.53C876.239 4693.2 859.633 4690.09 858.946 4689.47C858.151 4688.81 873.299 4690.92 892.79 4693.33ZM898.6 4682.55C1043.71 4699.22 1190.85 4686.08 1334.91 4658.02C1738.61 4573.21 2267.27 4622.85 2476.88 5028.15C2495.97 5070.11 2513.78 5112.92 2527.89 5157.2C2595.6 5309.99 2535.79 5560.64 2380.66 5723.59C2379.05 5725.49 2377.43 5727.4 2375.8 5729.31C2231.2 5896.82 2056.76 6033.73 1934.12 6129.73C1926.6 6135.55 1919.05 6141.36 1911.46 6147.18C1459.95 6460.02 1108.45 6508.41 948.25 6560.67C790.47 6600.79 746.519 6609.51 681.138 6624.46C679.37 6624.85 677.603 6625.24 675.837 6625.63C675.721 6625.66 675.604 6625.69 675.488 6625.72C673.273 6626.23 671.413 6626.66 670.455 6626.88C668.501 6627.32 666.927 6627.67 666.311 6627.81C664.905 6628.13 663.727 6628.39 663.308 6628.48C661.595 6628.86 659.637 6629.29 658.376 6629.57C646.443 6632.2 610.623 6639.94 581.274 6646.04C551.529 6652.24 530.662 6656.44 508.112 6660.93C505.85 6661.38 503.593 6661.83 501.338 6662.27C481.51 6666.2 459.14 6670.6 427.84 6676.67C409.139 6680.29 394.664 6682.65 397.097 6681.66C399.394 6680.7 417.051 6676.89 435.969 6673.22C469.279 6666.74 492.426 6662.16 512.658 6658.13C514.908 6657.68 517.161 6657.23 519.418 6656.78C541.272 6652.4 559.19 6648.77 585.77 6643.22C623.849 6635.21 652.105 6629.03 677.838 6623.31C745.421 6607.88 796.428 6597.68 961.373 6555.33C1112.96 6504.63 1456.27 6459.46 1910.35 6145.73C1917.87 6139.96 1925.37 6134.18 1932.83 6128.41C2055.68 6032.27 2230.24 5895.19 2374.51 5728.01C2376.18 5726.05 2377.84 5724.09 2379.48 5722.14C2534.47 5559.07 2593.43 5310.05 2526.21 5157.96C2511.95 5113.63 2494.01 5070.89 2474.84 5029.09C2260.65 4622.61 1737.9 4578.96 1335.57 4661.42C1192.95 4688.88 1046.68 4701.75 901.497 4684.73C789.395 4671.78 688.876 4640.62 606.767 4592.91C482.687 4521.85 405.34 4412.75 371.644 4302.42C338.911 4196.67 353.652 4087.8 399.428 3999.8C418.65 3962.34 484.285 3850.96 646.857 3791.29C670.829 3782.39 695.995 3774.81 723.435 3768.45C750.05 3762.3 777.763 3756.1 806.629 3750.52C943.463 3721.53 1113.65 3720.4 1287.36 3788.25C1294.76 3791.01 1302.49 3793.95 1310.55 3797.03C1349.15 3811.84 1383.43 3825.25 1416.45 3837.63C1558.69 3883.32 1669.57 3952.87 1962.57 3950.24C2100.56 3948.12 2280.24 3849.44 2342.38 3673.88C2470.18 3414.17 2414.66 3066.81 2246.63 2943.26C2125.19 2835.72 2035.06 2806.87 1976.77 2781.96C1960.28 2775.58 1945.21 2770.18 1931.77 2765.58C1923.11 2762.62 1914.84 2759.89 1906.73 2757.3C1882.09 2749.45 1859.2 2742.76 1831.3 2735.25C1567.18 2663.1 1367.51 2660.51 1084.35 2530.31C1067.15 2521.5 1052.68 2512.58 1051.69 2511.41C1050.66 2510.2 1063.52 2517.38 1080.52 2526.25C1362.68 2658.19 1565.64 2660.66 1833.48 2733.94C1860.64 2741.27 1883.66 2748.02 1907.28 2755.55C1917.38 2758.77 1927.56 2762.16 1938.18 2765.85C1951.47 2770.47 1966.02 2775.77 1981.62 2781.87C2039.03 2806.72 2128.21 2835.44 2249.11 2943.06C2416.95 3067.24 2471.7 3415.22 2344.07 3674.58C2281.88 3850.42 2101.62 3949.74 1963.6 3952C1672.7 3955.1 1563.9 3887.03 1422 3841.67C1389.09 3829.39 1354.01 3815.71 1315.34 3800.84C1305.86 3797.2 1295.74 3793.34 1286.71 3789.97C1115.3 3723.1 947.327 3723.22 811.943 3751.38C781.284 3757.19 751.942 3763.75 723.847 3770.24C698.356 3776.15 674.96 3783.08 652.542 3791.16C487.258 3851.06 426.526 3956.73 408.419 3987.21C357.029 4077.14 339.231 4191.69 373.396 4301.88C407.602 4414.2 487.085 4523.39 610.776 4593.1C692.076 4639.67 790.315 4669.69 898.6 4682.55ZM1081.8 1613.25C1067.11 1625.84 1054.29 1637.05 1052.95 1637.59C1051.61 1638.15 1062.07 1627.88 1076.84 1615.1C1142.42 1558.58 1197.67 1521.33 1241.11 1490.21C1248.81 1484.72 1257.27 1479.47 1265.35 1474.64C1358.81 1421.36 1405.57 1397.18 1471.55 1354.42C1642.15 1246.15 1784.94 1094.97 1840.78 924.725C1851.09 894.57 1858.87 864.652 1864.56 834.491C1899.11 578.336 1783.15 389.843 1737.91 290.798C1728.78 273.208 1721.51 259.081 1722.05 258.999C1722.6 258.97 1730.74 272.988 1739.87 290.599C1784.89 389.472 1900.95 577.496 1866.36 834.83C1860.84 864.089 1853.34 893.15 1843.5 922.388C1788.31 1093.6 1645.16 1246.31 1473.33 1355.45C1409.29 1396.89 1365.18 1420.29 1273.54 1471.94C1263.6 1477.76 1252.35 1484.47 1242.18 1491.71C1199.69 1522.13 1145.82 1558.5 1081.8 1613.25Z" fill="none" stroke="#ed3a31"  />
+    <path id="path-green" class="path-anim" d="M1630.58 476.881C1675.41 566.474 1720.28 683.488 1734.02 781.186C1734.22 782.545 1734.42 783.903 1734.61 785.26C1740.12 824.953 1743.07 866.14 1738.06 914.893C1737.4 921.064 1736.58 927.431 1735.59 933.88C1734.85 938.675 1734.01 943.532 1733.06 948.453C1722.26 1003.14 1702.84 1069.32 1656.55 1146.41C1488.11 1408.93 1232.18 1493.36 1151.92 1553.88C1146.01 1558.12 1139.99 1562.4 1135.42 1565.65C1004.95 1661.69 840.443 1769.86 761.913 2007.54C755.579 2029.13 750.462 2051.64 746.858 2075.1C743.936 2093.95 742.321 2109.89 741.77 2110.23C741.25 2110.67 741.942 2095.33 744.816 2076.36C748.282 2053.32 753.218 2031.14 759.296 2009.98C759.323 2009.89 759.351 2009.79 759.379 2009.69C837.902 1769.57 1000.35 1663.62 1127 1569.37C1133.77 1564.54 1141.84 1558.83 1150.85 1552.37C1238.04 1488.41 1494.45 1402.47 1658.83 1139C1701.98 1065.24 1720.78 1001.27 1731.24 948.109C1732.82 939.923 1734.09 931.916 1735.11 924.082C1735.93 917.776 1736.58 911.639 1737.09 905.605C1737.11 905.463 1737.12 905.321 1737.13 905.179C1741.02 856.041 1737.43 816.961 1731.83 779.052C1731.71 778.247 1731.58 777.443 1731.46 776.638C1716.76 678.177 1672.04 563.887 1628.64 477.082C1620.41 460.409 1613.87 447.061 1614.39 446.967C1614.94 446.941 1622.35 460.184 1630.58 476.881ZM360.603 4037.69C349.415 4093.58 349.484 4163.48 370.428 4230.06C385.445 4278.66 408.309 4325.65 436.339 4365.86C502.899 4463.24 598.651 4517.11 642.94 4538.05C686.663 4559.06 737.632 4577.35 800.639 4590.9C814.749 4593.93 830.247 4596.83 845.555 4599.27C897.034 4607.5 954.986 4612.15 1018.64 4611.85C1130.02 4611.05 1222.09 4597.16 1299.24 4582.44C1383.02 4566.24 1450.97 4558.29 1507.21 4554.06C1528.72 4552.45 1550.17 4551.33 1569 4550.71C1569.03 4550.71 1569.06 4550.71 1569.09 4550.7C1641.7 4548.41 1696.14 4551.51 1745.65 4556.95C1833.29 4567.23 1904.77 4583.4 1985.89 4614.98C2099.35 4655.57 2239.9 4760.88 2298.13 4856.37C2301.44 4861.33 2304.84 4866.64 2308.13 4871.99C2316.95 4886.33 2325.79 4902.37 2333.7 4919.38C2362.5 4984.68 2406.78 5061.96 2431 5176.37C2456.29 5298.32 2415.08 5406.56 2362.86 5485.12C2348.24 5507.54 2332.57 5528.53 2316.44 5548.35C2276.17 5597.6 2235.95 5637.24 2196.47 5673.57C2048.48 5806.68 1922.3 5887.56 1827.46 5950.13C1763.49 5991.35 1709.85 6018.28 1665.75 6039.09C1581.53 6078.11 1532.56 6094.81 1497.26 6107.52C1486.5 6111.3 1477.2 6114.48 1468.28 6117.49C1388.83 6144.2 1314.78 6165.6 1224.85 6187.8C1204.89 6192.7 1184.06 6197.63 1162.25 6202.57C1089.34 6219.04 1034.6 6229.79 991.677 6238.07C972.984 6241.65 956.306 6244.77 940.716 6247.62C940.428 6247.67 940.14 6247.72 939.852 6247.77C937.676 6248.17 935.517 6248.56 933.374 6248.95C931.759 6249.24 930.146 6249.54 928.531 6249.83C927.897 6249.95 927.329 6250.06 926.904 6250.14C926.568 6250.2 926.306 6250.25 926.138 6250.28C926.106 6250.29 926.074 6250.29 926.042 6250.3C922.987 6250.87 920.357 6251.34 919.817 6251.44C918.876 6251.61 918.041 6251.76 917.614 6251.83C915.36 6252.23 912.456 6252.74 910.527 6253.08C905.536 6253.94 896.82 6255.45 883.408 6257.71C871.734 6259.69 860.556 6261.58 846.612 6263.89C845.733 6264.03 844.858 6264.18 843.965 6264.33C830.204 6266.6 814.133 6269.2 794.105 6272.33C776.024 6275.16 758.785 6277.34 756.321 6277.19C753.777 6277.06 766.672 6274.71 784.996 6271.88C803.828 6268.96 818.842 6266.55 832.582 6264.31C833.453 6264.17 834.323 6264.03 835.195 6263.88C849.601 6261.53 862.886 6259.31 877.471 6256.85C882.341 6256.03 887.367 6255.17 892.068 6254.37C900.522 6252.92 910.191 6251.23 921.597 6249.18C923.894 6248.77 926.264 6248.35 928.688 6247.91C944.227 6245.11 962.468 6241.75 982.871 6237.87C1030.62 6228.75 1091.22 6216.89 1170.49 6198.8C1191.29 6194.03 1211.4 6189.24 1230.97 6184.39C1321.16 6161.96 1400.63 6138.88 1484.65 6109.88C1496.13 6105.9 1507.27 6101.96 1519.01 6097.69C1553.54 6084.85 1595.62 6069.97 1673.04 6033.61C1714.29 6013.87 1765.26 5988.04 1826.46 5948.6C1919.19 5887.38 2044.27 5807.47 2192.83 5674.41C2234.26 5636.5 2277.2 5594 2317.77 5543.81C2333.28 5524.55 2348.34 5504.13 2361.96 5483.13C2412.98 5405.8 2452.63 5301.99 2430.6 5184.49C2407.14 5065.29 2361.3 4987.01 2332 4920.16C2326.31 4907.95 2320.16 4896.23 2313.77 4885.12C2312.35 4882.67 2311.02 4880.4 2309.62 4878.06C2307.88 4875.16 2306.12 4872.28 2304.33 4869.41C2245.55 4766.27 2096 4653.07 1970.03 4610.9C1892.07 4582.34 1823.83 4567.37 1736.52 4557.82C1693.56 4553.52 1646.87 4550.49 1575.8 4552.33C1556.39 4552.88 1533.54 4553.96 1509.76 4555.71C1452.72 4559.91 1384.12 4567.9 1299.59 4584.24C1221.08 4599.22 1127.45 4613.28 1014.19 4613.7C952.488 4613.74 896.956 4609.29 845.656 4601.14C830.005 4598.65 813.943 4595.65 799.051 4592.43C735.58 4578.75 678.485 4558.63 628.271 4532.85C587.795 4512.48 495.707 4458.29 431.857 4362.58C404.405 4322.23 382.886 4276.54 368.679 4230.6C349.083 4168.12 348.136 4104.86 355.651 4055.33C356.974 4046.38 358.637 4037.3 360.592 4028.39C376.889 3950.87 420.378 3879.67 466.008 3833.49C520.766 3775.1 608.732 3723.5 713.06 3699.66C877.332 3654.12 1086.16 3647.74 1257.86 3719.44C1363.07 3760.14 1462.83 3799 1552.8 3825.58C1557.05 3826.86 1561.36 3828.14 1565.61 3829.38C1751.81 3884.71 1925.97 3899.32 2048.31 3855.57C2172.1 3812.89 2225.06 3725.85 2247.5 3686.24C2249.66 3682.33 2251.59 3678.7 2253.29 3675.41C2254.73 3672.63 2256.02 3670.08 2257.14 3667.82C2262.26 3657.46 2266.96 3647 2271.32 3636.35C2281.24 3612.1 2289.49 3589.56 2297.22 3565.48C2297.82 3563.62 2298.41 3561.75 2298.99 3559.89C2310.42 3523.13 2320.34 3484.43 2327.11 3437.67C2353.73 3262.15 2295.22 3118.32 2215.19 3025.61C2200.44 3008.11 2185.04 2992.03 2169.26 2977.13C2169.22 2977.09 2169.17 2977.04 2169.12 2977C2099.39 2911.72 2024.6 2868.74 1951.21 2835.27C1906.63 2815.14 1865.45 2800.25 1827.83 2788.31C1752.31 2764.72 1691.13 2751.5 1640.19 2740.28C1616.17 2735.08 1593.98 2730.48 1573.11 2726.21C1527.77 2716.93 1488.23 2709.09 1447.32 2700.61C1370.44 2684.67 1299.76 2669.07 1230.73 2650.03C1224.56 2648.33 1218.42 2646.6 1212.31 2644.85C1137.97 2623.35 1064.43 2597.94 991.98 2559.07C975.099 2549.98 961.983 2541.42 961.82 2540.74C961.833 2540.14 974.798 2547.69 991.577 2556.77C1061.77 2594.6 1133.14 2619.79 1207.39 2641.51C1213.51 2643.29 1219.68 2645.05 1225.89 2646.78C1294.67 2665.97 1366.57 2681.98 1444.86 2698.23C1484.28 2706.41 1521.68 2713.84 1566.12 2722.9C1587.2 2727.21 1610.14 2731.93 1635.36 2737.36C1687.68 2748.83 1750.64 2762.3 1828.39 2786.57C1865.81 2798.44 1906.64 2813.2 1950.74 2833.04C2023.4 2866.09 2097.55 2908.26 2167.85 2973.29C2183.9 2988.26 2199.57 3004.45 2214.63 3022.12C2295.66 3114.87 2355.69 3259.91 2329.07 3436.91C2322.72 3481.17 2313.65 3518.05 2302.46 3554.91C2301.84 3556.92 2301.22 3558.93 2300.59 3560.95C2292.8 3585.73 2283.93 3610.38 2273.02 3637.05C2268.85 3647.23 2264.35 3657.28 2259.47 3667.24C2257.1 3672.05 2254.01 3678.17 2249.87 3685.73C2227.45 3725.62 2174.36 3813.78 2049.58 3857.07C1926.28 3901.39 1751.04 3886.51 1564.03 3830.82C1562.87 3830.48 1561.69 3830.13 1560.52 3829.79C1432.77 3791.74 1336.33 3751.15 1257.13 3721.39C1178.91 3692.03 1114.84 3678.28 1059.18 3671.6C969.862 3661.23 902.285 3668.05 848.163 3675.61C837.805 3677.11 828.047 3678.67 818.774 3680.27C778.676 3687.22 747.407 3694.28 716.291 3701.49C715.4 3701.7 714.51 3701.91 713.623 3702.12C619.846 3725.07 555.076 3757.19 491.081 3812.37C436.256 3859.36 385.7 3935.87 366.764 4011.07C366.734 4011.19 366.705 4011.3 366.675 4011.41C364.315 4020.24 362.285 4029.07 360.603 4037.69ZM528.455 6309.87C509.683 6312.18 494.875 6313.56 494.975 6313.04C495.106 6312.52 510.129 6310.28 528.917 6307.96C572.927 6302.53 617.134 6296.89 661.474 6290.91C679.826 6288.43 694.806 6286.76 694.703 6287.28C694.587 6287.81 679.408 6290.34 661.049 6292.81C616.682 6298.8 572.493 6304.43 528.455 6309.87ZM392.334 3965.75C385.309 3982.42 379.595 3999.51 377.946 4003.33C376.353 4007.12 378.818 3995.98 385.129 3978.92C388.479 3969.96 394.23 3955.18 403.952 3936.28C434.508 3870.36 535.978 3750.17 715.7 3711.15C868.837 3670.28 1067.74 3653.56 1254.22 3729.11C1289.1 3742.17 1324.33 3755.99 1359.88 3769.36C1396.46 3783.16 1429.28 3795.04 1461.05 3805.9C1596.28 3844.11 1708.54 3907.3 1979.97 3880.77C2114.26 3861.63 2230.48 3766.41 2278.48 3639.29C2350.82 3468.49 2372.95 3262.92 2276.69 3098.71C2182.77 2934.51 2007.5 2835.91 1830.62 2779.52C1621.53 2714.98 1401.69 2691.71 1191.46 2627.74C986.809 2572.03 758.575 2431.03 751.894 2195.84C731.837 1991.19 854.013 1802.29 1005.88 1676.12C1054.06 1634.64 1105.75 1597.83 1157.32 1561.45C1388.07 1434.14 1640.23 1285.41 1722.56 1022.2C1729.64 1000.08 1735.95 975.95 1740.87 949.924C1795.28 656.634 1527.14 274.268 1465.65 192.933C1454.38 177.872 1445.37 165.9 1446 165.871C1446.4 165.571 1456.22 177.253 1467.54 192.401C1528.86 273.535 1797.33 656.717 1742.67 950.263C1737.93 975.332 1731.9 998.641 1725.18 1020C1643.6 1285.5 1389.5 1435.54 1158.39 1562.94C1108.1 1598.44 1057.84 1634.18 1010.79 1674.34C857.441 1800.69 733.618 1990.05 753.9 2195.69C760.716 2429.69 987.575 2569.76 1192.12 2625.33C1402.13 2689.05 1621.92 2712.07 1831.57 2776.54C2008.95 2832.93 2185.12 2931.64 2279.88 3096.99C2376.99 3262.4 2354.66 3469.47 2282.15 3640.79C2233.8 3769.45 2115.07 3866.21 1979.16 3885.02C1708.39 3910.7 1601.36 3847.44 1466.29 3809.63C1434.44 3798.82 1401.55 3786.99 1364.34 3773.01C1327.05 3759.02 1290.06 3744.5 1253.57 3730.84C1066.77 3655.2 868.462 3672.37 716.119 3712.97C546.345 3750.16 446.858 3859.13 413.635 3922.41C402.801 3941.4 396.233 3956.43 392.334 3965.75ZM818.315 4584.57C950.901 4611.15 1125.49 4606.41 1297.26 4572.28C1391.06 4554.04 1486.96 4542.53 1578.12 4540.3C1704.97 4536.73 1823.15 4552.71 1913.91 4578.95C2054.48 4620.33 2133.87 4672.92 2202.84 4732.15C2203.57 4732.79 2204.3 4733.44 2205.03 4734.09C2255.4 4779.94 2302.62 4831.75 2342.21 4915.47C2355.07 4943.66 2369.22 4974.1 2383.97 5008.23C2453.21 5137.44 2483.44 5374.71 2336.21 5537.16C2336.11 5537.29 2336.01 5537.42 2335.91 5537.54C2206.54 5701.41 2031.8 5823.49 1906.39 5910.03C1881.96 5926.57 1857.85 5942.52 1832.99 5958.64C1417.47 6203 1102.29 6221.69 953.188 6256.8C668.615 6309.54 341.291 6331.34 49.7165 6384.26C18.8777 6391.48 70.4615 6376.1 130.588 6367.13C132.781 6366.78 134.991 6366.43 137.216 6366.08C156.976 6363.02 176.092 6360.26 200.534 6356.92C237.542 6351.86 264.944 6348.43 289.229 6345.38C354.478 6337.31 807.705 6284.52 966.075 6252.64C1107.03 6218.44 1415.26 6199.4 1830.79 5955.26C1856.05 5938.86 1880.42 5922.72 1905.41 5905.8C2028.26 5820.83 2200.79 5703.64 2331.77 5539.9C2332.12 5539.45 2332.47 5538.99 2332.82 5538.54C2396.41 5457.64 2443.65 5359.91 2444.71 5262.02C2446.78 5164.57 2411.76 5078.47 2382.37 5009.13C2367.67 4975.12 2353.47 4944.59 2340.54 4916.23C2298.82 4828.14 2248.05 4774.51 2195.9 4728.56C2195.22 4727.97 2194.54 4727.38 2193.85 4726.8C2124.66 4669.35 2048.61 4620.62 1913.59 4580.77C1821.02 4553.99 1701.68 4538.3 1574.12 4542.24C1484.16 4544.7 1389.75 4556.16 1297.61 4574.08C1126.61 4608.02 953.218 4612.94 820.896 4586.93C802.655 4583.51 787.222 4579.42 786.557 4578.75C785.839 4578.05 800.217 4581.1 818.315 4584.57ZM824.642 4574.16C979.482 4602.27 1139.43 4590.08 1294.85 4559.9C1670.26 4479.75 2165.57 4527.56 2354.4 4909.88C2367.68 4939.08 2381.07 4968.23 2393.79 4997.73C2423.29 5067.07 2460.32 5154.79 2459.53 5257.04C2459.81 5359.7 2410.55 5462.83 2344.74 5546.24C2343.26 5548.14 2341.76 5550.05 2340.24 5551.97C2206.1 5717.24 2033.17 5835.23 1909.64 5920.48C1886.27 5936.28 1862.71 5951.86 1838.7 5967.44C1418.22 6214.66 1100.86 6233.49 950.965 6268.79C798.828 6294.51 756.122 6299.37 693.25 6308.46C691.534 6308.7 689.82 6308.94 688.107 6309.18C687.994 6309.19 687.881 6309.21 687.768 6309.23C685.617 6309.55 683.811 6309.81 682.882 6309.95C680.989 6310.22 679.447 6310.43 678.87 6310.52C677.536 6310.7 676.418 6310.86 676.02 6310.91C674.395 6311.14 672.536 6311.39 671.34 6311.55C660.497 6313.04 624.686 6317.79 597.325 6321.23C568.343 6324.89 548.643 6327.26 526.901 6329.85C524.709 6330.11 522.522 6330.37 520.338 6330.62C500.865 6332.93 480.202 6335.35 449.636 6338.91C431.275 6341.05 418.267 6342.14 420.4 6341.38C422.91 6340.58 439.059 6338.29 457.633 6336.12C490.148 6332.32 511.57 6329.8 531.436 6327.44C533.616 6327.18 535.799 6326.92 537.986 6326.65C558.206 6324.24 576.295 6322.04 601.708 6318.82C637.951 6314.18 665.56 6310.45 690.183 6307.04C755.297 6297.62 804.477 6291.98 963.829 6264.65C1105.72 6230.14 1415.45 6213.45 1837.7 5965.91C1861.63 5950.38 1885.14 5934.83 1908.45 5919.08C2032.16 5833.73 2205.19 5715.55 2338.9 5550.72C2340.45 5548.75 2341.98 5546.79 2343.5 5544.84C2409.19 5461.53 2458.05 5358.8 2457.71 5256.76C2458.42 5155.12 2421.6 5067.77 2392.19 4998.64C2379.34 4969.09 2365.83 4939.93 2352.45 4910.77C2158.99 4526.92 1669.03 4485.55 1295.54 4563.42C1141.49 4593 982.496 4605.01 827.253 4576.51C721.955 4557.3 629.582 4519.16 557.54 4465.4C469.231 4400.13 413.843 4312.75 386.776 4224.97C348.615 4100.72 379.454 3975.03 447.446 3885.76C471.478 3853.3 550.224 3762.07 709.927 3723.85C712.641 3723.19 715.388 3722.53 718.169 3721.89C762.782 3711.59 811.381 3700.84 864.182 3693.87C977.396 3677.59 1112.26 3687.64 1249.94 3740.51C1279 3751.41 1308.48 3762.93 1338.96 3774.51C1375.59 3788.45 1409.01 3800.75 1440.42 3811.7C1576.45 3851.31 1684.65 3914.89 1962.77 3896.91C2083.88 3886.44 2235.04 3797.75 2290.85 3644.37C2423.45 3384.42 2320.6 3038.5 2149.19 2929.86C2028.63 2834.67 1944.07 2807.43 1888.21 2784.81C1872.24 2778.88 1858.27 2774.06 1845.24 2769.76C1841.69 2768.59 1838.22 2767.46 1834.79 2766.37C1805.86 2757.16 1781.05 2750.13 1749.6 2741.97C1498 2676.32 1309.77 2671.93 1037.83 2555.51C1021.09 2547.58 1007.3 2539.73 1006.24 2538.59C1005.3 2537.49 1017.53 2543.7 1034.09 2551.68C1305.26 2669.63 1496.54 2673.95 1751.67 2740.61C1782.59 2748.65 1807.82 2755.85 1835.35 2764.62C1840.6 2766.3 1845.93 2768.04 1851.4 2769.87C1864.17 2774.15 1877.78 2778.92 1892.87 2784.59C1947.77 2807.09 2031.55 2834.25 2151.57 2929.45C2322.89 3038.52 2425.05 3385.42 2292.55 3645.07C2236.67 3798.73 2085.01 3888 1963.86 3898.62C1687.68 3916.96 1581.45 3854.71 1445.75 3815.5C1414.03 3804.52 1380.56 3792.27 1343.58 3778.23C1311.33 3766.01 1280.11 3753.79 1249.29 3742.23C1113.66 3690.2 980.901 3679.63 869.161 3695.08C814.498 3702.02 764.377 3713.12 718.581 3723.68C717.516 3723.93 716.455 3724.18 715.4 3724.43C552.873 3762.75 479.825 3849.31 457.923 3875.49C383.808 3965.11 349.04 4096.4 388.527 4224.43C416.03 4313.78 472.824 4401.47 561.342 4465.92C632.745 4518.46 723.042 4555.24 824.642 4574.16ZM1005.57 1694.99C991.556 1707.25 979.692 1717.85 978.334 1718.42C977.04 1718.96 986.896 1709.02 1000.78 1696.76C1066.6 1638.92 1121.76 1601.93 1164.39 1571.35C1168.67 1568.28 1174.12 1564.73 1178.55 1561.97C1266.32 1510.79 1311.75 1488.27 1374.39 1447.99C1536.92 1346.13 1673.92 1204.12 1728.56 1042.81C1739.24 1012.47 1747.17 982.478 1752.89 952.191C1785.45 711.19 1676.82 533.967 1634.25 440.513C1625.59 423.77 1618.73 410.375 1619.26 410.272C1619.82 410.247 1627.54 423.52 1636.2 440.285C1678.56 533.583 1787.3 710.369 1754.69 952.53C1749.13 981.97 1741.48 1011.16 1731.25 1040.65C1677.22 1202.91 1539.83 1346.38 1376.11 1449.07C1315.21 1488.13 1272.58 1509.93 1186.51 1559.24C1179.27 1563.61 1172.09 1568.11 1165.45 1572.85C1123.74 1602.76 1069.9 1638.92 1005.57 1694.99Z" fill="none" stroke="#ed3a31" />
+  </svg>
+</div>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  window.addEventListener("load", () => {
+    const svgRoot = document.getElementById('svg-root');
+    const fullHeight = document.documentElement.scrollHeight;
+    const fullWidth = document.documentElement.scrollWidth;
+
+    svgRoot.setAttribute('viewBox', `0 0 ${fullWidth} ${fullHeight}`);
+
+    const paths = ["#path-rose", "#path-green"];
+    
+    // VARIABLE DE SÉCURITÉ : 15% de la hauteur de l'écran
+    // Le trait s'arrêtera de progresser quand le bas du site sera à 15vh du bas de l'écran
+    const offsetVH = 35; 
+
+    paths.forEach(id => {
+      const path = document.querySelector(id);
+      if (!path) return;
+
+      const length = path.getTotalLength();
+
+      gsap.set(path, {
+        strokeDasharray: length,
+        strokeDashoffset: length,
+        visibility: "visible"
+      });
+
+      gsap.to(path, {
+        strokeDashoffset: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          // On termine l'animation du trait AVANT la fin réelle du scroll
+          // "bottom bottom-=15%" signifie : quand le bas du body atteint 15% du bas du viewport
+          end: `bottom bottom-=${offsetVH}%`, 
+          scrub: 1.5 // Augmenté légèrement pour plus de fluidité
+        }
+      });
+    });
+  });
+
+  function normalize(value, min, max) {
+  return (value - min) / (max - min);
+}
+
+function interpolate(value, min, max) {
+  return min + (max - min) * value;
+}
+
+function map(value, min1, max1, min2, max2) {
+  return interpolate(normalize(value, min1, max1), min2, max2);
+}
+
+let parameters = {
+  size: 8,
+  radius: 0.5,
+  proximity: 250,
+  growth: 8,
+  ease: 0.005,
+  color: '#D1EE41',
+  mesh_opacity: 0.3 
+};
+
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class Circle {
+  constructor(radius, x, y) {
+    this._radius = radius;
+    this.radius = radius;
+    this.growthValue = 0;
+    this.position = new Point(x, y);
+  }
+
+  draw(context, ease) {
+    this.radius += ((this._radius + this.growthValue) - (this.radius)) * ease;
+    context.moveTo(this.position.x, this.position.y);
+    context.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
+  }
+
+  addRadius(value) {
+    this.growthValue = value;
+  }
+
+  get x() {
+    return this.position.x;
+  }
+
+  set x(value) {
+    this.position.x = value;
+  }
+
+  get y() {
+    return this.position.y;
+  }
+
+  set y(value) {
+    this.position.y = value;
+  }
+}
+
+class Mesh {
+  constructor() {
+    this.dom = {};
+    this.dom.canvas = document.getElementById('canvas');
+
+    this.dom.canvas.width = window.innerWidth;
+    this.dom.canvas.height = window.innerHeight;
+    
+    this.context = this.dom.canvas.getContext('2d');
+    this.circles = [];
+
+    this.animate = this.animate.bind(this);
+    this.mouseMoveHandler = this.mouseMoveHandler.bind(this);
+    this.touchMoveHandler = this.touchMoveHandler.bind(this);
+    this.resizeHandler = this.resizeHandler.bind(this);
+  }
+  
+  build() {
+    this.circles = [];
+    const { size, radius } = parameters;
+    const columns = Math.ceil(window.innerWidth / size) + 1;
+    const rows = Math.ceil(window.innerHeight / size) + 1;
+    const amount = Math.ceil(columns * rows);
+    
+    for (let i = 0; i < amount; i++) {
+      const column = i % columns;
+      const row = ~~(i / columns);
+      
+      this.circles.push(new Circle(radius, size * column, size * row));
+    }
+  }
+  
+ animate() {
+    this.context.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    this.context.save();
+    
+    // On applique l'opacité ici
+    this.context.globalAlpha = parameters.mesh_opacity; 
+    
+    this.context.beginPath();
+    this.context.globalCompositeOperation = 'overlay';
+    this.context.fillStyle = parameters.color;
+    
+    for (let circle of this.circles) {
+      circle.draw(this.context, parameters.ease);
+    }
+    
+    this.context.fill();
+    this.context.restore();
+    
+    requestAnimationFrame(this.animate);
+  }
+  
+  proximityHandler(event) {
+    const { proximity, growth } = parameters;
+
+    for (let c of this.circles) {
+      let distance = Math.sqrt(Math.pow(c.x - event.clientX, 2) + Math.pow(c.y - event.clientY, 2));
+      let d = map(distance, c._radius, c._radius + proximity, growth, 0);
+      
+      if (d < 0) d = 0;
+      
+      c.addRadius(d);
+    }
+  }
+  
+  mouseMoveHandler(event) {
+    console.log('move');
+    this.proximityHandler(event);
+  }
+  
+  touchMoveHandler(event) {
+    this.proximityHandler(event.touches[0])
+  }
+  
+  resizeHandler() {
+    this.dom.canvas.width = window.innerWidth;
+    this.dom.canvas.height = window.innerHeight;
+    
+    this.build();
+  }
+  
+  addListeners() {
+    window.addEventListener('resize', this.resizeHandler);
+    window.addEventListener('mousemove', this.mouseMoveHandler);
+    window.addEventListener('touchmove', this.touchMoveHandler);
+  }
+  
+  init() {
+    this.addListeners();
+    this.build();
+    this.animate();
+  }
+}
+
+const mesh = new Mesh();
+mesh.init();
+</script>
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav__logo">ocebo</div>
+      <ul class="nav__links">
+        <li><a href="#">Lorem</a></li>
+        <li><a href="#">Ipsum</a></li>
+        <li><a href="#">Dolor</a></li>
+        <li><a href="#">Sit amet</a></li>
+      </ul>
+      <a href="#" class="btn btn--outline">Consectetur</a>
+    </nav>
+
+    <div class="hero__content">
+      <div class="hero__text">
+        <h1 class="hero__title">Lorem ipsum dolor <span class="text-accent">sit amet</span> consectetur</h1>
+        <p class="hero__subtitle">Praesent vehicula nulla vel sapien dignissim, ac tincidunt arcu fermentum vitae.</p>
+        <div class="hero__actions">
+          <a href="#" class="btn btn--lime">Adipiscing elit</a>
+          <a href="#" class="btn btn--outline">Sed do eiusmod &rarr;</a>
+        </div>
+      </div>
+      <div class="hero__visual">
+        <div class="img-placeholder img-placeholder--hero">524 &times; 524</div>
+      </div>
+    </div>
+
+    <div class="hero__badges">
+      <div class="badge-item"><span class="badge-icon"></span><span class="badge-label">Vestibulum</span></div>
+      <div class="badge-item"><span class="badge-icon"></span><span class="badge-label">Pellentesque</span></div>
+      <div class="badge-item"><span class="badge-icon"></span><span class="badge-label">Curabitur</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 1 — SERVICES
+     ============================================================ -->
+<section class="services">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <h2 class="section-header__title">Lorem ipsum dolor</h2>
+    </div>
+    <p class="body-lg text-muted" style="max-width:680px; margin-bottom:var(--space-xl);">
+      Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Donec velit neque.
+    </p>
+    <div class="services__grid">
+      <div class="card card--service">
+        <div class="card__icon"></div>
+        <h3 class="h4">Suspendisse potenti</h3>
+        <p class="body-md text-muted">Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+      </div>
+      <div class="card card--service">
+        <div class="card__icon"></div>
+        <h3 class="h4">Cras mattis</h3>
+        <p class="body-md text-muted">Nullam quis risus eget urna mollis ornare vel eu leo.</p>
+      </div>
+      <div class="card card--service">
+        <div class="card__icon"></div>
+        <h3 class="h4">Donec ullamcorper</h3>
+        <p class="body-md text-muted">Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — OFFRES
+     ============================================================ -->
+<section class="offres">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <h2 class="section-header__title">Fusce dapibus, tellus ac cursus</h2>
+    </div>
+
+    <div class="offres__cols">
+      <div class="offre-card">
+        <h3 class="offre-card__title">Sites &amp; Applications web</h3>
+        <p class="offre-card__text">Aenean lacinia bibendum nulla sed consectetur. Donec sed odio dui.</p>
+      </div>
+      <div class="offre-card">
+        <h3 class="offre-card__title">Communication &amp; Marketing digital</h3>
+        <p class="offre-card__text">Cras justo odio, dapibus ut facilisis in, egestas eget quam.</p>
+      </div>
+      <div class="offre-card">
+        <h3 class="offre-card__title">Performance &amp; Exploitation</h3>
+        <p class="offre-card__text">Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — POURQUOI OCEBO
+     ============================================================ -->
+<section class="why">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <h2 class="section-header__title">Morbi leo risus ?</h2>
+    </div>
+
+    <div class="why__features">
+      <div class="feature-item">
+        <div class="feature-item__icon"></div>
+        <div>
+          <h4 class="h4">Etiam porta sem</h4>
+          <p class="feature-item__label">Malesuada magna mollis euismod.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item__icon"></div>
+        <div>
+          <h4 class="h4">Vivamus sagittis</h4>
+          <p class="feature-item__label">Lacus vel augue laoreet rutrum.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item__icon"></div>
+        <div>
+          <h4 class="h4">Nullam id dolor</h4>
+          <p class="feature-item__label">Ultricies vehicula ut id elit.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item__icon"></div>
+        <div>
+          <h4 class="h4">Duis mollis</h4>
+          <p class="feature-item__label">Est non commodo luctus nisi erat.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION — SHOWCASE BENTO
+     ============================================================ -->
+<section class="showcase">
+  <div class="container">
+    <div class="bento">
+      <div class="bento__item bento__item--a">
+        <div class="img-placeholder">
+          <div class="why__stats">
+            <div class="stat">
+              <div class="stat__number">20+</div>
+              <p class="stat__label">lorem ipsum</p>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div class="bento__item bento__item--b petit">
+        <div class="img-placeholder">
+          <div class="why__stats">
+            <div class="stat">
+              <div class="stat__number">3</div>
+              <p class="stat__label">dolor sit amet</p>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div class="bento__item bento__item--c petit">
+        <div class="img-placeholder">
+          <div class="why__stats">
+            <div class="stat">
+              <div class="stat__number">~10</div>
+              <p class="stat__label">consectetur adipiscing</p>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <div class="bento__item bento__item--d">
+        <div class="img-placeholder">
+          <div class="why__stats">
+            <div class="stat">
+              <div class="stat__number">999+</div>
+              <p class="stat__label">sed do eiusmod</p>
+            </div>
+          </div> 
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — CONFIANCE
+     ============================================================ -->
+<section class="trust">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <h2 class="section-header__title">Lorem ipsum dolor</h2>
+    </div>
+
+    <div class="trust__logos">
+      <div class="logo-placeholder">Logo 1</div>
+      <div class="logo-placeholder">Logo 2</div>
+      <div class="logo-placeholder">Logo 3</div>
+      <div class="logo-placeholder">Logo 4</div>
+      <div class="logo-placeholder">Logo 5</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — FAQ
+     ============================================================ -->
+<section class="faq">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <h2 class="section-header__title">Foire aux questions</h2>
+    </div>
+
+    <div class="faq__list">
+      <div class="faq-item is-open">
+        <div class="faq-item__question" onclick="this.parentElement.classList.toggle('is-open')">
+          Vestibulum ante ipsum primis in faucibus orci ?
+        </div>
+        <div class="faq-item__answer">
+          Donec sed odio dui. Maecenas faucibus mollis interdum. Cras mattis consectetur purus sit amet fermentum.
+          Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-item__question" onclick="this.parentElement.classList.toggle('is-open')">
+          Cras justo odio dapibus ut facilisis ?
+        </div>
+        <div class="faq-item__answer">
+          Nullam quis risus eget urna mollis ornare vel eu leo. Donec id elit non mi porta gravida at eget metus.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-item__question" onclick="this.parentElement.classList.toggle('is-open')">
+          Nulla vitae elit libero a pharetra augue ?
+        </div>
+        <div class="faq-item__answer">
+          Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Etiam porta sem malesuada magna mollis euismod.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-item__question" onclick="this.parentElement.classList.toggle('is-open')">
+          Morbi leo risus porta ac consectetur ?
+        </div>
+        <div class="faq-item__answer">
+          Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Praesent commodo cursus magna.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="cta">
+  <div class="container">
+    <div class="cta__inner">
+      <h2 class="cta__title">Lorem ipsum dolor <strong class="text-accent">sit amet</strong> ?</h2>
+      <form class="cta__form" onsubmit="return false">
+        <div class="form-row">
+          <input type="text" class="form-field" placeholder="Praenomen">
+          <input type="email" class="form-field" placeholder="Inscriptio electronica">
+        </div>
+        <input type="text" class="form-field" placeholder="Societas">
+        <textarea class="form-field" rows="4" placeholder="Nuntium vestrum..."></textarea>
+        <label style="display:flex; align-items:center; gap:var(--space-sm); font-size:14px; color:var(--color-text-muted);">
+          <input type="checkbox"> Vestibulum faucibus odio vitae arcu auctor lectus.
+        </label>
+        <button class="btn btn--primary btn--full" type="submit">Mittere</button>
+        <p class="caption" style="text-align:center;">Nulla vitae elit libero, a pharetra augue.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER BAR
+     ============================================================ -->
+<div class="footer-bar">
+  <div class="footer-bar__col">Descriptio</div>
+  <div class="footer-bar__col">Descriptio</div>
+  <div class="footer-bar__col">Descriptio</div>
+</div>
+
+</body>
+</html>

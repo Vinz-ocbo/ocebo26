@@ -1,0 +1,38 @@
+/* ============================================
+   OCEBO 2026 — WordPress overrides
+   Neutralise les styles par défaut de Gutenberg
+   qui interfèrent avec le design original.
+   ============================================ */
+
+/* --- Neutraliser les marges/paddings ajoutés par WP --- */
+body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)) {
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .is-layout-flow > * + * {
+  margin-block-start: 0;
+}
+
+body .wp-site-blocks {
+  padding: 0;
+}
+
+/* --- CTA nav : forcer la taille compacte (WP peut override) --- */
+.nav__cta.btn--sm {
+  padding: var(--space-1) var(--space-2) !important;
+  font-size: var(--text-caption) !important;
+  line-height: 1 !important;
+}
+
+/* --- Masquer la toolbar admin en front si logged-in --- */
+body.admin-bar .site-header {
+  top: 32px;
+}
+
+@media (max-width: 782px) {
+  body.admin-bar .site-header {
+    top: 46px;
+  }
+}

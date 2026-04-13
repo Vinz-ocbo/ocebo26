@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/logos-slider",
+  "version": "1.0.0",
+  "title": "Logos — Confiance",
+  "category": "ocebo26",
+  "icon": "slides",
+  "description": "Section logos clients avec titre, texte et carrousel en défilement infini.",
+  "keywords": ["logos", "slider", "carousel", "clients", "confiance"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "4" },
+    "title": { "type": "string", "default": "Ils nous font <em class=\"text-cyan\">confiance</em>" },
+    "text": { "type": "string", "default": "Cosmétique, automobile, pharma, grande distribution, industrie, secteur public : on s'adapte à tous les univers." },
+    "logos": {
+      "type": "array",
+      "default": []
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/logos-slider/index.js",
+  "render": "file:./render.php",
+  "style": "file:./style.css",
+  "viewScript": "file:./view.js"
+}

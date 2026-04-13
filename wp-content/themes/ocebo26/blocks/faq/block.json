@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/faq",
+  "version": "1.0.0",
+  "title": "FAQ \u2014 Foire aux questions",
+  "category": "ocebo26",
+  "icon": "editor-help",
+  "description": "Bloc FAQ avec accordions.",
+  "keywords": ["faq", "questions", "accordion"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "5" },
+    "title": { "type": "string", "default": "Foire aux <em class=\"text-cyan\">questions</em>" },
+    "items": {
+      "type": "array",
+      "default": [
+        { "question": "Quels types de projets r\u00e9alisez-vous ?", "answer": "Sites internet (vitrines, e-commerce, corporate), applications web m\u00e9tier, landing pages, emailings, banni\u00e8res display, vid\u00e9os et motion design. On couvre l\u2019ensemble de la production digitale." },
+        { "question": "Travaillez-vous avec des agences ?", "answer": "Oui, on collabore r\u00e9guli\u00e8rement avec des agences et des services marketing d\u2019entreprises. On intervient comme studio externe sur la production, en marque blanche si besoin." },
+        { "question": "O\u00f9 \u00eates-vous situ\u00e9s ?", "answer": "On a trois implantations : Lyon (si\u00e8ge), Lille et Nancy. Mais on travaille avec des clients partout en France, en visio ou en pr\u00e9sentiel." },
+        { "question": "Combien co\u00fbte un site internet ?", "answer": "Ca d\u00e9pend du projet. Un site vitrine sur-mesure d\u00e9marre autour de 5 000 euros, un e-commerce ou une application m\u00e9tier sera plus cons\u00e9quent. On \u00e9tablit un devis d\u00e9taill\u00e9 apr\u00e8s avoir compris vos besoins." },
+        { "question": "Quels sont vos d\u00e9lais ?", "answer": "Variable selon la complexit\u00e9. Comptez 6 \u00e0 12 semaines pour un site vitrine, davantage pour une application sur-mesure. On d\u00e9finit ensemble un planning r\u00e9aliste d\u00e8s le d\u00e9part." }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/faq/index.js",
+  "render": "file:./render.php"
+}

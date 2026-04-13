@@ -1,0 +1,46 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/services-grid",
+  "version": "1.0.0",
+  "title": "Acc\u00e8s direct \u2014 Services",
+  "category": "ocebo26",
+  "icon": "grid-view",
+  "description": "Grille de cartes services avec acc\u00e8s direct.",
+  "keywords": ["services", "grille", "cartes", "grid"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "2" },
+    "title": { "type": "string", "default": "Chaque projet est unique,<br><em class=\"text-cyan\">vos besoins aussi.</em>" },
+    "cards": {
+      "type": "array",
+      "default": [
+        {
+          "title": "Sites<br>& Applications web",
+          "text": "Sites vitrines, e-commerce, applications m\u00e9tier, landing pages : nous concevons, d\u00e9veloppons des solutions adapt\u00e9es \u00e0 vos objectifs et \u00e0 vos utilisateurs.",
+          "ctaLabel": "NOS SERVICES WEB",
+          "ctaUrl": "/services/sites-applications"
+        },
+        {
+          "title": "Communication & Marketing digital",
+          "text": "Emailing, banni\u00e8res display, social ads, motion design : nous produisons vos campagnes marketing de A \u00e0 Z, de la cr\u00e9ation \u00e0 l\u2019int\u00e9gration.",
+          "ctaLabel": "NOS SERVICES MARKETING",
+          "ctaUrl": "/services/communication-marketing-digital"
+        },
+        {
+          "title": "Maintenance<br>& Exploitation",
+          "text": "Votre site m\u00e9rite qu\u2019on s\u2019en occupe. Maintenance technique, \u00e9volutions, reprise de sites orphelins, optimisation SEO : nous prenons le relais.",
+          "ctaLabel": "NOS SERVICES MAINTENANCE",
+          "ctaUrl": "/services/maintenance-exploitation"
+        }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/services-grid/index.js",
+  "render": "file:./render.php"
+}

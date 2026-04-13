@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/contact-cta",
+  "version": "1.0.0",
+  "title": "Contact \u2014 CTA final",
+  "category": "ocebo26",
+  "icon": "email",
+  "description": "Bloc contact avec formulaire et appel \u00e0 l\u2019action.",
+  "keywords": ["contact", "cta", "formulaire"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "title": { "type": "string", "default": "Pr\u00eat \u00e0 cr\u00e9er avec <em class=\"text-cyan\">Oc\u00e9bo</em> ?" },
+    "submitLabel": { "type": "string", "default": "D\u00c9MARRER UN PROJET" },
+    "privacyUrl": { "type": "string", "default": "/politique-confidentialite" }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/contact-cta/index.js",
+  "render": "file:./render.php"
+}

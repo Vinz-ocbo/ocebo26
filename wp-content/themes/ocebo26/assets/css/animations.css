@@ -1,0 +1,118 @@
+/* ============================================
+   ANIMATIONS — Scroll reveals, parallax, counters
+   ============================================ */
+
+/* ---- Scroll Reveal (IntersectionObserver) ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
+}
+
+.reveal--left {
+  transform: translateX(-30px);
+}
+
+.reveal--right {
+  transform: translateX(30px);
+}
+
+.reveal--scale {
+  transform: scale(0.95);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* Stagger children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
+}
+
+.reveal-stagger.is-visible > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger.is-visible > *:nth-child(2) { transition-delay: 100ms; }
+.reveal-stagger.is-visible > *:nth-child(3) { transition-delay: 200ms; }
+.reveal-stagger.is-visible > *:nth-child(4) { transition-delay: 300ms; }
+.reveal-stagger.is-visible > *:nth-child(5) { transition-delay: 400ms; }
+
+.reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Parallax (scroll-driven) ---- */
+.parallax {
+  will-change: transform;
+}
+
+/* ---- Counter animation ---- */
+.card-chiffre__number {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Accordion animation ---- */
+.accordion__body {
+  overflow: hidden;
+}
+
+.accordion__body-inner {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity var(--transition-slow) ease,
+    transform var(--transition-slow) ease;
+}
+
+.accordion[open] .accordion__body-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Logo slider: driven by JS — no CSS animation */
+
+/* ---- Glow pulse (decorative) ---- */
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.1);
+  }
+}
+
+.bg-effects__glow--cyan {
+  animation: glow-pulse 8s ease-in-out infinite;
+}
+
+.bg-effects__glow--magenta {
+  animation: glow-pulse 10s ease-in-out infinite 2s;
+}
+
+.bg-effects__glow--yellow {
+  animation: glow-pulse 12s ease-in-out infinite 4s;
+}
+
+/* ---- Section number entrance ---- */
+.section-number {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
+}
+
+.is-visible .section-number,
+.reveal.is-visible .section-number {
+  opacity: 1;
+  transform: scale(1);
+}

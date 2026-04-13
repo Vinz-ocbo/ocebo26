@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ocebo | Agence web et studio digital depuis 2004</title>
+  <meta name="description" content="Agence web spécialisée dans la création de sites internet, applications web, emailing et production digitale. Sur-mesure, conseil et expertise depuis 2004. Lyon, Lille, Nancy.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css">
+
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/layout.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/sections.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
+  <link rel="stylesheet" href="assets/css/utilities.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+  <!-- HEADER / NAVIGATION -->
+  <header class="site-header" role="banner">
+    <nav class="nav" aria-label="Navigation principale">
+      <div class="nav__inner">
+        <a href="/" class="nav__logo" aria-label="Ocebo — Accueil">
+          <span class="nav__logo-text">OCEBO</span>
+        </a>
+
+        <ul class="nav__menu" role="menubar">
+          <li class="nav__item" role="none">
+            <a href="/services" role="menuitem" class="nav__link" aria-haspopup="true" aria-expanded="false">
+              Services
+              <svg class="nav__chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <div class="nav__dropdown" role="menu" aria-label="Sous-menu Services">
+              <div class="nav__dropdown-inner">
+                <a href="/services/sites-applications" role="menuitem" class="nav__dropdown-link">
+                  <span class="nav__dropdown-title">Sites & Applications web</span>
+                  <span class="nav__dropdown-desc">Sites vitrines, e-commerce, applications métier</span>
+                </a>
+                <a href="/services/communication-marketing-digital" role="menuitem" class="nav__dropdown-link">
+                  <span class="nav__dropdown-title">Communication & Marketing digital</span>
+                  <span class="nav__dropdown-desc">Emailing, bannières, social ads, motion design</span>
+                </a>
+                <a href="/services/maintenance-exploitation" role="menuitem" class="nav__dropdown-link">
+                  <span class="nav__dropdown-title">Maintenance & Exploitation</span>
+                  <span class="nav__dropdown-desc">Maintenance technique, évolutions, SEO</span>
+                </a>
+              </div>
+            </div>
+          </li>
+          <li class="nav__item" role="none">
+            <a href="/references" role="menuitem" class="nav__link">Références</a>
+          </li>
+          <li class="nav__item" role="none">
+            <a href="/studio-externe" role="menuitem" class="nav__link">Studio externe</a>
+          </li>
+        </ul>
+
+        <a href="/contact" class="btn btn--primary btn--sm nav__cta">Nous contacter</a>
+
+        <button class="nav__burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="nav__burger-line"></span>
+          <span class="nav__burger-line"></span>
+          <span class="nav__burger-line"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <ul class="mobile-menu__list">
+        <li><a href="/services" class="mobile-menu__link">Services</a>
+          <ul class="mobile-menu__sub">
+            <li><a href="/services/sites-applications">Sites & Applications web</a></li>
+            <li><a href="/services/communication-marketing-digital">Communication & Marketing digital</a></li>
+            <li><a href="/services/maintenance-exploitation">Maintenance & Exploitation</a></li>
+          </ul>
+        </li>
+        <li><a href="/references" class="mobile-menu__link">Références</a></li>
+        <li><a href="/studio-externe" class="mobile-menu__link">Studio externe</a></li>
+        <li><a href="/contact" class="mobile-menu__link mobile-menu__link--cta">Nous contacter</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Interactive dot mesh background -->
+  <canvas id="dot-canvas" aria-hidden="true"></canvas>
+
+  <!-- DECORATIVE BACKGROUND (disabled – remove outer comment to restore)
+  <div class="bg-effects" aria-hidden="true">
+    <div class="bg-effects__glow bg-effects__glow--cyan"></div>
+    <div class="bg-effects__glow bg-effects__glow--magenta"></div>
+    <div class="bg-effects__glow bg-effects__glow--yellow"></div>
+  </div>
+  -->
+
+  <main id="main-content">
+
+    <!-- HERO -->
+    <section class="hero section" aria-labelledby="hero-title">
+      <div class="hero__inner container">
+        <div class="hero__content">
+          <div class="section-header">
+            <span class="section-number" aria-hidden="true">0</span>
+            <h1 id="hero-title" class="hero__title display-xl">
+              Océbo créé votre <em class="text-cyan">digital</em><br>sur mesure
+            </h1>
+          </div>
+          <div class="hero__body">
+            <p class="hero__text body-lg">Agence web depuis 2004, on conçoit et produit vos sites, applications et campagnes digitales. Du conseil à la livraison, une équipe à vos côtés.</p>
+            <div class="hero__ctas">
+              <a href="/contact" class="btn btn--primary">
+                Parlons de votre projet
+                <span class="btn__icon-right" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H5M12 4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </a>
+              <a href="/references" class="btn btn--secondary">
+                Découvrez nos références
+                <span class="btn__icon-right btn__icon-right--accent" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H5M12 4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 1 — CE QU'ON FAIT -->
+    <section class="section section--liste" aria-labelledby="bloc1-title">
+      <div class="container">
+        <div class="bloc-liste">
+          <div class="bloc-liste__header">
+            <div class="section-header">
+              <span class="section-number" aria-hidden="true">1</span>
+              <h2 id="bloc1-title" class="display-lg">Ce qu'<em class="text-cyan">on fait</em></h2>
+            </div>
+          </div>
+          <div class="bloc-liste__body">
+            <ul class="check-list">
+              <li class="check-list__item">
+                <svg class="check-list__icon" width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true"><path d="M2 8L8 14L20 2" stroke="#d74ed7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Depuis plus de 20 ans, nous accompagnons entreprises et agences dans leurs projets digitaux.</span>
+              </li>
+              <hr class="check-list__separator" aria-hidden="true">
+              <li class="check-list__item">
+                <svg class="check-list__icon" width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true"><path d="M2 8L8 14L20 2" stroke="#d74ed7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Nous vous aidons à optimiser votre visibilité, attirer plus de leads et donc générer plus de ventes.</span>
+              </li>
+              <hr class="check-list__separator" aria-hidden="true">
+              <li class="check-list__item">
+                <svg class="check-list__icon" width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true"><path d="M2 8L8 14L20 2" stroke="#d74ed7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Notre truc ? Pas de template, pas de solution toute faite, nous nous adaptons à VOS besoins.</span>
+              </li>
+              <hr class="check-list__separator" aria-hidden="true">
+              <li class="check-list__item">
+                <svg class="check-list__icon" width="22" height="16" viewBox="0 0 22 16" fill="none" aria-hidden="true"><path d="M2 8L8 14L20 2" stroke="#d74ed7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>Comment ? En maîtrisant toute la chaîne de production de la conception à la réalisation.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 2 — ACCÈS DIRECT / SERVICES -->
+    <section class="section section--acces-direct" aria-labelledby="bloc2-title">
+      <div class="container container--wide">
+        <div class="section-header">
+          <span class="section-number" aria-hidden="true">2</span>
+          <h2 id="bloc2-title" class="display-lg">Chaque projet est unique,<br><em class="text-cyan">vos besoins aussi.</em></h2>
+        </div>
+        <div class="acces-direct__grid">
+          <div class="card-service">
+            <div class="card-service__header">
+              <h3 class="card-service__title heading-md">Sites<br>& Applications web</h3>
+            </div>
+            <hr class="card-service__separator" aria-hidden="true">
+            <p class="card-service__text body-md">Sites vitrines, e-commerce, applications métier, landing pages : nous concevons, développons des solutions adaptées à vos objectifs et à vos utilisateurs.</p>
+            <a href="/services/sites-applications" class="card-service__cta">
+              <span>NOS SERVICES WEB</span>
+              <span class="card-service__cta-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H5M12 4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+          </div>
+          <div class="card-service">
+            <div class="card-service__header">
+              <h3 class="card-service__title heading-md">Communication & Marketing digital</h3>
+            </div>
+            <hr class="card-service__separator" aria-hidden="true">
+            <p class="card-service__text body-md">Emailing, bannières display, social ads, motion design : nous produisons vos campagnes marketing de A à Z, de la création à l'intégration.</p>
+            <a href="/services/communication-marketing-digital" class="card-service__cta">
+              <span>NOS SERVICES MARKETING</span>
+              <span class="card-service__cta-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H5M12 4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+          </div>
+          <div class="card-service">
+            <div class="card-service__header">
+              <h3 class="card-service__title heading-md">Maintenance<br>& Exploitation</h3>
+            </div>
+            <hr class="card-service__separator" aria-hidden="true">
+            <p class="card-service__text body-md">Votre site mérite qu'on s'en occupe. Maintenance technique, évolutions, reprise de sites orphelins, optimisation SEO : nous prenons le relais.</p>
+            <a href="/services/maintenance-exploitation" class="card-service__cta">
+              <span>NOS SERVICES MAINTENANCE</span>
+              <span class="card-service__cta-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 12L12 4M12 4H5M12 4V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 3 — POURQUOI OCEBO -->
+    <section class="section section--pourquoi" aria-labelledby="bloc3-title">
+      <div class="container container--wide">
+        <div class="section-header">
+          <span class="section-number" aria-hidden="true">3</span>
+          <h2 id="bloc3-title" class="display-lg">Pourquoi <em class="text-cyan">Ocebo</em> ?</h2>
+        </div>
+        <div class="pourquoi__list">
+          <article class="pourquoi__item">
+            <h3 class="pourquoi__title heading-md">Du sur-mesure,<br>vraiment</h3>
+            <span class="pourquoi__divider" aria-hidden="true"></span>
+            <p class="pourquoi__text body-md">On ne fait pas dans le template. Chaque projet démarre d'une feuille blanche, avec vos objectifs en tête.</p>
+          </article>
+          <article class="pourquoi__item">
+            <h3 class="pourquoi__title heading-md">Un interlocuteur<br>unique</h3>
+            <span class="pourquoi__divider" aria-hidden="true"></span>
+            <p class="pourquoi__text body-md">Chef de projet, designer, développeur : vous avez une équipe dédiée, mais un seul contact. Plus simple, plus efficace.</p>
+          </article>
+          <article class="pourquoi__item">
+            <h3 class="pourquoi__title heading-md">Des expertises<br>multiples</h3>
+            <span class="pourquoi__divider" aria-hidden="true"></span>
+            <p class="pourquoi__text body-md">Sites, emails, display, vidéo, print : on couvre tous vos besoins digitaux. Un partenaire, pas dix prestataires.</p>
+          </article>
+          <article class="pourquoi__item">
+            <h3 class="pourquoi__title heading-md">+20 ans<br>d'expérience</h3>
+            <span class="pourquoi__divider" aria-hidden="true"></span>
+            <p class="pourquoi__text body-md">On a traversé les évolutions du web. Flash, responsive, mobile-first, accessibilité : on s'adapte, on apprend, on reste à jour.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 4 — CHIFFRES CLEFS -->
+    <section class="section section--chiffres" aria-labelledby="bloc4-title">
+      <div class="container container--wide">
+        <h2 id="bloc4-title" class="sr-only">Quelques chiffres</h2>
+        <div class="chiffres__grid">
+          <div class="card-chiffre card-chiffre--tall" data-target="20" data-suffix="+">
+            <div class="card-chiffre__inner">
+              <span class="card-chiffre__number number-xl card-chiffre__number--magenta" aria-live="polite">20+</span>
+              <span class="card-chiffre__label heading-sm">années<br>d'expérience</span>
+            </div>
+          </div>
+          <div class="card-chiffre card-chiffre--short" data-target="10" data-prefix="~">
+            <div class="card-chiffre__inner">
+              <span class="card-chiffre__number number-xl card-chiffre__number--cyan" aria-live="polite">~10</span>
+              <span class="card-chiffre__label heading-sm">experts<br>dans l'équipe</span>
+            </div>
+          </div>
+          <div class="card-chiffre card-chiffre--short" data-target="3">
+            <div class="card-chiffre__inner">
+              <span class="card-chiffre__number number-xl card-chiffre__number--cyan" aria-live="polite">3</span>
+              <span class="card-chiffre__label heading-sm">implantations :<br>Lyon, Lille, Nancy</span>
+            </div>
+          </div>
+          <div class="card-chiffre card-chiffre--tall" data-target="999" data-suffix="+">
+            <div class="card-chiffre__inner">
+              <span class="card-chiffre__number number-xl card-chiffre__number--magenta" aria-live="polite">999+</span>
+              <span class="card-chiffre__label heading-sm">Des milliers<br>de projets livrés</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 5 — LOGOS / CONFIANCE -->
+    <section class="section section--logos" aria-labelledby="bloc5-title">
+      <div class="container container--wide">
+        <div class="section-header">
+          <span class="section-number" aria-hidden="true">4</span>
+          <h2 id="bloc5-title" class="display-lg">Ils nous font <em class="text-cyan">confiance</em></h2>
+        </div>
+        <p class="logos__desc body-md section-body-indent">Cosmétique, automobile, pharma, grande distribution, industrie, secteur public : on s'adapte à tous les univers.</p>
+        <div class="logos-slider" aria-label="Logos de nos clients">
+          <div class="logos-slider__track">
+            <div class="logos-slider__slide"><img src="assets/img/logos/chanel.svg" alt="Chanel" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/hermes.svg" alt="Hermès" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/gucci.svg" alt="Gucci" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/clarins.svg" alt="Clarins" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/bnp.svg" alt="BNP Paribas" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/netflix.svg" alt="Netflix" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/konbini.svg" alt="Konbini" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide"><img src="assets/img/logos/total.svg" alt="TotalEnergies" width="120" height="60" loading="lazy"></div>
+            <!-- Duplicated for infinite loop -->
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/chanel.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/hermes.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/gucci.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/clarins.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/bnp.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/netflix.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/konbini.svg" alt="" width="120" height="60" loading="lazy"></div>
+            <div class="logos-slider__slide" aria-hidden="true"><img src="assets/img/logos/total.svg" alt="" width="120" height="60" loading="lazy"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 6 — FAQ -->
+    <section class="section section--faq" aria-labelledby="bloc6-title">
+      <div class="container container--wide">
+        <div class="section-header">
+          <span class="section-number" aria-hidden="true">5</span>
+          <h2 id="bloc6-title" class="display-lg">Foire aux <em class="text-cyan">questions</em></h2>
+        </div>
+        <div class="faq__list" role="list">
+          <details class="accordion" role="listitem">
+            <summary class="accordion__header">
+              <span class="accordion__title heading-sm">Quels types de projets réalisez-vous ?</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <div class="accordion__body-inner"><p class="body-md">Sites internet (vitrines, e-commerce, corporate), applications web métier, landing pages, emailings, bannières display, vidéos et motion design. On couvre l'ensemble de la production digitale.</p></div>
+            </div>
+          </details>
+          <details class="accordion" role="listitem">
+            <summary class="accordion__header">
+              <span class="accordion__title heading-sm">Travaillez-vous avec des agences ?</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <div class="accordion__body-inner"><p class="body-md">Oui, on collabore régulièrement avec des agences et des services marketing d'entreprises. On intervient comme studio externe sur la production, en marque blanche si besoin.</p></div>
+            </div>
+          </details>
+          <details class="accordion" role="listitem">
+            <summary class="accordion__header">
+              <span class="accordion__title heading-sm">Où êtes-vous situés ?</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <div class="accordion__body-inner"><p class="body-md">On a trois implantations : Lyon (siège), Lille et Nancy. Mais on travaille avec des clients partout en France, en visio ou en présentiel.</p></div>
+            </div>
+          </details>
+          <details class="accordion" role="listitem">
+            <summary class="accordion__header">
+              <span class="accordion__title heading-sm">Combien coûte un site internet ?</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <div class="accordion__body-inner"><p class="body-md">Ça dépend du projet. Un site vitrine sur-mesure démarre autour de 5 000 euros, un e-commerce ou une application métier sera plus conséquent. On établit un devis détaillé après avoir compris vos besoins.</p></div>
+            </div>
+          </details>
+          <details class="accordion" role="listitem">
+            <summary class="accordion__header">
+              <span class="accordion__title heading-sm">Quels sont vos délais ?</span>
+              <span class="accordion__icon" aria-hidden="true"></span>
+            </summary>
+            <div class="accordion__body">
+              <div class="accordion__body-inner"><p class="body-md">Variable selon la complexité. Comptez 6 à 12 semaines pour un site vitrine, davantage pour une application sur-mesure. On définit ensemble un planning réaliste dès le départ.</p></div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOC 7 — CONTACT / CTA FINAL -->
+    <section class="section section--contact" aria-labelledby="bloc7-title">
+      <div class="container">
+        <div class="contact__inner">
+          <h2 id="bloc7-title" class="display-xl">Prêt à créer avec <em class="text-cyan">Océbo</em> ?</h2>
+          <form class="contact-form" action="#" method="post" novalidate>
+            <div class="contact-form__fields">
+              <div class="form-group">
+                <label for="field-prenom" class="form-label">Prénom</label>
+                <input type="text" id="field-prenom" name="prenom" class="form-input" placeholder="Placeholder" required autocomplete="given-name">
+              </div>
+              <div class="form-group">
+                <label for="field-nom" class="form-label">Nom *</label>
+                <input type="text" id="field-nom" name="nom" class="form-input" placeholder="Placeholder" required autocomplete="family-name">
+              </div>
+              <div class="form-group">
+                <label for="field-email" class="form-label">Adresse e-mail *</label>
+                <input type="email" id="field-email" name="email" class="form-input" placeholder="Placeholder" required autocomplete="email">
+              </div>
+              <div class="form-group">
+                <label for="field-tel" class="form-label">Numéro de téléphone</label>
+                <input type="tel" id="field-tel" name="tel" class="form-input" placeholder="Placeholder" autocomplete="tel">
+              </div>
+              <div class="form-group form-group--full">
+                <label for="field-sujet" class="form-label">Sujet</label>
+                <select id="field-sujet" name="sujet" class="form-input form-select">
+                  <option value="" disabled selected>- choisissez le sujet -</option>
+                  <option value="projet">Nouveau projet</option>
+                  <option value="devis">Demande de devis</option>
+                  <option value="maintenance">Maintenance</option>
+                  <option value="autre">Autre</option>
+                </select>
+              </div>
+            </div>
+            <div class="contact-form__consent">
+              <label class="form-checkbox">
+                <input type="checkbox" name="consent" required>
+                <span class="form-checkbox__mark"></span>
+                <span class="form-checkbox__text text-small">J'accepte que mes données soient utilisées pour répondre à ma demande conformément à la <a href="/politique-confidentialite">politique de confidentialité</a>.</span>
+              </label>
+            </div>
+            <button type="submit" class="btn btn--primary btn--submit">DÉMARRER UN PROJET</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer__inner container container--full">
+      <p class="footer__copy body-sm">©ocebo</p>
+      <p class="footer__legal body-sm"><a href="/mentions-legales">Mentions légales</a></p>
+      <p class="footer__credits body-sm"><a href="/politique-confidentialite">Politique de confidentialité</a></p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>

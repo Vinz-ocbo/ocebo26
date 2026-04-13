@@ -1,0 +1,67 @@
+/* Chiffres clefs — Block styles */
+.section--chiffres {
+  position: relative;
+}
+
+.chiffres__grid {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: var(--wp--preset--spacing--30, 24px);
+  justify-content: center;
+}
+
+.card-chiffre__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--wp--preset--spacing--50, 40px) var(--wp--preset--spacing--40, 32px);
+  border-radius: var(--wp--custom--radius--sm, 8px);
+  background: #ffffff1a;
+  width: 330px;
+  transition: transform var(--wp--custom--transition--base, 300ms ease);
+}
+
+.card-chiffre--tall .card-chiffre__inner {
+  height: 350px;
+}
+
+.card-chiffre--short .card-chiffre__inner {
+  height: 250px;
+}
+
+.card-chiffre__number {
+  font-family: var(--wp--preset--font-family--heading);
+  font-size: var(--wp--preset--font-size--number-xl, 100px);
+  line-height: 1;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-chiffre__number--cyan {
+  color: var(--wp--preset--color--accent-cyan);
+}
+
+.card-chiffre__number--magenta {
+  color: var(--wp--preset--color--accent-magenta);
+}
+
+.card-chiffre__label {
+  font-family: var(--wp--preset--font-family--heading);
+  font-size: var(--wp--preset--font-size--heading-sm, 20px);
+  line-height: 1.3;
+  color: var(--wp--preset--color--text-primary);
+  margin-top: var(--wp--preset--spacing--10, 8px);
+}
+
+@media (max-width: 767px) {
+  .card-chiffre__inner {
+    width: 100%;
+    max-width: 330px;
+  }
+
+  .card-chiffre--tall .card-chiffre__inner {
+    height: 250px;
+  }
+}

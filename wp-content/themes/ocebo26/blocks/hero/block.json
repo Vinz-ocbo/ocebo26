@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/hero",
+  "version": "1.0.0",
+  "title": "Hero \u2014 Accueil",
+  "category": "ocebo26",
+  "icon": "superhero-alt",
+  "description": "Bloc hero principal de la page d\u2019accueil.",
+  "keywords": ["hero", "accueil", "home"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "0" },
+    "title": { "type": "string", "default": "Oc\u00e9bo cr\u00e9\u00e9 votre <em class=\"text-cyan\">digital</em><br>sur mesure" },
+    "text": { "type": "string", "default": "Agence web depuis 2004, on con\u00e7oit et produit vos sites, applications et campagnes digitales. Du conseil \u00e0 la livraison, une \u00e9quipe \u00e0 vos c\u00f4t\u00e9s." },
+    "ctaPrimaryLabel": { "type": "string", "default": "Parlons de votre projet" },
+    "ctaPrimaryUrl": { "type": "string", "default": "/contact" },
+    "ctaSecondaryLabel": { "type": "string", "default": "D\u00e9couvrez nos r\u00e9f\u00e9rences" },
+    "ctaSecondaryUrl": { "type": "string", "default": "/references" }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/hero/index.js",
+  "render": "file:./render.php"
+}

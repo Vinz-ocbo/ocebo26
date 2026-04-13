@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/checklist",
+  "version": "1.0.0",
+  "title": "Ce qu\u2019on fait \u2014 Checklist",
+  "category": "ocebo26",
+  "icon": "yes-alt",
+  "description": "Bloc liste \u00e0 coches pour la section \u00ab Ce qu\u2019on fait \u00bb.",
+  "keywords": ["checklist", "liste", "check"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "1" },
+    "title": { "type": "string", "default": "Ce qu\u2019<em class=\"text-cyan\">on fait</em>" },
+    "items": {
+      "type": "array",
+      "default": [
+        "Depuis plus de 20 ans, nous accompagnons entreprises et agences dans leurs projets digitaux.",
+        "Nous vous aidons \u00e0 optimiser votre visibilit\u00e9, attirer plus de leads et donc g\u00e9n\u00e9rer plus de ventes.",
+        "Notre truc ? Pas de template, pas de solution toute faite, nous nous adaptons \u00e0 VOS besoins.",
+        "Comment ? En ma\u00eetrisant toute la cha\u00eene de production de la conception \u00e0 la r\u00e9alisation."
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/checklist/index.js",
+  "render": "file:./render.php"
+}

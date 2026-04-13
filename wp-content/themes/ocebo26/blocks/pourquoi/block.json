@@ -1,0 +1,32 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/pourquoi",
+  "version": "1.0.0",
+  "title": "Pourquoi Ocebo",
+  "category": "ocebo26",
+  "icon": "star-filled",
+  "description": "Bloc « Pourquoi Ocebo » avec liste d\u2019arguments.",
+  "keywords": ["pourquoi", "arguments", "avantages"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "3" },
+    "title": { "type": "string", "default": "Pourquoi <em class=\"text-cyan\">Ocebo</em> ?" },
+    "items": {
+      "type": "array",
+      "default": [
+        { "title": "Du sur-mesure,<br>vraiment", "text": "On ne fait pas dans le template. Chaque projet d\u00e9marre d\u2019une feuille blanche, avec vos objectifs en t\u00eate." },
+        { "title": "Un interlocuteur<br>unique", "text": "Chef de projet, designer, d\u00e9veloppeur : vous avez une \u00e9quipe d\u00e9di\u00e9e, mais un seul contact. Plus simple, plus efficace." },
+        { "title": "Des expertises<br>multiples", "text": "Sites, emails, display, vid\u00e9o, print : on couvre tous vos besoins digitaux. Un partenaire, pas dix prestataires." },
+        { "title": "+20 ans<br>d\u2019exp\u00e9rience", "text": "On a travers\u00e9 les \u00e9volutions du web. Flash, responsive, mobile-first, accessibilit\u00e9 : on s\u2019adapte, on apprend, on reste \u00e0 jour." }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/pourquoi/index.js",
+  "render": "file:./render.php"
+}
