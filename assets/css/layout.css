@@ -34,6 +34,12 @@ body {
   z-index: -1;
   overflow: hidden;
   filter: blur(3px);
+  opacity: 0;
+  transition: opacity 1200ms ease-out;
+}
+
+#lace-wrap.is-active {
+  opacity: 1;
 }
 
 #lace-svg {

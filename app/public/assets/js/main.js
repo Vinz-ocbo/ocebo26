@@ -737,6 +737,9 @@
     var rafId = null;
     var MAX_SPEED = 80;  // max px per frame (cap)
     var EASE = 0.12;     // lerp factor — lower = smoother ease-out
+    var DRIFT_PX = 0.15; // continuous downward drift (~9px/s @ 60fps)
+    var driftAmount = 0;
+    var hasScrolled = false;
 
     function buildBezier(points) {
       var d = "M " + points[0].x + " " + points[0].y;
@@ -800,13 +803,13 @@
       allPaths.forEach(function (p) {
         p.style.strokeDasharray = totalLen;
       });
-      currentOffset = getTargetOffset();
+      currentOffset = hasScrolled ? getTargetOffset() : totalLen;
       applyOffset(currentOffset);
     }
 
     function getTargetOffset() {
       var pageH = document.documentElement.scrollHeight;
-      var tipY = window.scrollY + window.innerHeight / 2;
+      var tipY = window.scrollY + window.innerHeight / 2 + driftAmount;
       var progress = Math.max(0, Math.min(1, tipY / pageH));
       return totalLen * (1 - progress);
     }
@@ -818,24 +821,31 @@
     }
 
     function tick() {
+      driftAmount += DRIFT_PX;
       var target = getTargetOffset();
       var delta = target - currentOffset;
       var step = delta * EASE;
       if (step > MAX_SPEED) step = MAX_SPEED;
       else if (step < -MAX_SPEED) step = -MAX_SPEED;
       currentOffset += step;
-
-      if (Math.abs(target - currentOffset) < 0.5) {
-        currentOffset = target;
-        applyOffset(currentOffset);
-        rafId = null;
-        return;
-      }
       applyOffset(currentOffset);
-      rafId = requestAnimationFrame(tick);
+
+      // Keep looping while the lace hasn't reached its end.
+      // Once fully drawn (offset ~0), stop to save CPU.
+      if (currentOffset > 0.5) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        currentOffset = 0;
+        applyOffset(0);
+        rafId = null;
+      }
     }
 
     function onScroll() {
+      if (!hasScrolled) {
+        hasScrolled = true;
+        wrap.classList.add("is-active");
+      }
       if (rafId === null) rafId = requestAnimationFrame(tick);
     }
 

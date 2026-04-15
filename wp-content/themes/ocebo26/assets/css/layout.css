@@ -13,6 +13,41 @@ body {
   position: relative;
 }
 
+/* static dot background replaced by interactive canvas — see #dot-canvas */
+#dot-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -2;
+}
+
+/* --- Scroll lace --- */
+#lace-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+  filter: blur(3px);
+  opacity: 0;
+  transition: opacity 1200ms ease-out;
+}
+
+#lace-wrap.is-active {
+  opacity: 1;
+}
+
+#lace-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* keep static fallback as comment for restoration:
 body::before {
   content: "";
   position: fixed;
@@ -24,6 +59,7 @@ body::before {
   pointer-events: none;
   z-index: -2;
 }
+*/
 
 /* --- Skip link --- */
 .skip-link {
@@ -64,7 +100,7 @@ body::before {
   padding-block: var(--section-gap);
 }
 
-/* --- Background effects (glows only, no SVG waves) --- */
+/* --- Background effects (disabled – uncomment to restore) ---
 .bg-effects {
   position: fixed;
   inset: 0;
@@ -101,6 +137,7 @@ body::before {
   width: 400px;
   height: 400px;
 }
+*/
 
 /* --- Responsive --- */
 @media (max-width: 767px) {

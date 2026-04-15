@@ -80,9 +80,10 @@
           <stop offset="25%"  stop-color="#15ffd6" stop-opacity="0.05"/>
           <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.20"/>
           <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.08"/>
-          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.25"/>
-          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.05"/>
-          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0.18"/>
+          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.22"/>
+          <stop offset="82%"  stop-color="#15ffd6" stop-opacity="0.10"/>
+          <stop offset="92%"  stop-color="#15ffd6" stop-opacity="0.03"/>
+          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="lace-grad-cyan-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
           <stop offset="0%"   stop-color="#15ffd6" stop-opacity="0.04"/>
@@ -91,8 +92,9 @@
           <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.06"/>
           <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.02"/>
           <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.08"/>
-          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.02"/>
-          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0.05"/>
+          <stop offset="82%"  stop-color="#15ffd6" stop-opacity="0.03"/>
+          <stop offset="92%"  stop-color="#15ffd6" stop-opacity="0.01"/>
+          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0"/>
         </linearGradient>
         <!-- Magenta gradient: same pattern, offset rhythm -->
         <linearGradient id="lace-grad-mag" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
@@ -101,9 +103,10 @@
           <stop offset="30%"  stop-color="#d74ed7" stop-opacity="0.05"/>
           <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.25"/>
           <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.10"/>
-          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.05"/>
-          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.20"/>
-          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0.12"/>
+          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.08"/>
+          <stop offset="85%"  stop-color="#d74ed7" stop-opacity="0.15"/>
+          <stop offset="93%"  stop-color="#d74ed7" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="lace-grad-mag-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
           <stop offset="0%"   stop-color="#d74ed7" stop-opacity="0.02"/>
@@ -112,13 +115,14 @@
           <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.08"/>
           <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.03"/>
           <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.02"/>
-          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.06"/>
-          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0.03"/>
+          <stop offset="85%"  stop-color="#d74ed7" stop-opacity="0.05"/>
+          <stop offset="93%"  stop-color="#d74ed7" stop-opacity="0.01"/>
+          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0"/>
         </linearGradient>
       </defs>
       <!-- Cyan lace -->
-      <path id="lace-cyan-glow" fill="none" stroke="url(#lace-grad-cyan-glow)" stroke-width="20" stroke-linecap="round"/>
-      <path id="lace-cyan" fill="none" stroke="url(#lace-grad-cyan)" stroke-width="6" stroke-linecap="round"/>
+      <path id="lace-cyan-glow" fill="none" stroke="url(#lace-grad-cyan-glow)" stroke-width="22" stroke-linecap="round"/>
+      <path id="lace-cyan" fill="none" stroke="url(#lace-grad-cyan)" stroke-width="6.6" stroke-linecap="round"/>
       <!-- Magenta lace -->
       <path id="lace-magenta-glow" fill="none" stroke="url(#lace-grad-mag-glow)" stroke-width="20" stroke-linecap="round"/>
       <path id="lace-magenta" fill="none" stroke="url(#lace-grad-mag)" stroke-width="6" stroke-linecap="round"/>
