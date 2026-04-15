@@ -667,6 +667,18 @@
 
     var resizeTimer;
     window.addEventListener("resize", function () {
+      // Immediate reset: wipe halo + any in-flight growth so dots return to base size
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      if (dotR) {
+        for (var r = 0; r < dotCount; r++) {
+          dotR[r] = BASE_RADIUS;
+          dotGR[r] = 0;
+          dotTouched[r] = 0;
+        }
+      }
+      handleProximity._prevIndices = null;
+
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         buildGrid();
