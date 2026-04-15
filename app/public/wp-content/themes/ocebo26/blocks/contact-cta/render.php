@@ -14,7 +14,7 @@ $privacy_url  = esc_url( $attributes['privacyUrl'] ?? '/politique-confidentialit
 <section class="section section--contact" aria-labelledby="bloc7-title">
   <div class="container">
     <div class="contact__inner">
-      <h2 id="bloc7-title" class="display-xl"><?php echo $title; ?></h2>
+      <h2 id="bloc7-title" class="display-lg"><?php echo $title; ?></h2>
       <form class="contact-form" action="#" method="post" novalidate>
         <div class="contact-form__fields">
           <div class="form-group">

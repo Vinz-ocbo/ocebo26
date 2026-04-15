@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.0.13');
+define('OCEBO26_VERSION', '1.0.14');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
