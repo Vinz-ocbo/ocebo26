@@ -693,6 +693,10 @@
     var allPaths = [cyanPath, cyanGlow, magPath, magGlow];
     var totalLen = 0;
     var OFFSET_X = 12; // small gap between the two laces
+    var currentOffset = 0;
+    var rafId = null;
+    var MAX_SPEED = 80;  // max px per frame (cap)
+    var EASE = 0.12;     // lerp factor — lower = smoother ease-out
 
     function buildBezier(points) {
       var d = "M " + points[0].x + " " + points[0].y;
@@ -754,26 +758,48 @@
       // Set up dash — include a fade gap for progressive tip
       totalLen = cyanPath.getTotalLength();
       allPaths.forEach(function (p) {
-        // dash = solid + transparent gap (for fade effect the gradient mask handles it)
         p.style.strokeDasharray = totalLen;
-        p.style.strokeDashoffset = totalLen;
       });
+      currentOffset = getTargetOffset();
+      applyOffset(currentOffset);
+    }
+
+    function getTargetOffset() {
+      var pageH = document.documentElement.scrollHeight;
+      var tipY = window.scrollY + window.innerHeight / 2;
+      var progress = Math.max(0, Math.min(1, tipY / pageH));
+      return totalLen * (1 - progress);
+    }
+
+    function applyOffset(v) {
+      for (var i = 0; i < allPaths.length; i++) {
+        allPaths[i].style.strokeDashoffset = v;
+      }
+    }
+
+    function tick() {
+      var target = getTargetOffset();
+      var delta = target - currentOffset;
+      var step = delta * EASE;
+      if (step > MAX_SPEED) step = MAX_SPEED;
+      else if (step < -MAX_SPEED) step = -MAX_SPEED;
+      currentOffset += step;
+
+      if (Math.abs(target - currentOffset) < 0.5) {
+        currentOffset = target;
+        applyOffset(currentOffset);
+        rafId = null;
+        return;
+      }
+      applyOffset(currentOffset);
+      rafId = requestAnimationFrame(tick);
     }
 
     function onScroll() {
-      var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (maxScroll <= 0) return;
-
-      var progress = window.scrollY / maxScroll;
-      var offset = totalLen * (1 - progress);
-
-      allPaths.forEach(function (p) {
-        p.style.strokeDashoffset = offset;
-      });
+      if (rafId === null) rafId = requestAnimationFrame(tick);
     }
 
     buildPath();
-    onScroll();
 
     window.addEventListener("scroll", onScroll, { passive: true });
 

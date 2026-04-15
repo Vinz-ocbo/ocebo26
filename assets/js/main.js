@@ -514,19 +514,45 @@
 
     // ---- Render: batch inactive dots, draw active ones per-palette step ----
     var ACTIVE_THRESHOLD = BASE_RADIUS + 0.05;
+    var SETTLE_EPSILON  = 0.01;
+
+    // Pre-allocated scratch buffers (reused across frames — no per-frame GC churn)
+    var activeDots = [];
+    var buckets = new Array(PALETTE_STEPS);
+    for (var b0 = 0; b0 < PALETTE_STEPS; b0++) buckets[b0] = [];
+
+    // rAF is only scheduled while something is actually moving. When everything
+    // has eased to its target, the loop stops and the canvas keeps its last frame.
+    var running = false;
+
+    function startLoop() {
+      if (running) return;
+      running = true;
+      requestAnimationFrame(animate);
+    }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = "overlay";
 
-      // 1) Batch inactive dots: white (untouched) vs violet (touched)
-      var activeDots = [];
+      activeDots.length = 0;
+      for (var b1 = 0; b1 < PALETTE_STEPS; b1++) buckets[b1].length = 0;
+
+      var hasTouchedInactive = false;
+      var anyTransitioning = false;
+
+      // Pass 1: advance radii, categorize, draw untouched-inactive (white base) in one path
       ctx.fillStyle = palette[0];
       ctx.beginPath();
-      var hasTouchedInactive = false;
 
       for (var i = 0; i < dotCount; i++) {
-        dotR[i] += ((BASE_RADIUS + dotGR[i]) - dotR[i]) * EASE;
+        var target = BASE_RADIUS + dotGR[i];
+        var delta  = target - dotR[i];
+        if (delta > SETTLE_EPSILON || delta < -SETTLE_EPSILON) {
+          dotR[i] += delta * EASE;
+          anyTransitioning = true;
+        } else {
+          dotR[i] = target;
+        }
 
         if (dotR[i] > ACTIVE_THRESHOLD) {
           activeDots.push(i);
@@ -539,48 +565,48 @@
       }
       ctx.fill();
 
-      // 1b) Batch touched-but-inactive dots in violet
+      // Pass 2: touched-but-settled dots (magenta trail)
       if (hasTouchedInactive) {
         ctx.fillStyle = TOUCHED_STYLE;
         ctx.beginPath();
-        for (var i = 0; i < dotCount; i++) {
-          if (dotTouched[i] && dotR[i] <= ACTIVE_THRESHOLD) {
-            ctx.moveTo(dotX[i] + BASE_RADIUS, dotY[i]);
-            ctx.arc(dotX[i], dotY[i], BASE_RADIUS, 0, 6.2832);
+        for (var t1 = 0; t1 < dotCount; t1++) {
+          if (dotTouched[t1] && dotR[t1] <= ACTIVE_THRESHOLD) {
+            ctx.moveTo(dotX[t1] + BASE_RADIUS, dotY[t1]);
+            ctx.arc(dotX[t1], dotY[t1], BASE_RADIUS, 0, 6.2832);
           }
         }
         ctx.fill();
       }
 
-      // 2) Draw active dots grouped by palette bucket
-      if (activeDots.length > 0) {
-        // Sort into palette buckets
-        var buckets = new Array(PALETTE_STEPS);
-        for (var b = 0; b < PALETTE_STEPS; b++) buckets[b] = [];
-
-        for (var j = 0; j < activeDots.length; j++) {
+      // Pass 3: active dots grouped by palette bucket
+      var aLen = activeDots.length;
+      if (aLen > 0) {
+        for (var j = 0; j < aLen; j++) {
           var idx = activeDots[j];
-          var t = (dotR[idx] - BASE_RADIUS) / GROWTH;
-          if (t > 1) t = 1;
-          var bucket = ~~(t * (PALETTE_STEPS - 1));
-          buckets[bucket].push(idx);
+          var tt = (dotR[idx] - BASE_RADIUS) / GROWTH;
+          if (tt > 1) tt = 1;
+          buckets[~~(tt * (PALETTE_STEPS - 1))].push(idx);
         }
-
-        // One beginPath + fill per non-empty bucket
-        for (var b = 0; b < PALETTE_STEPS; b++) {
-          if (buckets[b].length === 0) continue;
-          ctx.fillStyle = palette[b];
+        for (var b2 = 0; b2 < PALETTE_STEPS; b2++) {
+          var bucket = buckets[b2];
+          var bLen = bucket.length;
+          if (bLen === 0) continue;
+          ctx.fillStyle = palette[b2];
           ctx.beginPath();
-          for (var k = 0; k < buckets[b].length; k++) {
-            var idx = buckets[b][k];
-            ctx.moveTo(dotX[idx] + dotR[idx], dotY[idx]);
-            ctx.arc(dotX[idx], dotY[idx], dotR[idx], 0, 6.2832);
+          for (var k = 0; k < bLen; k++) {
+            var di = bucket[k];
+            ctx.moveTo(dotX[di] + dotR[di], dotY[di]);
+            ctx.arc(dotX[di], dotY[di], dotR[di], 0, 6.2832);
           }
           ctx.fill();
         }
       }
 
-      requestAnimationFrame(animate);
+      if (anyTransitioning) {
+        requestAnimationFrame(animate);
+      } else {
+        running = false;
+      }
     }
 
     // ---- Proximity: only check dots in cursor's neighbourhood ----
@@ -631,20 +657,25 @@
 
     window.addEventListener("mousemove", function (e) {
       handleProximity(e.clientX, e.clientY);
+      startLoop();
     });
 
     window.addEventListener("touchmove", function (e) {
       handleProximity(e.touches[0].clientX, e.touches[0].clientY);
+      startLoop();
     }, { passive: true });
 
     var resizeTimer;
     window.addEventListener("resize", function () {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(buildGrid, 150);
+      resizeTimer = setTimeout(function () {
+        buildGrid();
+        animate(); // one frame to repaint base grid at new size
+      }, 150);
     });
 
     buildGrid();
-    requestAnimationFrame(animate);
+    animate(); // single initial paint; rAF won't reschedule because nothing is transitioning
   }
 
   /* ============================================
@@ -782,6 +813,89 @@
     });
   }
 
+
+  /* ============================================
+     HEADING LETTER REVEAL (H1 / H2)
+     Inspired by Tobias Ahlin's "ml10" effect: each letter rotates
+     in on Y-axis with a 45ms stagger when its heading enters view.
+     Pure CSS transitions — no animation library.
+     ============================================ */
+  function initHeadingLetterReveal() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var headings = document.querySelectorAll("h1, h2");
+    if (!headings.length) return;
+
+    for (var i = 0; i < headings.length; i++) {
+      wrapHeadingLetters(headings[i]);
+    }
+
+    if (!("IntersectionObserver" in window)) return;
+
+    var io = new IntersectionObserver(
+      function (entries) {
+        for (var k = 0; k < entries.length; k++) {
+          if (!entries[k].isIntersecting) continue;
+          var t = entries[k].target;
+          io.unobserve(t);
+          // Prepare (hidden state) then reveal on next frame so the transition plays.
+          t.classList.add("letters-prepared");
+          void t.offsetWidth;
+          requestAnimationFrame(function (el) {
+            return function () { el.classList.add("is-letters-visible"); };
+          }(t));
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+    for (var m = 0; m < headings.length; m++) io.observe(headings[m]);
+  }
+
+  function wrapHeadingLetters(heading) {
+    // Skip if already wrapped
+    if (heading.getAttribute("data-letters-wrapped")) return;
+
+    // Preserve accessible text (letters-as-spans can confuse some screen readers)
+    if (!heading.hasAttribute("aria-label")) {
+      var label = (heading.innerText || heading.textContent || "").replace(/\s+/g, " ").trim();
+      if (label) heading.setAttribute("aria-label", label);
+    }
+
+    var letterIndex = 0;
+
+    function walk(node) {
+      var children = Array.prototype.slice.call(node.childNodes);
+      for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+        if (child.nodeType === 3) {
+          var text = child.nodeValue;
+          if (!text) continue;
+          var frag = document.createDocumentFragment();
+          for (var c = 0; c < text.length; c++) {
+            var ch = text.charAt(c);
+            if (ch === " " || ch === "\u00a0") {
+              frag.appendChild(document.createTextNode(ch));
+            } else {
+              var span = document.createElement("span");
+              span.className = "letter";
+              span.setAttribute("aria-hidden", "true");
+              span.style.transitionDelay = (letterIndex * 45) + "ms";
+              span.textContent = ch;
+              frag.appendChild(span);
+              letterIndex++;
+            }
+          }
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1 && child.tagName !== "BR") {
+          walk(child);
+        }
+      }
+    }
+
+    walk(heading);
+    heading.setAttribute("data-letters-wrapped", "1");
+  }
+
   /* ============================================
      INIT
      ============================================ */
@@ -797,6 +911,7 @@
     initParallax();
     initLogosSlider();
     initScrollLace();
+    initHeadingLetterReveal();
   }
 
   if (document.readyState === "loading") {

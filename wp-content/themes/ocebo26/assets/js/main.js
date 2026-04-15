@@ -455,9 +455,452 @@
   }
 
   /* ============================================
+     INTERACTIVE DOT MESH BACKGROUND (optimized)
+     ============================================ */
+  function initDotMesh() {
+    var canvas = document.getElementById("dot-canvas");
+    if (!canvas) return;
+
+    var ctx = canvas.getContext("2d");
+
+    var SPACING     = 8;
+    var BASE_RADIUS = 0.5;
+    var PROXIMITY   = 250;
+    var GROWTH      = SPACING / 2 - BASE_RADIUS; // 3.5 — dots never overlap
+    var EASE        = 0.04;
+    var BASE_ALPHA  = 0.12;
+    var ACTIVE_EXTRA_ALPHA = 0.35;
+
+    // Pre-build a palette of 32 steps (white → magenta) with matching alpha
+    var PALETTE_STEPS = 32;
+    var palette = new Array(PALETTE_STEPS);
+    for (var s = 0; s < PALETTE_STEPS; s++) {
+      var t = s / (PALETTE_STEPS - 1);
+      var cr = ~~(255 + (215 - 255) * t);
+      var cg = ~~(255 + (78  - 255) * t);
+      var cb = ~~(255 + (215 - 255) * t);
+      var a  = (BASE_ALPHA + t * ACTIVE_EXTRA_ALPHA).toFixed(3);
+      palette[s] = "rgba(" + cr + "," + cg + "," + cb + "," + a + ")";
+    }
+
+    // Violet style for touched-but-inactive dots (base size, magenta color)
+    var TOUCHED_STYLE = "rgba(215,78,215," + BASE_ALPHA.toFixed(3) + ")";
+
+    // Dot data stored in flat typed arrays for cache performance
+    var dotX, dotY, dotR, dotGR, dotTouched, dotCount;
+    var cols;
+
+    function buildGrid() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      cols = Math.ceil(canvas.width / SPACING) + 1;
+      var rows = Math.ceil(canvas.height / SPACING) + 1;
+      dotCount = cols * rows;
+
+      dotX  = new Float32Array(dotCount);
+      dotY  = new Float32Array(dotCount);
+      dotR  = new Float32Array(dotCount);
+      dotGR = new Float32Array(dotCount);
+      dotTouched = new Uint8Array(dotCount); // 0 = never touched, 1 = touched
+
+      for (var i = 0; i < dotCount; i++) {
+        dotX[i] = (i % cols) * SPACING;
+        dotY[i] = ~~(i / cols) * SPACING;
+        dotR[i] = BASE_RADIUS;
+        dotGR[i] = 0;
+      }
+    }
+
+    // ---- Render: batch inactive dots, draw active ones per-palette step ----
+    var ACTIVE_THRESHOLD = BASE_RADIUS + 0.05;
+    var SETTLE_EPSILON  = 0.01;
+
+    // Pre-allocated scratch buffers (reused across frames — no per-frame GC churn)
+    var activeDots = [];
+    var buckets = new Array(PALETTE_STEPS);
+    for (var b0 = 0; b0 < PALETTE_STEPS; b0++) buckets[b0] = [];
+
+    // rAF is only scheduled while something is actually moving. When everything
+    // has eased to its target, the loop stops and the canvas keeps its last frame.
+    var running = false;
+
+    function startLoop() {
+      if (running) return;
+      running = true;
+      requestAnimationFrame(animate);
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      activeDots.length = 0;
+      for (var b1 = 0; b1 < PALETTE_STEPS; b1++) buckets[b1].length = 0;
+
+      var hasTouchedInactive = false;
+      var anyTransitioning = false;
+
+      // Pass 1: advance radii, categorize, draw untouched-inactive (white base) in one path
+      ctx.fillStyle = palette[0];
+      ctx.beginPath();
+
+      for (var i = 0; i < dotCount; i++) {
+        var target = BASE_RADIUS + dotGR[i];
+        var delta  = target - dotR[i];
+        if (delta > SETTLE_EPSILON || delta < -SETTLE_EPSILON) {
+          dotR[i] += delta * EASE;
+          anyTransitioning = true;
+        } else {
+          dotR[i] = target;
+        }
+
+        if (dotR[i] > ACTIVE_THRESHOLD) {
+          activeDots.push(i);
+        } else if (dotTouched[i]) {
+          hasTouchedInactive = true;
+        } else {
+          ctx.moveTo(dotX[i] + BASE_RADIUS, dotY[i]);
+          ctx.arc(dotX[i], dotY[i], BASE_RADIUS, 0, 6.2832);
+        }
+      }
+      ctx.fill();
+
+      // Pass 2: touched-but-settled dots (magenta trail)
+      if (hasTouchedInactive) {
+        ctx.fillStyle = TOUCHED_STYLE;
+        ctx.beginPath();
+        for (var t1 = 0; t1 < dotCount; t1++) {
+          if (dotTouched[t1] && dotR[t1] <= ACTIVE_THRESHOLD) {
+            ctx.moveTo(dotX[t1] + BASE_RADIUS, dotY[t1]);
+            ctx.arc(dotX[t1], dotY[t1], BASE_RADIUS, 0, 6.2832);
+          }
+        }
+        ctx.fill();
+      }
+
+      // Pass 3: active dots grouped by palette bucket
+      var aLen = activeDots.length;
+      if (aLen > 0) {
+        for (var j = 0; j < aLen; j++) {
+          var idx = activeDots[j];
+          var tt = (dotR[idx] - BASE_RADIUS) / GROWTH;
+          if (tt > 1) tt = 1;
+          buckets[~~(tt * (PALETTE_STEPS - 1))].push(idx);
+        }
+        for (var b2 = 0; b2 < PALETTE_STEPS; b2++) {
+          var bucket = buckets[b2];
+          var bLen = bucket.length;
+          if (bLen === 0) continue;
+          ctx.fillStyle = palette[b2];
+          ctx.beginPath();
+          for (var k = 0; k < bLen; k++) {
+            var di = bucket[k];
+            ctx.moveTo(dotX[di] + dotR[di], dotY[di]);
+            ctx.arc(dotX[di], dotY[di], dotR[di], 0, 6.2832);
+          }
+          ctx.fill();
+        }
+      }
+
+      if (anyTransitioning) {
+        requestAnimationFrame(animate);
+      } else {
+        running = false;
+      }
+    }
+
+    // ---- Proximity: only check dots in cursor's neighbourhood ----
+    function handleProximity(cx, cy) {
+      // Determine column/row range to scan
+      var colMin = Math.max(0, ~~((cx - PROXIMITY) / SPACING) - 1);
+      var colMax = Math.min(cols - 1, ~~((cx + PROXIMITY) / SPACING) + 1);
+      var rowMin = Math.max(0, ~~((cy - PROXIMITY) / SPACING) - 1);
+      var rowMax = Math.min(~~((canvas.height) / SPACING) + 1, ~~((cy + PROXIMITY) / SPACING) + 1);
+      var proxSq = PROXIMITY * PROXIMITY;
+
+      // Reset all dots first (only previous active zone needs it,
+      // but resetting the local neighbourhood is fast enough)
+      // We track previous zone to reset it
+      if (handleProximity._prevIndices) {
+        var prev = handleProximity._prevIndices;
+        for (var p = 0; p < prev.length; p++) {
+          dotGR[prev[p]] = 0;
+        }
+      }
+
+      var touched = [];
+
+      for (var row = rowMin; row <= rowMax; row++) {
+        var base = row * cols;
+        for (var col = colMin; col <= colMax; col++) {
+          var i = base + col;
+          if (i >= dotCount) continue;
+
+          var dx = dotX[i] - cx;
+          var dy = dotY[i] - cy;
+          var distSq = dx * dx + dy * dy;
+
+          if (distSq < proxSq) {
+            var dist = Math.sqrt(distSq);
+            var factor = 1 - dist / PROXIMITY;
+            var g = factor * GROWTH;
+            dotGR[i] = g > 0 ? g : 0;
+            dotTouched[i] = 1;
+            touched.push(i);
+          }
+        }
+      }
+
+      handleProximity._prevIndices = touched;
+    }
+    handleProximity._prevIndices = null;
+
+    window.addEventListener("mousemove", function (e) {
+      handleProximity(e.clientX, e.clientY);
+      startLoop();
+    });
+
+    window.addEventListener("touchmove", function (e) {
+      handleProximity(e.touches[0].clientX, e.touches[0].clientY);
+      startLoop();
+    }, { passive: true });
+
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        buildGrid();
+        animate(); // one frame to repaint base grid at new size
+      }, 150);
+    });
+
+    buildGrid();
+    animate(); // single initial paint; rAF won't reschedule because nothing is transitioning
+  }
+
+  /* ============================================
+     SCROLL-DRIVEN LACES (cyan + magenta)
+     ============================================ */
+  function initScrollLace() {
+    var wrap = document.getElementById("lace-wrap");
+    var svg = document.getElementById("lace-svg");
+    var cyanPath = document.getElementById("lace-cyan");
+    var cyanGlow = document.getElementById("lace-cyan-glow");
+    var magPath  = document.getElementById("lace-magenta");
+    var magGlow  = document.getElementById("lace-magenta-glow");
+    if (!wrap || !svg || !cyanPath || !magPath) return;
+
+    var allPaths = [cyanPath, cyanGlow, magPath, magGlow];
+    var totalLen = 0;
+    var OFFSET_X = 12; // small gap between the two laces
+    var currentOffset = 0;
+    var rafId = null;
+    var MAX_SPEED = 80;  // max px per frame (cap)
+    var EASE = 0.12;     // lerp factor — lower = smoother ease-out
+
+    function buildBezier(points) {
+      var d = "M " + points[0].x + " " + points[0].y;
+      for (var i = 1; i < points.length; i++) {
+        var prev = points[i - 1];
+        var curr = points[i];
+        var dy = (curr.y - prev.y) * 0.5;
+        d += " C " + prev.x + " " + (prev.y + dy) + " " + curr.x + " " + (curr.y - dy) + " " + curr.x + " " + curr.y;
+      }
+      return d;
+    }
+
+    function buildPath() {
+      var pageH = document.documentElement.scrollHeight;
+      var pageW = document.documentElement.clientWidth;
+      var cx = pageW / 2;
+      var margin = 60; // min distance from viewport edges
+
+      wrap.style.height = pageH + "px";
+      svg.setAttribute("viewBox", "0 0 " + pageW + " " + pageH);
+
+      // Update gradient y2 to match page height
+      var grads = svg.querySelectorAll("linearGradient[gradientUnits]");
+      grads.forEach(function (g) { g.setAttribute("y2", pageH); });
+
+      // Collect section midpoints
+      var sects = document.querySelectorAll(".section");
+      var sections = [];
+      sects.forEach(function (s) {
+        var rect = s.getBoundingClientRect();
+        sections.push({ mid: rect.top + window.scrollY + rect.height / 2 });
+      });
+
+      // Max 200px beyond the widest content block (1090px / 2 + 200 = 745px)
+      var maxAmplitude = 745;
+      var amplitude = Math.min(maxAmplitude, (pageW / 2) - margin);
+
+      // Build waypoints for cyan
+      var cyanPts = [{ x: cx, y: 0 }];
+      for (var i = 0; i < sections.length; i++) {
+        var side = (i % 2 === 0) ? -1 : 1;
+        cyanPts.push({ x: cx + side * amplitude, y: sections[i].mid });
+      }
+      cyanPts.push({ x: cx, y: pageH });
+
+      // Magenta: same shape, slight horizontal offset
+      var magPts = cyanPts.map(function (p) {
+        return { x: p.x + OFFSET_X, y: p.y };
+      });
+
+      var dCyan = buildBezier(cyanPts);
+      var dMag  = buildBezier(magPts);
+
+      cyanPath.setAttribute("d", dCyan);
+      cyanGlow.setAttribute("d", dCyan);
+      magPath.setAttribute("d", dMag);
+      magGlow.setAttribute("d", dMag);
+
+      // Set up dash — include a fade gap for progressive tip
+      totalLen = cyanPath.getTotalLength();
+      allPaths.forEach(function (p) {
+        p.style.strokeDasharray = totalLen;
+      });
+      currentOffset = getTargetOffset();
+      applyOffset(currentOffset);
+    }
+
+    function getTargetOffset() {
+      var pageH = document.documentElement.scrollHeight;
+      var tipY = window.scrollY + window.innerHeight / 2;
+      var progress = Math.max(0, Math.min(1, tipY / pageH));
+      return totalLen * (1 - progress);
+    }
+
+    function applyOffset(v) {
+      for (var i = 0; i < allPaths.length; i++) {
+        allPaths[i].style.strokeDashoffset = v;
+      }
+    }
+
+    function tick() {
+      var target = getTargetOffset();
+      var delta = target - currentOffset;
+      var step = delta * EASE;
+      if (step > MAX_SPEED) step = MAX_SPEED;
+      else if (step < -MAX_SPEED) step = -MAX_SPEED;
+      currentOffset += step;
+
+      if (Math.abs(target - currentOffset) < 0.5) {
+        currentOffset = target;
+        applyOffset(currentOffset);
+        rafId = null;
+        return;
+      }
+      applyOffset(currentOffset);
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function onScroll() {
+      if (rafId === null) rafId = requestAnimationFrame(tick);
+    }
+
+    buildPath();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        buildPath();
+        onScroll();
+      }, 200);
+    });
+  }
+
+
+  /* ============================================
+     HEADING LETTER REVEAL (H1 / H2)
+     Inspired by Tobias Ahlin's "ml10" effect: each letter rotates
+     in on Y-axis with a 45ms stagger when its heading enters view.
+     Pure CSS transitions — no animation library.
+     ============================================ */
+  function initHeadingLetterReveal() {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var headings = document.querySelectorAll("h1, h2");
+    if (!headings.length) return;
+
+    for (var i = 0; i < headings.length; i++) {
+      wrapHeadingLetters(headings[i]);
+    }
+
+    if (!("IntersectionObserver" in window)) return;
+
+    var io = new IntersectionObserver(
+      function (entries) {
+        for (var k = 0; k < entries.length; k++) {
+          if (!entries[k].isIntersecting) continue;
+          var t = entries[k].target;
+          io.unobserve(t);
+          // Prepare (hidden state) then reveal on next frame so the transition plays.
+          t.classList.add("letters-prepared");
+          void t.offsetWidth;
+          requestAnimationFrame(function (el) {
+            return function () { el.classList.add("is-letters-visible"); };
+          }(t));
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+    );
+    for (var m = 0; m < headings.length; m++) io.observe(headings[m]);
+  }
+
+  function wrapHeadingLetters(heading) {
+    // Skip if already wrapped
+    if (heading.getAttribute("data-letters-wrapped")) return;
+
+    // Preserve accessible text (letters-as-spans can confuse some screen readers)
+    if (!heading.hasAttribute("aria-label")) {
+      var label = (heading.innerText || heading.textContent || "").replace(/\s+/g, " ").trim();
+      if (label) heading.setAttribute("aria-label", label);
+    }
+
+    var letterIndex = 0;
+
+    function walk(node) {
+      var children = Array.prototype.slice.call(node.childNodes);
+      for (var i = 0; i < children.length; i++) {
+        var child = children[i];
+        if (child.nodeType === 3) {
+          var text = child.nodeValue;
+          if (!text) continue;
+          var frag = document.createDocumentFragment();
+          for (var c = 0; c < text.length; c++) {
+            var ch = text.charAt(c);
+            if (ch === " " || ch === "\u00a0") {
+              frag.appendChild(document.createTextNode(ch));
+            } else {
+              var span = document.createElement("span");
+              span.className = "letter";
+              span.setAttribute("aria-hidden", "true");
+              span.style.transitionDelay = (letterIndex * 45) + "ms";
+              span.textContent = ch;
+              frag.appendChild(span);
+              letterIndex++;
+            }
+          }
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1 && child.tagName !== "BR") {
+          walk(child);
+        }
+      }
+    }
+
+    walk(heading);
+    heading.setAttribute("data-letters-wrapped", "1");
+  }
+
+  /* ============================================
      INIT
      ============================================ */
   function init() {
+    initDotMesh();
     addRevealClasses();
     initScrollReveal();
     initHeaderScroll();
@@ -467,6 +910,8 @@
     initCounters();
     initParallax();
     initLogosSlider();
+    initScrollLace();
+    initHeadingLetterReveal();
   }
 
   if (document.readyState === "loading") {
