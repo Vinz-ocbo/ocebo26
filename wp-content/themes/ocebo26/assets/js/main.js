@@ -658,11 +658,12 @@
     var lastCx = -1, lastCy = -1;
     var idleTimer = null;
     var pulseRafId = null;
-    var pulseStart = 0;
-    var PULSE_IDLE_DELAY = 500;  // ms of stillness before pulse starts
-    var PULSE_PERIOD     = 3800; // ms per full breath cycle (slow)
-    var PULSE_MIN        = 0.725; // scale at the "shrink" bottom (halved drop)
-    var PULSE_MAX        = 1.0;   // scale at the "expand" peak
+    var PULSE_IDLE_DELAY = 500;
+    var PULSE_PERIOD     = 3800;
+    var PULSE_MIN        = 0.55;
+    var PULSE_MAX        = 0.80;
+    var PULSE_HOVER_MIN  = 1.10;
+    var PULSE_HOVER_MAX  = 1.45;
 
     function stopPulse() {
       if (pulseRafId !== null) {
@@ -673,12 +674,17 @@
 
     function startPulse() {
       stopPulse();
-      pulseStart = performance.now();
-      var amp = (PULSE_MAX - PULSE_MIN) / 2;
-      var mid = (PULSE_MAX + PULSE_MIN) / 2;
+      var lastTime = performance.now();
+      var phase = 0;
       function pulseStep(now) {
-        var phase = ((now - pulseStart) / PULSE_PERIOD) * 2 * Math.PI;
-        // start near max so transition from active state is smooth
+        var dt = now - lastTime;
+        lastTime = now;
+        var period = hoverActive ? PULSE_PERIOD / 2 : PULSE_PERIOD;
+        var lo = hoverActive ? PULSE_HOVER_MIN : PULSE_MIN;
+        var hi = hoverActive ? PULSE_HOVER_MAX : PULSE_MAX;
+        var mid = (hi + lo) / 2;
+        var amp = (hi - lo) / 2;
+        phase += (dt / period) * 2 * Math.PI;
         var pulse = mid + amp * Math.cos(phase);
         handleProximity(lastCx, lastCy, pulse);
         startLoop();
@@ -692,6 +698,21 @@
       stopPulse();
       idleTimer = setTimeout(startPulse, PULSE_IDLE_DELAY);
     }
+
+    var hoverActive = false;
+
+    var ctaSelector = ".btn, .card-service__cta, .card-service";
+    document.querySelectorAll(ctaSelector).forEach(function (el) {
+      el.addEventListener("mouseenter", function () {
+        if (lastCx < 0 || lastCy < 0) return;
+        hoverActive = true;
+        clearTimeout(idleTimer);
+        startPulse();
+      });
+      el.addEventListener("mouseleave", function () {
+        hoverActive = false;
+      });
+    });
 
     // ---- Section-number halo proximity (viewport-relative) ----
     var sectionNumberEls = [];
@@ -722,19 +743,27 @@
     window.addEventListener("mousemove", function (e) {
       lastCx = e.clientX;
       lastCy = e.clientY;
-      handleProximity(lastCx, lastCy, 1);
       updateNumberHalos(lastCx, lastCy);
-      startLoop();
-      scheduleIdlePulse();
+      if (hoverActive) {
+        startLoop();
+      } else {
+        handleProximity(lastCx, lastCy, 1);
+        startLoop();
+        scheduleIdlePulse();
+      }
     });
 
     window.addEventListener("touchmove", function (e) {
       lastCx = e.touches[0].clientX;
       lastCy = e.touches[0].clientY;
-      handleProximity(lastCx, lastCy, 1);
       updateNumberHalos(lastCx, lastCy);
-      startLoop();
-      scheduleIdlePulse();
+      if (hoverActive) {
+        startLoop();
+      } else {
+        handleProximity(lastCx, lastCy, 1);
+        startLoop();
+        scheduleIdlePulse();
+      }
     }, { passive: true });
 
     var resizeTimer;
@@ -752,6 +781,7 @@
       handleProximity._prevIndices = null;
       stopPulse();
       clearTimeout(idleTimer);
+      hoverActive = false;
 
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {

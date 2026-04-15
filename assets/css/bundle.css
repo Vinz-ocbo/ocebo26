@@ -351,7 +351,8 @@ body {
   background: var(--color-surface-dark);
   color: var(--color-accent-cyan);
   margin-left: var(--space-1);
-  transition: transform var(--transition-fast);
+  overflow: hidden;
+  position: relative;
 }
 
 .btn__icon-right--accent {
@@ -359,8 +360,19 @@ body {
   color: var(--color-surface-dark);
 }
 
-.btn:hover .btn__icon-right {
-  transform: translate(2px, -2px);
+.btn__icon-right svg {
+  display: block;
+}
+
+.btn:hover .btn__icon-right svg {
+  animation: btn-arrow-shuffle 520ms cubic-bezier(0.6, 0, 0.2, 1) 1;
+}
+
+@keyframes btn-arrow-shuffle {
+  0%     { transform: translate(0, 0); }
+  45%    { transform: translate(26px, -26px); }
+  45.01% { transform: translate(-26px, 26px); }
+  100%   { transform: translate(0, 0); }
 }
 
 .btn--primary {
@@ -369,7 +381,6 @@ body {
 }
 
 .btn--primary:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-glow-cyan);
 }
 
@@ -392,7 +403,6 @@ body {
 
 .btn--secondary:hover {
   background-color: #000000;
-  transform: translateY(-2px);
 }
 
 .btn--secondary:focus-visible {
@@ -469,8 +479,14 @@ body {
 }
 
 .site-header.is-scrolled {
-  background: rgba(3, 2, 23, 0.8);
-  backdrop-filter: var(--blur-menu);
+  background-color: transparent;
+  background-image: radial-gradient(
+    ellipse at center,
+    rgba(3, 2, 23, 0.70) 0%,
+    rgba(3, 2, 23, 0.40) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -802,7 +818,6 @@ body {
 
 .card-service__cta:hover {
   background: #000000;
-  transform: translateY(-1px);
 }
 
 .card-service__cta-icon {
@@ -814,11 +829,16 @@ body {
   background: var(--color-accent-cyan);
   color: var(--color-surface-dark);
   border-radius: 4px;
-  transition: transform var(--transition-fast);
+  overflow: hidden;
+  position: relative;
 }
 
-.card-service__cta:hover .card-service__cta-icon {
-  transform: translate(2px, -2px);
+.card-service__cta-icon svg {
+  display: block;
+}
+
+.card-service__cta:hover .card-service__cta-icon svg {
+  animation: btn-arrow-shuffle 520ms cubic-bezier(0.6, 0, 0.2, 1) 1;
 }
 
 .pourquoi__list {
