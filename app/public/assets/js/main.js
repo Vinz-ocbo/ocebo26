@@ -735,11 +735,18 @@
     var OFFSET_X = 12; // small gap between the two laces
     var currentOffset = 0;
     var rafId = null;
-    var MAX_SPEED = 80;  // max px per frame (cap)
-    var EASE = 0.12;     // lerp factor — lower = smoother ease-out
-    var DRIFT_PX = 0.15; // continuous downward drift (~9px/s @ 60fps)
+    var MAX_SPEED = 80;   // max px per frame (cap)
+    var EASE = 0.12;      // lerp factor — lower = smoother ease-out
+    var DRIFT_PX = 0.15;  // continuous downward drift (~9px/s @ 60fps)
+    var MAX_DRIFT = 300;  // cap drift so scroll-up can retract the lace
     var driftAmount = 0;
     var hasScrolled = false;
+
+    // Deterministic pseudo-random in [0,1) from an integer seed
+    function psr(n) {
+      var x = Math.sin(n * 12.9898) * 43758.5453;
+      return x - Math.floor(x);
+    }
 
     function buildBezier(points) {
       var d = "M " + points[0].x + " " + points[0].y;
@@ -777,11 +784,17 @@
       var maxAmplitude = 745;
       var amplitude = Math.min(maxAmplitude, (pageW / 2) - margin);
 
-      // Build waypoints for cyan
+      // Build waypoints for cyan with variable amplitude and vertical shift
+      // so turns aren't all aligned horizontally
       var cyanPts = [{ x: cx, y: 0 }];
       for (var i = 0; i < sections.length; i++) {
         var side = (i % 2 === 0) ? -1 : 1;
-        cyanPts.push({ x: cx + side * amplitude, y: sections[i].mid });
+        var ampFactor = 0.5 + psr(i + 1) * 0.5;         // 0.5..1.0
+        var yShift    = (psr(i * 2 + 3) - 0.5) * 140;   // ±70px
+        cyanPts.push({
+          x: cx + side * amplitude * ampFactor,
+          y: sections[i].mid + yShift
+        });
       }
       cyanPts.push({ x: cx, y: pageH });
 
@@ -821,7 +834,7 @@
     }
 
     function tick() {
-      driftAmount += DRIFT_PX;
+      if (driftAmount < MAX_DRIFT) driftAmount += DRIFT_PX;
       var target = getTargetOffset();
       var delta = target - currentOffset;
       var step = delta * EASE;
@@ -830,24 +843,85 @@
       currentOffset += step;
       applyOffset(currentOffset);
 
-      // Keep looping while the lace hasn't reached its end.
-      // Once fully drawn (offset ~0), stop to save CPU.
-      if (currentOffset > 0.5) {
+      // Keep looping while we're still moving toward the target OR drifting forward
+      var stillMoving = Math.abs(delta) > 0.5;
+      var stillDrifting = driftAmount < MAX_DRIFT && currentOffset > 0.5;
+      if (stillMoving || stillDrifting) {
         rafId = requestAnimationFrame(tick);
       } else {
-        currentOffset = 0;
-        applyOffset(0);
         rafId = null;
       }
     }
 
     function onScroll() {
-      if (!hasScrolled) {
+      var y = window.scrollY;
+      if (!hasScrolled && y > 20) {
         hasScrolled = true;
         wrap.classList.add("is-active");
+      } else if (hasScrolled && y < 5) {
+        // Back at top — fade out and reset so the lace re-appears fresh next scroll
+        hasScrolled = false;
+        wrap.classList.remove("is-active");
+        driftAmount = 0;
+        currentOffset = totalLen;
+        applyOffset(currentOffset);
       }
       if (rafId === null) rafId = requestAnimationFrame(tick);
     }
+
+    // ---- Luminous particles traveling along the path ----
+    function spawnParticle() {
+      if (!hasScrolled || totalLen === 0) {
+        setTimeout(spawnParticle, 1500);
+        return;
+      }
+      var useCyan = Math.random() < 0.5;
+      var color = useCyan ? "#15ffd6" : "#d74ed7";
+      var srcPath = useCyan ? cyanPath : magPath;
+      var pathLen = srcPath.getTotalLength();
+      if (pathLen === 0) {
+        setTimeout(spawnParticle, 1500);
+        return;
+      }
+
+      var ns = "http://www.w3.org/2000/svg";
+      var circle = document.createElementNS(ns, "circle");
+      circle.setAttribute("r", "3");
+      circle.setAttribute("fill", color);
+      circle.style.filter =
+        "drop-shadow(0 0 8px " + color + ") drop-shadow(0 0 3px " + color + ")";
+      svg.appendChild(circle);
+
+      var duration = 2600 + Math.random() * 1400; // 2.6–4s
+      var startTime = performance.now();
+
+      function step(now) {
+        var t = (now - startTime) / duration;
+        if (t >= 1) {
+          if (circle.parentNode) circle.remove();
+          return;
+        }
+        var drawnLen = totalLen - currentOffset;
+        var dist = t * pathLen;
+        if (dist > drawnLen) {
+          if (circle.parentNode) circle.remove();
+          return;
+        }
+        var pt = srcPath.getPointAtLength(dist);
+        circle.setAttribute("cx", pt.x);
+        circle.setAttribute("cy", pt.y);
+        var op = 1;
+        if (t < 0.1) op = t / 0.1;
+        else if (t > 0.85) op = (1 - t) / 0.15;
+        circle.setAttribute("opacity", op.toFixed(2));
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+
+      var nextDelay = 3000 + Math.random() * 3000; // 3–6s
+      setTimeout(spawnParticle, nextDelay);
+    }
+    setTimeout(spawnParticle, 3000 + Math.random() * 3000);
 
     buildPath();
 
