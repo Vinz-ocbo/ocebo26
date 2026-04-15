@@ -90,6 +90,7 @@
   }
 }
 
+/* bg-effects animations disabled – uncomment to restore
 .bg-effects__glow--cyan {
   animation: glow-pulse 8s ease-in-out infinite;
 }
@@ -101,6 +102,7 @@
 .bg-effects__glow--yellow {
   animation: glow-pulse 12s ease-in-out infinite 4s;
 }
+*/
 
 /* ---- Section number entrance ---- */
 .section-number {
@@ -108,11 +110,38 @@
   transform: scale(0.5);
   transition:
     opacity var(--transition-slow),
-    transform var(--transition-slow);
+    transform var(--transition-slow),
+    background-color 1200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .is-visible .section-number,
 .reveal.is-visible .section-number {
   opacity: 1;
   transform: scale(1);
+}
+
+/* ---- Heading letter reveal (H1 / H2) — inspired by Tobias Ahlin "ml10" ---- */
+/* Letters look normal until their heading is primed for reveal (keeps text visible during page load). */
+h1[data-letters-wrapped],
+h2[data-letters-wrapped] {
+  perspective: 1000px;
+}
+
+.letter {
+  display: inline-block;
+  line-height: 1em;
+  transform-origin: 0 0;
+}
+
+.letters-prepared .letter {
+  transform: rotateY(-90deg);
+  opacity: 0;
+  transition:
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 500ms ease;
+}
+
+.is-letters-visible .letter {
+  transform: rotateY(0);
+  opacity: 1;
 }
