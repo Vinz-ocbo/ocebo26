@@ -655,13 +655,41 @@
     }
     handleProximity._prevIndices = null;
 
+    // ---- Section-number halo proximity (viewport-relative) ----
+    var sectionNumberEls = [];
+    function refreshSectionNumbers() {
+      sectionNumberEls = Array.prototype.slice.call(
+        document.querySelectorAll(".section-number")
+      );
+    }
+    refreshSectionNumbers();
+
+    function updateNumberHalos(cx, cy) {
+      var proxSq = PROXIMITY * PROXIMITY;
+      for (var n = 0; n < sectionNumberEls.length; n++) {
+        var el = sectionNumberEls[n];
+        var rect = el.getBoundingClientRect();
+        var mx = rect.left + rect.width / 2;
+        var my = rect.top + rect.height / 2;
+        var dx = mx - cx;
+        var dy = my - cy;
+        if (dx * dx + dy * dy < proxSq) {
+          el.classList.add("is-haloed");
+        } else {
+          el.classList.remove("is-haloed");
+        }
+      }
+    }
+
     window.addEventListener("mousemove", function (e) {
       handleProximity(e.clientX, e.clientY);
+      updateNumberHalos(e.clientX, e.clientY);
       startLoop();
     });
 
     window.addEventListener("touchmove", function (e) {
       handleProximity(e.touches[0].clientX, e.touches[0].clientY);
+      updateNumberHalos(e.touches[0].clientX, e.touches[0].clientY);
       startLoop();
     }, { passive: true });
 
