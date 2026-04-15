@@ -8,7 +8,9 @@ body {
   font-weight: var(--fw-regular);
   line-height: var(--lh-body-md);
   color: var(--color-text-primary);
-  background-color: var(--color-bg);
+  background-color: #06070a;
+  background-image: linear-gradient(to bottom, #13161d 0, #06070a 300px);
+  background-repeat: no-repeat;
   overflow-x: hidden;
   position: relative;
 }

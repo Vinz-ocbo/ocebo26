@@ -107,7 +107,7 @@
 .acces-direct__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: 64px;
 }
 
 @media (max-width: 767px) {

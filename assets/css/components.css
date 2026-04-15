@@ -523,7 +523,7 @@
 .pourquoi__item {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-4);
+  gap: 144px;
   padding: var(--space-4) 72px;
   border-radius: var(--radius-sm);
 }

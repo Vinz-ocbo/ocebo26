@@ -215,7 +215,9 @@ body {
   font-weight: var(--fw-regular);
   line-height: var(--lh-body-md);
   color: var(--color-text-primary);
-  background-color: var(--color-bg);
+  background-color: #06070a;
+  background-image: linear-gradient(to bottom, #13161d 0, #06070a 300px);
+  background-repeat: no-repeat;
   overflow-x: hidden;
   position: relative;
 }
@@ -828,7 +830,7 @@ body {
 .pourquoi__item {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-4);
+  gap: 144px;
   padding: var(--space-4) 72px;
   border-radius: var(--radius-sm);
 }
@@ -1264,7 +1266,7 @@ body {
 .acces-direct__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
+  gap: 64px;
 }
 
 @media (max-width: 767px) {
