@@ -904,18 +904,19 @@
       }
     }
 
-    function onScroll() {
+    // Continuous opacity tied to scroll — no abrupt binary toggles
+    function updateWrapOpacity() {
       var y = window.scrollY;
-      if (!hasScrolled && y > 20) {
-        hasScrolled = true;
-        wrap.classList.add("is-active");
-      } else if (hasScrolled && y < 5) {
-        hasScrolled = false;
-        wrap.classList.remove("is-active");
-        driftAmount = 0;
-        currentTipY = 0;
-        applyTipMask(0);
-      }
+      // Fully invisible under 10px, fully opaque at 110px, smooth fade in-between
+      var t = (y - 10) / 100;
+      if (t < 0) t = 0;
+      if (t > 1) t = 1;
+      wrap.style.opacity = t;
+      if (t > 0 && !hasScrolled) hasScrolled = true;
+    }
+
+    function onScroll() {
+      updateWrapOpacity();
       if (rafId === null) rafId = requestAnimationFrame(tick);
     }
 
