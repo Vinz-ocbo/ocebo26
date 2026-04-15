@@ -142,7 +142,7 @@ body::before {
 /* --- Responsive --- */
 @media (max-width: 767px) {
   :root {
-    --text-display-xl: 36px;
+    --text-display-xl: 44px;
     --text-display-lg: 36px;
     --text-number-xl: 56px;
     --text-number-lg: 28px;
@@ -150,6 +150,9 @@ body::before {
     --text-heading-sm: 18px;
     --section-gap: 48px;
   }
+
+  .section-header { --title-line-h: 36px; }
+  .hero .section-header { --title-line-h: 44px; }
 
   .container {
     padding-inline: var(--space-2);
@@ -163,4 +166,7 @@ body::before {
     --text-number-xl: 72px;
     --section-gap: 64px;
   }
+
+  .section-header { --title-line-h: 44px; }
+  .hero .section-header { --title-line-h: 44px; }
 }

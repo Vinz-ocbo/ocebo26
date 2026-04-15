@@ -22,6 +22,7 @@
 
 .hero .section-header {
   margin-bottom: var(--space-3);
+  --title-line-h: 56px; /* H1 desktop — responsive overrides in layout.css */
 }
 
 .hero__body {
@@ -86,6 +87,23 @@
 }
 
 /* ---- ACCES DIRECT (Services) ---- */
+.section--acces-direct .section-number,
+.section--faq .section-number {
+  background: #000000;
+}
+
+.section--acces-direct > .container {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+}
+
 .acces-direct__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -116,6 +134,7 @@
   grid-template-columns: repeat(2, auto);
   gap: var(--space-3);
   justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 767px) {
@@ -141,10 +160,22 @@
 
 
 /* ---- FAQ ---- */
+.section--faq > .container {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4);
+}
+
 .faq__list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0;
 }
 
 /* ---- CONTACT ---- */
@@ -205,7 +236,7 @@
 /* ---- FOOTER ---- */
 .site-footer {
   padding: var(--space-3) 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid #ffffff0d;
 }
 
 .footer__inner {

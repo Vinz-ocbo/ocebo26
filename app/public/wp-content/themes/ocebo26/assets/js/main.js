@@ -776,10 +776,16 @@
     var magGlow  = document.getElementById("lace-magenta-glow");
     if (!wrap || !svg || !cyanPath || !magPath) return;
 
+    // Mask stops for the progressive tip fade (updated per frame)
+    var maskS2 = document.getElementById("lace-mask-s2");
+    var maskS3 = document.getElementById("lace-mask-s3");
+
     var allPaths = [cyanPath, cyanGlow, magPath, magGlow];
     var totalLen = 0;
-    var OFFSET_X = 12; // small gap between the two laces
-    var currentOffset = 0;
+    var pageH_cached = 0;
+    var OFFSET_X = 12;   // small gap between the two laces
+    var FEATHER  = 220;  // px over which the drawing tip fades to transparent
+    var currentTipY = 0; // animated reveal position (0..pageH)
     var rafId = null;
     var MAX_SPEED = 80;   // max px per frame (cap)
     var EASE = 0.12;      // lerp factor — lower = smoother ease-out
@@ -857,41 +863,40 @@
       magPath.setAttribute("d", dMag);
       magGlow.setAttribute("d", dMag);
 
-      // Set up dash — include a fade gap for progressive tip
       totalLen = cyanPath.getTotalLength();
-      allPaths.forEach(function (p) {
-        p.style.strokeDasharray = totalLen;
-      });
-      currentOffset = hasScrolled ? getTargetOffset() : totalLen;
-      applyOffset(currentOffset);
+      pageH_cached = pageH;
+      currentTipY = hasScrolled ? getTargetTipY() : 0;
+      applyTipMask(currentTipY);
     }
 
-    function getTargetOffset() {
-      var pageH = document.documentElement.scrollHeight;
+    function getTargetTipY() {
       var tipY = window.scrollY + window.innerHeight / 2 + driftAmount;
-      var progress = Math.max(0, Math.min(1, tipY / pageH));
-      return totalLen * (1 - progress);
+      if (tipY < 0) tipY = 0;
+      if (tipY > pageH_cached) tipY = pageH_cached;
+      return tipY;
     }
 
-    function applyOffset(v) {
-      for (var i = 0; i < allPaths.length; i++) {
-        allPaths[i].style.strokeDashoffset = v;
-      }
+    function applyTipMask(tipY) {
+      if (!maskS2 || !maskS3 || pageH_cached <= 0) return;
+      var bot = tipY;
+      var top = bot - FEATHER;
+      if (top < 0) top = 0;
+      maskS2.setAttribute("offset", ((top / pageH_cached) * 100).toFixed(3) + "%");
+      maskS3.setAttribute("offset", ((bot / pageH_cached) * 100).toFixed(3) + "%");
     }
 
     function tick() {
       if (driftAmount < MAX_DRIFT) driftAmount += DRIFT_PX;
-      var target = getTargetOffset();
-      var delta = target - currentOffset;
+      var target = getTargetTipY();
+      var delta = target - currentTipY;
       var step = delta * EASE;
       if (step > MAX_SPEED) step = MAX_SPEED;
       else if (step < -MAX_SPEED) step = -MAX_SPEED;
-      currentOffset += step;
-      applyOffset(currentOffset);
+      currentTipY += step;
+      applyTipMask(currentTipY);
 
-      // Keep looping while we're still moving toward the target OR drifting forward
       var stillMoving = Math.abs(delta) > 0.5;
-      var stillDrifting = driftAmount < MAX_DRIFT && currentOffset > 0.5;
+      var stillDrifting = driftAmount < MAX_DRIFT && currentTipY < pageH_cached - 0.5;
       if (stillMoving || stillDrifting) {
         rafId = requestAnimationFrame(tick);
       } else {
@@ -905,12 +910,11 @@
         hasScrolled = true;
         wrap.classList.add("is-active");
       } else if (hasScrolled && y < 5) {
-        // Back at top — fade out and reset so the lace re-appears fresh next scroll
         hasScrolled = false;
         wrap.classList.remove("is-active");
         driftAmount = 0;
-        currentOffset = totalLen;
-        applyOffset(currentOffset);
+        currentTipY = 0;
+        applyTipMask(0);
       }
       if (rafId === null) rafId = requestAnimationFrame(tick);
     }
@@ -950,13 +954,13 @@
           if (circle.parentNode) circle.remove();
           return;
         }
-        var drawnLen = totalLen - currentOffset;
         var dist = t * pathLen;
-        if (dist > drawnLen) {
+        var pt = srcPath.getPointAtLength(dist);
+        // Stop the particle once it passes the revealed tip
+        if (pt.y > currentTipY) {
           if (circle.parentNode) circle.remove();
           return;
         }
-        var pt = srcPath.getPointAtLength(dist);
         circle.setAttribute("cx", pt.x);
         circle.setAttribute("cy", pt.y);
 
