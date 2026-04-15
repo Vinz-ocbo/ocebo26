@@ -467,9 +467,9 @@
     var BASE_RADIUS = 0.5;
     var PROXIMITY   = 250;
     var GROWTH      = SPACING / 2 - BASE_RADIUS; // 3.5 — dots never overlap
-    var EASE        = 0.04;
+    var EASE        = 0.15;
     var BASE_ALPHA  = 0.12;
-    var ACTIVE_EXTRA_ALPHA = 0.35;
+    var ACTIVE_EXTRA_ALPHA = 0.30;
 
     // Pre-build a palette of 32 steps (white → magenta) with matching alpha
     var PALETTE_STEPS = 32;
@@ -610,17 +610,16 @@
     }
 
     // ---- Proximity: only check dots in cursor's neighbourhood ----
-    function handleProximity(cx, cy) {
-      // Determine column/row range to scan
+    // pulse multiplier: 1 = full growth, <1 = dimmed (used for idle pulsation)
+    function handleProximity(cx, cy, pulse) {
+      if (pulse == null) pulse = 1;
+
       var colMin = Math.max(0, ~~((cx - PROXIMITY) / SPACING) - 1);
       var colMax = Math.min(cols - 1, ~~((cx + PROXIMITY) / SPACING) + 1);
       var rowMin = Math.max(0, ~~((cy - PROXIMITY) / SPACING) - 1);
       var rowMax = Math.min(~~((canvas.height) / SPACING) + 1, ~~((cy + PROXIMITY) / SPACING) + 1);
       var proxSq = PROXIMITY * PROXIMITY;
 
-      // Reset all dots first (only previous active zone needs it,
-      // but resetting the local neighbourhood is fast enough)
-      // We track previous zone to reset it
       if (handleProximity._prevIndices) {
         var prev = handleProximity._prevIndices;
         for (var p = 0; p < prev.length; p++) {
@@ -643,7 +642,7 @@
           if (distSq < proxSq) {
             var dist = Math.sqrt(distSq);
             var factor = 1 - dist / PROXIMITY;
-            var g = factor * GROWTH;
+            var g = factor * GROWTH * pulse;
             dotGR[i] = g > 0 ? g : 0;
             dotTouched[i] = 1;
             touched.push(i);
@@ -654,6 +653,45 @@
       handleProximity._prevIndices = touched;
     }
     handleProximity._prevIndices = null;
+
+    // ---- Idle pulsation: when cursor is stationary, gently breathe the halo ----
+    var lastCx = -1, lastCy = -1;
+    var idleTimer = null;
+    var pulseRafId = null;
+    var pulseStart = 0;
+    var PULSE_IDLE_DELAY = 500;  // ms of stillness before pulse starts
+    var PULSE_PERIOD     = 3800; // ms per full breath cycle (slow)
+    var PULSE_MIN        = 0.725; // scale at the "shrink" bottom (halved drop)
+    var PULSE_MAX        = 1.0;   // scale at the "expand" peak
+
+    function stopPulse() {
+      if (pulseRafId !== null) {
+        cancelAnimationFrame(pulseRafId);
+        pulseRafId = null;
+      }
+    }
+
+    function startPulse() {
+      stopPulse();
+      pulseStart = performance.now();
+      var amp = (PULSE_MAX - PULSE_MIN) / 2;
+      var mid = (PULSE_MAX + PULSE_MIN) / 2;
+      function pulseStep(now) {
+        var phase = ((now - pulseStart) / PULSE_PERIOD) * 2 * Math.PI;
+        // start near max so transition from active state is smooth
+        var pulse = mid + amp * Math.cos(phase);
+        handleProximity(lastCx, lastCy, pulse);
+        startLoop();
+        pulseRafId = requestAnimationFrame(pulseStep);
+      }
+      pulseRafId = requestAnimationFrame(pulseStep);
+    }
+
+    function scheduleIdlePulse() {
+      clearTimeout(idleTimer);
+      stopPulse();
+      idleTimer = setTimeout(startPulse, PULSE_IDLE_DELAY);
+    }
 
     // ---- Section-number halo proximity (viewport-relative) ----
     var sectionNumberEls = [];
@@ -682,15 +720,21 @@
     }
 
     window.addEventListener("mousemove", function (e) {
-      handleProximity(e.clientX, e.clientY);
-      updateNumberHalos(e.clientX, e.clientY);
+      lastCx = e.clientX;
+      lastCy = e.clientY;
+      handleProximity(lastCx, lastCy, 1);
+      updateNumberHalos(lastCx, lastCy);
       startLoop();
+      scheduleIdlePulse();
     });
 
     window.addEventListener("touchmove", function (e) {
-      handleProximity(e.touches[0].clientX, e.touches[0].clientY);
-      updateNumberHalos(e.touches[0].clientX, e.touches[0].clientY);
+      lastCx = e.touches[0].clientX;
+      lastCy = e.touches[0].clientY;
+      handleProximity(lastCx, lastCy, 1);
+      updateNumberHalos(lastCx, lastCy);
       startLoop();
+      scheduleIdlePulse();
     }, { passive: true });
 
     var resizeTimer;
@@ -706,6 +750,8 @@
         }
       }
       handleProximity._prevIndices = null;
+      stopPulse();
+      clearTimeout(idleTimer);
 
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
@@ -886,14 +932,17 @@
 
       var ns = "http://www.w3.org/2000/svg";
       var circle = document.createElementNS(ns, "circle");
-      circle.setAttribute("r", "3");
+      circle.setAttribute("r", "1.5");
       circle.setAttribute("fill", color);
       circle.style.filter =
-        "drop-shadow(0 0 8px " + color + ") drop-shadow(0 0 3px " + color + ")";
+        "drop-shadow(0 0 6px " + color + ") drop-shadow(0 0 2px " + color + ")";
       svg.appendChild(circle);
 
-      var duration = 2600 + Math.random() * 1400; // 2.6–4s
+      var duration = 5200 + Math.random() * 2800; // 5.2–8s (half-speed)
       var startTime = performance.now();
+      var enteredViewport = false;
+      var fadeStart = 0;
+      var FADE_DUR = 600;
 
       function step(now) {
         var t = (now - startTime) / duration;
@@ -910,9 +959,27 @@
         var pt = srcPath.getPointAtLength(dist);
         circle.setAttribute("cx", pt.x);
         circle.setAttribute("cy", pt.y);
+
+        // Detect first entry into viewport and schedule a random fade-out
+        if (!enteredViewport) {
+          var vTop = window.scrollY;
+          var vBot = vTop + window.innerHeight;
+          if (pt.y >= vTop && pt.y <= vBot) {
+            enteredViewport = true;
+            fadeStart = now + 400 + Math.random() * 1800; // 0.4–2.2s delay
+          }
+        }
+
         var op = 1;
-        if (t < 0.1) op = t / 0.1;
-        else if (t > 0.85) op = (1 - t) / 0.15;
+        if (t < 0.1) op = t / 0.1; // gentle fade-in at spawn
+        if (enteredViewport && now >= fadeStart) {
+          var ft = (now - fadeStart) / FADE_DUR;
+          if (ft >= 1) {
+            if (circle.parentNode) circle.remove();
+            return;
+          }
+          op = Math.min(op, 1 - ft);
+        }
         circle.setAttribute("opacity", op.toFixed(2));
         requestAnimationFrame(step);
       }

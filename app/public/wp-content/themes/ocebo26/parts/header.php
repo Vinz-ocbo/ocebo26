@@ -79,10 +79,13 @@
           <stop offset="12%"  stop-color="#15ffd6" stop-opacity="0.25"/>
           <stop offset="25%"  stop-color="#15ffd6" stop-opacity="0.05"/>
           <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.20"/>
-          <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.08"/>
-          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.22"/>
-          <stop offset="82%"  stop-color="#15ffd6" stop-opacity="0.10"/>
-          <stop offset="92%"  stop-color="#15ffd6" stop-opacity="0.03"/>
+          <stop offset="50%"  stop-color="#15ffd6" stop-opacity="0.22"/>
+          <stop offset="60%"  stop-color="#15ffd6" stop-opacity="0.19"/>
+          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.15"/>
+          <stop offset="78%"  stop-color="#15ffd6" stop-opacity="0.11"/>
+          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.07"/>
+          <stop offset="91%"  stop-color="#15ffd6" stop-opacity="0.04"/>
+          <stop offset="96%"  stop-color="#15ffd6" stop-opacity="0.02"/>
           <stop offset="100%" stop-color="#15ffd6" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="lace-grad-cyan-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
@@ -90,10 +93,13 @@
           <stop offset="12%"  stop-color="#15ffd6" stop-opacity="0.08"/>
           <stop offset="25%"  stop-color="#15ffd6" stop-opacity="0.02"/>
           <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.06"/>
-          <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.02"/>
-          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.08"/>
-          <stop offset="82%"  stop-color="#15ffd6" stop-opacity="0.03"/>
-          <stop offset="92%"  stop-color="#15ffd6" stop-opacity="0.01"/>
+          <stop offset="50%"  stop-color="#15ffd6" stop-opacity="0.07"/>
+          <stop offset="60%"  stop-color="#15ffd6" stop-opacity="0.06"/>
+          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.05"/>
+          <stop offset="78%"  stop-color="#15ffd6" stop-opacity="0.035"/>
+          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.022"/>
+          <stop offset="91%"  stop-color="#15ffd6" stop-opacity="0.013"/>
+          <stop offset="96%"  stop-color="#15ffd6" stop-opacity="0.006"/>
           <stop offset="100%" stop-color="#15ffd6" stop-opacity="0"/>
         </linearGradient>
         <!-- Magenta gradient: same pattern, offset rhythm -->
@@ -102,10 +108,13 @@
           <stop offset="15%"  stop-color="#d74ed7" stop-opacity="0.22"/>
           <stop offset="30%"  stop-color="#d74ed7" stop-opacity="0.05"/>
           <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.25"/>
-          <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.10"/>
-          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.08"/>
-          <stop offset="85%"  stop-color="#d74ed7" stop-opacity="0.15"/>
-          <stop offset="93%"  stop-color="#d74ed7" stop-opacity="0.04"/>
+          <stop offset="55%"  stop-color="#d74ed7" stop-opacity="0.22"/>
+          <stop offset="65%"  stop-color="#d74ed7" stop-opacity="0.18"/>
+          <stop offset="74%"  stop-color="#d74ed7" stop-opacity="0.14"/>
+          <stop offset="82%"  stop-color="#d74ed7" stop-opacity="0.10"/>
+          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.06"/>
+          <stop offset="93%"  stop-color="#d74ed7" stop-opacity="0.03"/>
+          <stop offset="97%"  stop-color="#d74ed7" stop-opacity="0.015"/>
           <stop offset="100%" stop-color="#d74ed7" stop-opacity="0"/>
         </linearGradient>
         <linearGradient id="lace-grad-mag-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
@@ -113,10 +122,13 @@
           <stop offset="15%"  stop-color="#d74ed7" stop-opacity="0.07"/>
           <stop offset="30%"  stop-color="#d74ed7" stop-opacity="0.02"/>
           <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.08"/>
-          <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.03"/>
-          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.02"/>
-          <stop offset="85%"  stop-color="#d74ed7" stop-opacity="0.05"/>
+          <stop offset="55%"  stop-color="#d74ed7" stop-opacity="0.07"/>
+          <stop offset="65%"  stop-color="#d74ed7" stop-opacity="0.06"/>
+          <stop offset="74%"  stop-color="#d74ed7" stop-opacity="0.045"/>
+          <stop offset="82%"  stop-color="#d74ed7" stop-opacity="0.032"/>
+          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.02"/>
           <stop offset="93%"  stop-color="#d74ed7" stop-opacity="0.01"/>
+          <stop offset="97%"  stop-color="#d74ed7" stop-opacity="0.005"/>
           <stop offset="100%" stop-color="#d74ed7" stop-opacity="0"/>
         </linearGradient>
       </defs>
