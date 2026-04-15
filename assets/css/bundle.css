@@ -486,6 +486,12 @@ body {
   align-items: center;
 }
 
+.nav__logo-image {
+  display: block;
+  height: 32px;
+  width: auto;
+}
+
 .nav__logo-text {
   font-family: var(--font-heading);
   font-size: var(--text-heading-sm);

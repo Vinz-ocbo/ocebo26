@@ -6,7 +6,7 @@
     <nav class="nav" aria-label="Navigation principale">
       <div class="nav__inner">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="nav__logo" aria-label="Ocebo — Accueil">
-          <span class="nav__logo-text">OCEBO</span>
+          <img src="<?php echo OCEBO26_URI; ?>/assets/images/logo.svg" alt="Ocebo" class="nav__logo-image" width="131" height="55">
         </a>
 
         <ul class="nav__menu" role="menubar">
