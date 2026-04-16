@@ -52,6 +52,7 @@
 
   .hero__ctas .btn {
     width: 100%;
+    justify-content: space-between;
   }
 }
 
