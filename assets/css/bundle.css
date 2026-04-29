@@ -476,6 +476,11 @@ body {
     transform var(--transition-base);
 }
 
+.site-header.is-scrolled:has(.mobile-menu[aria-hidden="false"]) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .site-header.is-hidden {
   transform: translateY(-100%);
 }

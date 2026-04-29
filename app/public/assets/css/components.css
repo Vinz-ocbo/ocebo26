@@ -163,6 +163,14 @@
     transform var(--transition-base);
 }
 
+/* Quand le menu mobile est ouvert, on coupe le backdrop-filter du header :
+   sinon il pose un backdrop-root qui empêche la .mobile-menu (descendante)
+   d'appliquer son propre flou. */
+.site-header.is-scrolled:has(.mobile-menu[aria-hidden="false"]) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .site-header.is-hidden {
   transform: translateY(-100%);
 }
