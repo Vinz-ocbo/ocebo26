@@ -811,25 +811,25 @@
 
     var resizeTimer;
     window.addEventListener("resize", function () {
-      // Immediate reset: wipe halo + any in-flight growth so dots return to base size
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      if (dotR) {
-        for (var r = 0; r < dotCount; r++) {
-          dotR[r] = BASE_RADIUS;
-          dotGR[r] = 0;
-          dotTouched[r] = 0;
-        }
-      }
-      handleProximity._prevIndices = null;
-      stopPulse();
-      clearTimeout(idleTimer);
-      hoverActive = false;
-
+      // Tout est débouncé : on évitait avant un freeze pendant le drag de fenêtre
+      // (chaque event resize relançait une boucle sur ~30K dots + un canvas fullscreen)
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        if (dotR) {
+          for (var r = 0; r < dotCount; r++) {
+            dotR[r] = BASE_RADIUS;
+            dotGR[r] = 0;
+            dotTouched[r] = 0;
+          }
+        }
+        handleProximity._prevIndices = null;
+        stopPulse();
+        clearTimeout(idleTimer);
+        hoverActive = false;
         buildGrid();
-        animate(); // one frame to repaint base grid at new size
+        animate();
       }, 150);
     });
 
