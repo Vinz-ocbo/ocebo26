@@ -238,6 +238,15 @@
 .site-footer {
   padding: var(--space-3) 0;
   border-top: 1px solid #ffffff0d;
+  /* Glass aligné sur le header (.site-header.is-scrolled) */
+  background-color: transparent;
+  background-image: radial-gradient(
+    ellipse at center,
+    rgba(3, 2, 23, 0.70) 0%,
+    rgba(3, 2, 23, 0.40) 100%
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .footer__inner {

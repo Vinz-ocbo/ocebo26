@@ -162,29 +162,153 @@
   }
 
   /* ============================================
-     DROPDOWN MENU — KEYBOARD ACCESSIBILITY
+     DROPDOWN PORTAL
+     Sort les .nav__dropdown du DOM du .site-header pour les rattacher à <body>.
+     Pourquoi : le backdrop-filter du header (.is-scrolled) crée un backdrop-root
+     qui piège le rendering des descendants — le backdrop-filter d'un dropdown
+     enfant ne voit alors plus la page mais la couche compositée du header,
+     d'où la perte de flou. En sortant les dropdowns à body level, les deux
+     glass coexistent.
+     Position calculée en position:fixed depuis le bounding rect du header
+     et du trigger.
      ============================================ */
-  function initDropdownKeyboard() {
-    const dropdownItems = document.querySelectorAll(
-      '.nav__item [aria-haspopup="true"]'
-    );
+  function initDropdownPortal() {
+    const header = document.querySelector(".site-header");
+    if (!header) return;
 
-    dropdownItems.forEach((trigger) => {
-      trigger.addEventListener("keydown", (e) => {
+    const items = document.querySelectorAll(".nav__item");
+    if (!items.length) return;
+
+    let portal = document.getElementById("nav-dropdown-portal");
+    if (!portal) {
+      portal = document.createElement("div");
+      portal.id = "nav-dropdown-portal";
+      document.body.appendChild(portal);
+    }
+
+    items.forEach(function (item) {
+      const dropdown = item.querySelector(".nav__dropdown");
+      const trigger = item.querySelector('.nav__link[aria-haspopup="true"]');
+      if (!dropdown || !trigger) return;
+
+      portal.appendChild(dropdown);
+
+      let hideTimer = null;
+
+      function reposition() {
+        const headerRect = header.getBoundingClientRect();
+        const triggerRect = trigger.getBoundingClientRect();
+        const cx = triggerRect.left + triggerRect.width / 2;
+        // 6px sous le bandeau header pour éviter tout chevauchement, et
+        // 170 = 340/2 pour centrer le dropdown (width fixe en CSS) sur le trigger.
+        dropdown.style.top = (headerRect.bottom + 6) + "px";
+        dropdown.style.left = (cx - 170) + "px";
+      }
+
+      function open() {
+        window.clearTimeout(hideTimer);
+        reposition();
+        dropdown.classList.add("is-open");
+        item.classList.add("has-open-dropdown");
+        trigger.setAttribute("aria-expanded", "true");
+      }
+
+      function close() {
+        dropdown.classList.remove("is-open");
+        item.classList.remove("has-open-dropdown");
+        trigger.setAttribute("aria-expanded", "false");
+      }
+
+      function scheduleClose() {
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(close, 180);
+      }
+
+      function isFocusInside(target) {
+        return !!target && (item.contains(target) || dropdown.contains(target));
+      }
+
+      item.addEventListener("mouseenter", open);
+      item.addEventListener("mouseleave", scheduleClose);
+      dropdown.addEventListener("mouseenter", open);
+      dropdown.addEventListener("mouseleave", scheduleClose);
+
+      trigger.addEventListener("focus", open);
+      item.addEventListener("focusout", function (e) {
+        if (!isFocusInside(e.relatedTarget)) scheduleClose();
+      });
+      dropdown.addEventListener("focusout", function (e) {
+        if (!isFocusInside(e.relatedTarget)) scheduleClose();
+      });
+
+      trigger.addEventListener("keydown", function (e) {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          const expanded = trigger.getAttribute("aria-expanded") === "true";
-          trigger.setAttribute("aria-expanded", String(!expanded));
+          if (dropdown.classList.contains("is-open")) close();
+          else open();
         }
       });
 
-      // Close dropdown on Escape
-      const parent = trigger.closest(".nav__item");
-      parent.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-          trigger.setAttribute("aria-expanded", "false");
+      function onEscape(e) {
+        if (e.key === "Escape" && dropdown.classList.contains("is-open")) {
+          close();
           trigger.focus();
         }
+      }
+      item.addEventListener("keydown", onEscape);
+      dropdown.addEventListener("keydown", onEscape);
+
+      window.addEventListener("resize", function () {
+        if (dropdown.classList.contains("is-open")) reposition();
+      });
+    });
+  }
+
+  /* ============================================
+     DROPDOWN HOVER INDICATOR
+     Glissement cyan sous le lien survolé, animé d'un lien à l'autre.
+     ============================================ */
+  function initDropdownIndicator() {
+    document.querySelectorAll(".nav__dropdown-inner").forEach(function (inner) {
+      const indicator = document.createElement("div");
+      indicator.className = "nav__dropdown-indicator";
+      indicator.setAttribute("aria-hidden", "true");
+      // En dernier enfant : ne décale pas les :nth-child des liens (stagger).
+      // Le z-index du CSS le maintient derrière les liens.
+      inner.appendChild(indicator);
+
+      const links = inner.querySelectorAll(".nav__dropdown-link");
+      let firstShow = true;
+
+      function moveTo(link) {
+        const animate = !firstShow;
+        if (!animate) {
+          indicator.style.transition = "none";
+        }
+        indicator.style.left = link.offsetLeft + "px";
+        indicator.style.top = link.offsetTop + "px";
+        indicator.style.width = link.offsetWidth + "px";
+        indicator.style.height = link.offsetHeight + "px";
+        if (!animate) {
+          void indicator.offsetHeight;
+          indicator.style.transition = "";
+          firstShow = false;
+        }
+        indicator.classList.add("is-active");
+      }
+
+      function hide() {
+        indicator.classList.remove("is-active");
+      }
+
+      links.forEach(function (link) {
+        link.addEventListener("mouseenter", function () { moveTo(link); });
+        link.addEventListener("focus", function () { moveTo(link); });
+      });
+
+      inner.addEventListener("mouseleave", hide);
+      inner.addEventListener("focusout", function (e) {
+        if (!inner.contains(e.relatedTarget)) hide();
       });
     });
   }
@@ -1241,7 +1365,8 @@
     initScrollReveal();
     initHeaderScroll();
     initMobileMenu();
-    initDropdownKeyboard();
+    initDropdownPortal();
+    initDropdownIndicator();
     initAccordions();
     initCounters();
     initLogosSlider();
