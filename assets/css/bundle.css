@@ -1478,6 +1478,13 @@ body {
   margin-bottom: var(--space-4);
 }
 
+/* Sur les sections à fond blanc frosted, le chip section-number passe en noir
+   (sinon le frosted-white du chip se confond avec le fond du container). */
+.section--acces-direct .section-number,
+.section--faq .section-number {
+  background: #000000;
+}
+
 .section--faq > .container,
 .section--acces-direct > .container {
   background: radial-gradient(
