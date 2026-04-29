@@ -21,6 +21,23 @@
   overflow: hidden;
 }
 
+/* Drag/swipe : on garde le scroll vertical natif, on capte l'horizontal */
+.slider-simple[data-loop="1"] {
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.slider-simple[data-loop="1"].is-dragging,
+.slider-simple[data-loop="1"].is-dragging .slider-simple__link {
+  cursor: grabbing;
+}
+.slider-simple[data-loop="1"] .slider-simple__media img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
 .slider-simple__track {
   display: flex;
   gap: var(--slide-gap);

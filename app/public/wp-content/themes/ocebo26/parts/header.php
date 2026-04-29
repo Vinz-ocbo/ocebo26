@@ -52,16 +52,24 @@
 
     <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
       <ul class="mobile-menu__list">
-        <li><a href="<?php echo esc_url(home_url('/services')); ?>" class="mobile-menu__link">Services</a>
-          <ul class="mobile-menu__sub">
+        <li class="mobile-menu__item mobile-menu__item--has-sub">
+          <div class="mobile-menu__row">
+            <a href="<?php echo esc_url(home_url('/services')); ?>" class="mobile-menu__link">Services</a>
+            <button type="button" class="mobile-menu__toggle" aria-expanded="false" aria-controls="mobile-sub-services" aria-label="Sous-pages Services">
+              <svg class="mobile-menu__chevron" width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="mobile-menu__sub" id="mobile-sub-services" hidden>
             <li><a href="<?php echo esc_url(home_url('/services/sites-applications')); ?>">Sites & Applications web</a></li>
             <li><a href="<?php echo esc_url(home_url('/services/communication-marketing-digital')); ?>">Communication & Marketing digital</a></li>
             <li><a href="<?php echo esc_url(home_url('/services/maintenance-exploitation')); ?>">Maintenance & Exploitation</a></li>
           </ul>
         </li>
-        <li><a href="<?php echo esc_url(home_url('/references')); ?>" class="mobile-menu__link">Références</a></li>
-        <li><a href="<?php echo esc_url(home_url('/studio-externe')); ?>" class="mobile-menu__link">Studio externe</a></li>
-        <li><a href="<?php echo esc_url(home_url('/contact')); ?>" class="mobile-menu__link mobile-menu__link--cta">Nous contacter</a></li>
+        <li class="mobile-menu__item"><a href="<?php echo esc_url(home_url('/references')); ?>" class="mobile-menu__link">Références</a></li>
+        <li class="mobile-menu__item"><a href="<?php echo esc_url(home_url('/studio-externe')); ?>" class="mobile-menu__link">Studio externe</a></li>
+        <li class="mobile-menu__item"><a href="<?php echo esc_url(home_url('/contact')); ?>" class="mobile-menu__link mobile-menu__link--cta">Nous contacter</a></li>
       </ul>
     </div>
   </header>

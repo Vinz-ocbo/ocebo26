@@ -76,26 +76,88 @@
   function initMobileMenu() {
     const burger = document.querySelector(".nav__burger");
     const mobileMenu = document.getElementById("mobile-menu");
+    const header = document.querySelector(".site-header");
     if (!burger || !mobileMenu) return;
 
-    burger.addEventListener("click", () => {
+    function expandAccordion(toggle) {
+      const id = toggle.getAttribute("aria-controls");
+      const panel = id ? document.getElementById(id) : null;
+      if (!panel) return;
+      toggle.setAttribute("aria-expanded", "true");
+      panel.hidden = false;
+      panel.style.maxHeight = "0px";
+      void panel.offsetHeight;
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      function onEnd(e) {
+        if (e.propertyName !== "max-height") return;
+        panel.style.maxHeight = "none";
+        panel.removeEventListener("transitionend", onEnd);
+      }
+      panel.addEventListener("transitionend", onEnd);
+    }
+
+    function collapseAccordion(toggle, instant) {
+      const id = toggle.getAttribute("aria-controls");
+      const panel = id ? document.getElementById(id) : null;
+      if (!panel) return;
+      toggle.setAttribute("aria-expanded", "false");
+      if (instant) {
+        panel.hidden = true;
+        panel.style.maxHeight = "";
+        return;
+      }
+      panel.style.maxHeight = panel.scrollHeight + "px";
+      void panel.offsetHeight;
+      panel.style.maxHeight = "0px";
+      function onEnd(e) {
+        if (e.propertyName !== "max-height") return;
+        panel.hidden = true;
+        panel.style.maxHeight = "";
+        panel.removeEventListener("transitionend", onEnd);
+      }
+      panel.addEventListener("transitionend", onEnd);
+    }
+
+    function openMenu() {
+      burger.setAttribute("aria-expanded", "true");
+      burger.setAttribute("aria-label", "Fermer le menu");
+      mobileMenu.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      // Header doit rester visible pour exposer la croix de fermeture
+      if (header) header.classList.remove("is-hidden");
+    }
+
+    function closeMenu() {
+      burger.setAttribute("aria-expanded", "false");
+      burger.setAttribute("aria-label", "Ouvrir le menu");
+      mobileMenu.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      // Replie tous les sous-menus pour qu'on retrouve l'état initial à la prochaine ouverture
+      mobileMenu
+        .querySelectorAll(".mobile-menu__toggle[aria-expanded='true']")
+        .forEach(function (t) { collapseAccordion(t, true); });
+    }
+
+    burger.addEventListener("click", function () {
       const isOpen = burger.getAttribute("aria-expanded") === "true";
-      burger.setAttribute("aria-expanded", String(!isOpen));
-      mobileMenu.setAttribute("aria-hidden", String(isOpen));
-      document.body.style.overflow = isOpen ? "" : "hidden";
+      if (isOpen) closeMenu(); else openMenu();
     });
 
     // Close on Escape
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        burger.getAttribute("aria-expanded") === "true"
-      ) {
-        burger.setAttribute("aria-expanded", "false");
-        mobileMenu.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && burger.getAttribute("aria-expanded") === "true") {
+        closeMenu();
         burger.focus();
       }
+    });
+
+    // Accordion toggles (sous-menus de niveau 2)
+    mobileMenu.querySelectorAll(".mobile-menu__toggle").forEach(function (toggle) {
+      toggle.addEventListener("click", function () {
+        const expanded = toggle.getAttribute("aria-expanded") === "true";
+        if (expanded) collapseAccordion(toggle, false);
+        else expandAccordion(toggle);
+      });
     });
   }
 
@@ -1168,9 +1230,6 @@
   /* ============================================
      INIT — light immédiat, heavy en idle
      ============================================ */
-  function isMobileViewport() {
-    return window.innerWidth <= 768;
-  }
   function prefersReducedMotion() {
     return window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1188,10 +1247,9 @@
     initLogosSlider();
   }
 
-  // Modules lourds — différés à browser idle, desktop uniquement
+  // Modules lourds — différés à browser idle
   function initHeavy() {
     if (prefersReducedMotion()) return;
-    if (isMobileViewport()) return; // mobile = pas de décoratif, TBT critique
 
     initParallax();
     initHeadingLetterReveal();
