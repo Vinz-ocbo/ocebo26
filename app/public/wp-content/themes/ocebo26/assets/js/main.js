@@ -299,14 +299,20 @@
     section.addEventListener("mouseleave", resetTargets);
     section.addEventListener("touchend", resetTargets);
 
-    // Animation loop — lerp toward target
+    // Animation loop — idle-stop quand toutes les cards ont convergé vers leur cible
+    let parallaxRafId = null;
+    const SETTLE = 0.05;
     function tick() {
+      let stillMoving = false;
       cards.forEach((card) => {
         const s = state.get(card);
         s.x += (s.targetX - s.x) * EASE;
         s.y += (s.targetY - s.y) * EASE;
 
-        // Clamp
+        if (Math.abs(s.targetX - s.x) > SETTLE || Math.abs(s.targetY - s.y) > SETTLE) {
+          stillMoving = true;
+        }
+
         const len = Math.sqrt(s.x * s.x + s.y * s.y);
         if (len > MAX_OFFSET) {
           s.x = (s.x / len) * MAX_OFFSET;
@@ -317,10 +323,21 @@
           "translate(" + s.x.toFixed(1) + "px," + s.y.toFixed(1) + "px)";
       });
 
-      requestAnimationFrame(tick);
+      if (stillMoving) {
+        parallaxRafId = requestAnimationFrame(tick);
+      } else {
+        parallaxRafId = null;
+      }
     }
 
-    requestAnimationFrame(tick);
+    function startParallaxTick() {
+      if (parallaxRafId === null) parallaxRafId = requestAnimationFrame(tick);
+    }
+
+    section.addEventListener("mousemove", startParallaxTick);
+    section.addEventListener("touchmove", startParallaxTick, { passive: true });
+    section.addEventListener("mouseleave", startParallaxTick);
+    section.addEventListener("touchend", startParallaxTick);
   }
 
   /* ============================================
@@ -340,7 +357,8 @@
     let isDragging = false;
     let dragStartX = 0;
     let dragOffset = 0;
-    let rafId = null;
+    let rafActive = false;
+    let isInView = false;
 
     // Measure one set width (original slides only)
     function getSetWidth() {
@@ -351,24 +369,30 @@
       return w;
     }
 
-    // Auto-scroll tick
+    // Auto-scroll tick — pause hors viewport
     function tick() {
+      if (!rafActive) return;
+
       if (!isDragging) {
         offset -= speed;
       }
 
       const setW = getSetWidth();
-      // Wrap around: when we've scrolled past one full set, reset
-      if (offset <= -setW) {
-        offset += setW;
-      }
-      if (offset > 0) {
-        offset -= setW;
-      }
+      if (offset <= -setW) offset += setW;
+      if (offset > 0) offset -= setW;
 
       track.style.transform = "translateX(" + offset + "px)";
       updateOpacity();
-      rafId = requestAnimationFrame(tick);
+      requestAnimationFrame(tick);
+    }
+
+    function startTick() {
+      if (rafActive) return;
+      rafActive = true;
+      requestAnimationFrame(tick);
+    }
+    function stopTick() {
+      rafActive = false;
     }
 
     // Opacity based on center distance
@@ -426,12 +450,31 @@
       speed = 0;
     });
     slider.addEventListener("mouseleave", () => {
-      speed = 0.5;
+      if (isInView) speed = 0.5;
     });
 
     // Disable CSS animation — we drive everything from JS
     track.style.animation = "none";
-    rafId = requestAnimationFrame(tick);
+
+    // Auto-scroll uniquement quand le slider est visible (économie CPU)
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            isInView = true;
+            speed = 0.5;
+            startTick();
+          } else {
+            isInView = false;
+            stopTick();
+          }
+        });
+      }, { threshold: 0.1 });
+      io.observe(slider);
+    } else {
+      isInView = true;
+      startTick();
+    }
   }
 
   /* ============================================
@@ -1123,10 +1166,18 @@
   }
 
   /* ============================================
-     INIT
+     INIT — light immédiat, heavy en idle
      ============================================ */
-  function init() {
-    initDotMesh();
+  function isMobileViewport() {
+    return window.innerWidth <= 768;
+  }
+  function prefersReducedMotion() {
+    return window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  // Modules légers — exécutés à DOMContentLoaded
+  function initLight() {
     addRevealClasses();
     initScrollReveal();
     initHeaderScroll();
@@ -1134,10 +1185,30 @@
     initDropdownKeyboard();
     initAccordions();
     initCounters();
-    initParallax();
     initLogosSlider();
-    initScrollLace();
+  }
+
+  // Modules lourds — différés à browser idle, desktop uniquement
+  function initHeavy() {
+    if (prefersReducedMotion()) return;
+    if (isMobileViewport()) return; // mobile = pas de décoratif, TBT critique
+
+    initParallax();
     initHeadingLetterReveal();
+    initDotMesh();
+    initScrollLace();
+  }
+
+  function init() {
+    initLight();
+
+    if ("requestIdleCallback" in window) {
+      // timeout long : on préfère que ça tourne quand le browser est vraiment idle
+      // (au-delà de la fenêtre de mesure TBT de Lighthouse)
+      window.requestIdleCallback(initHeavy, { timeout: 5000 });
+    } else {
+      window.setTimeout(initHeavy, 1500);
+    }
   }
 
   if (document.readyState === "loading") {

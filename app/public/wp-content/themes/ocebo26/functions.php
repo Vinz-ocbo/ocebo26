@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.0.67');
+define('OCEBO26_VERSION', '1.0.77');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
@@ -67,9 +67,88 @@ add_action('wp_enqueue_scripts', function () {
         $prev = $full_handle;
     }
 
-    // Frontend JS
-    wp_enqueue_script('ocebo26-main', OCEBO26_URI . '/assets/js/main.js', [], OCEBO26_VERSION, ['strategy' => 'defer']);
+    // Frontend JS (minifié via terser, cf. npm run build:js)
+    wp_enqueue_script('ocebo26-main', OCEBO26_URI . '/assets/js/main.min.js', [], OCEBO26_VERSION, ['strategy' => 'defer']);
 });
+
+/* ============================================
+   RESOURCE HINTS — preconnect aux serveurs de fonts
+   ============================================ */
+add_filter('wp_resource_hints', function ($hints, $relation) {
+    if ($relation === 'preconnect') {
+        $hints[] = [ 'href' => 'https://fonts.googleapis.com' ];
+        $hints[] = [ 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' ];
+        $hints[] = [ 'href' => 'https://p.typekit.net', 'crossorigin' => 'anonymous' ];
+        $hints[] = [ 'href' => 'https://use.typekit.net', 'crossorigin' => 'anonymous' ];
+    }
+    return $hints;
+}, 10, 2);
+
+/* ============================================
+   ASYNC LOAD — Google Fonts CSS uniquement (typekit reste sync pour LCP)
+   ============================================ */
+add_filter('style_loader_tag', function ($tag, $handle) {
+    // Note : typekit (Bookmania) reste sync car le H1 hero l'utilise et
+    // l'async retardait le LCP. Seul Google Fonts (Cabin/Kanit) est async.
+    if ($handle !== 'ocebo26-google-fonts') {
+        return $tag;
+    }
+    $async = preg_replace(
+        '/(rel=["\']stylesheet["\'])/',
+        '$1 media="print" onload="this.media=\'all\'"',
+        $tag
+    );
+    return $async . '<noscript>' . $tag . '</noscript>';
+}, 10, 2);
+
+/* ============================================
+   DISABLE wp-emoji (parse JS inutile dans <head>)
+   ============================================ */
+remove_action('wp_head', 'print_emoji_detection_script', 7);
+remove_action('admin_print_scripts', 'print_emoji_detection_script');
+remove_action('wp_print_styles', 'print_emoji_styles');
+remove_action('admin_print_styles', 'print_emoji_styles');
+remove_filter('the_content_feed', 'wp_staticize_emoji');
+remove_filter('comment_text_rss', 'wp_staticize_emoji');
+remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
+
+/* ============================================
+   DISABLE wp-embed.min.js + jquery-migrate (frontend)
+   ============================================ */
+add_action('wp_footer', function () {
+    wp_dequeue_script('wp-embed');
+});
+add_action('wp_default_scripts', function ($scripts) {
+    if (!is_admin() && !empty($scripts->registered['jquery'])) {
+        $jq = $scripts->registered['jquery'];
+        if ($jq->deps) {
+            $jq->deps = array_diff($jq->deps, ['jquery-migrate']);
+        }
+    }
+});
+
+/* ============================================
+   DEFER tous les scripts frontend (sauf admin-bar)
+   ============================================ */
+add_filter('script_loader_tag', function ($tag, $handle) {
+    if (is_admin_bar_showing() && in_array($handle, ['admin-bar', 'jquery', 'jquery-core'], true)) {
+        return $tag;
+    }
+    if (strpos($tag, ' defer') !== false || strpos($tag, ' async') !== false) {
+        return $tag;
+    }
+    return str_replace(' src=', ' defer src=', $tag);
+}, 10, 2);
+
+/* ============================================
+   DISABLE block library CSS globale (on ne l'utilise pas en front)
+   ============================================ */
+add_action('wp_enqueue_scripts', function () {
+    wp_dequeue_style('wp-block-library');
+    wp_dequeue_style('wp-block-library-theme');
+    wp_dequeue_style('classic-theme-styles');
+    wp_dequeue_style('global-styles');
+}, 100);
 
 /* ============================================
    ENQUEUE — EDITOR
@@ -101,6 +180,7 @@ add_action('init', function () {
     $blocks = [
         'hero', 'checklist', 'services-grid', 'pourquoi',
         'chiffres', 'logos-slider', 'faq', 'contact-cta',
+        'slider-simple',
     ];
 
     foreach ($blocks as $block) {

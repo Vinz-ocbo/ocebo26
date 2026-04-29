@@ -35,7 +35,7 @@
     <nav class="nav" aria-label="Navigation principale">
       <div class="nav__inner">
         <a href="/" class="nav__logo" aria-label="Ocebo — Accueil">
-          <span class="nav__logo-text">OCEBO</span>
+          <img src="assets/images/logo.svg" alt="Ocebo" class="nav__logo-image" width="131" height="55">
         </a>
 
         <ul class="nav__menu" role="menubar">
@@ -97,6 +97,69 @@
 
   <!-- Interactive dot mesh background -->
   <canvas id="dot-canvas" aria-hidden="true"></canvas>
+
+  <!-- Scroll-driven laces (cyan + magenta) -->
+  <div id="lace-wrap" aria-hidden="true">
+    <svg id="lace-svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="lace-grad-cyan" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0%"   stop-color="#15ffd6" stop-opacity="0.15"/>
+          <stop offset="12%"  stop-color="#15ffd6" stop-opacity="0.25"/>
+          <stop offset="25%"  stop-color="#15ffd6" stop-opacity="0.10"/>
+          <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.22"/>
+          <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.14"/>
+          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.25"/>
+          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.14"/>
+          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0.22"/>
+        </linearGradient>
+        <linearGradient id="lace-grad-cyan-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0%"   stop-color="#15ffd6" stop-opacity="0.04"/>
+          <stop offset="12%"  stop-color="#15ffd6" stop-opacity="0.08"/>
+          <stop offset="25%"  stop-color="#15ffd6" stop-opacity="0.03"/>
+          <stop offset="40%"  stop-color="#15ffd6" stop-opacity="0.07"/>
+          <stop offset="55%"  stop-color="#15ffd6" stop-opacity="0.04"/>
+          <stop offset="70%"  stop-color="#15ffd6" stop-opacity="0.08"/>
+          <stop offset="85%"  stop-color="#15ffd6" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#15ffd6" stop-opacity="0.07"/>
+        </linearGradient>
+        <linearGradient id="lace-grad-mag" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0%"   stop-color="#d74ed7" stop-opacity="0.08"/>
+          <stop offset="15%"  stop-color="#d74ed7" stop-opacity="0.22"/>
+          <stop offset="30%"  stop-color="#d74ed7" stop-opacity="0.10"/>
+          <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.25"/>
+          <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.14"/>
+          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.22"/>
+          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.14"/>
+          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0.20"/>
+        </linearGradient>
+        <linearGradient id="lace-grad-mag-glow" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
+          <stop offset="0%"   stop-color="#d74ed7" stop-opacity="0.02"/>
+          <stop offset="15%"  stop-color="#d74ed7" stop-opacity="0.07"/>
+          <stop offset="30%"  stop-color="#d74ed7" stop-opacity="0.03"/>
+          <stop offset="45%"  stop-color="#d74ed7" stop-opacity="0.08"/>
+          <stop offset="60%"  stop-color="#d74ed7" stop-opacity="0.04"/>
+          <stop offset="75%"  stop-color="#d74ed7" stop-opacity="0.07"/>
+          <stop offset="88%"  stop-color="#d74ed7" stop-opacity="0.04"/>
+          <stop offset="100%" stop-color="#d74ed7" stop-opacity="0.06"/>
+        </linearGradient>
+        <linearGradient id="lace-mask-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100%">
+          <stop id="lace-mask-s1" offset="0%"   stop-color="#fff"/>
+          <stop id="lace-mask-s2" offset="0%"   stop-color="#fff"/>
+          <stop id="lace-mask-s3" offset="0%"   stop-color="#000"/>
+          <stop id="lace-mask-s4" offset="100%" stop-color="#000"/>
+        </linearGradient>
+        <mask id="lace-mask" maskUnits="userSpaceOnUse">
+          <rect id="lace-mask-rect" x="0" y="0" width="100%" height="100%" fill="url(#lace-mask-grad)"/>
+        </mask>
+      </defs>
+      <g mask="url(#lace-mask)">
+        <path id="lace-cyan-glow" fill="none" stroke="url(#lace-grad-cyan-glow)" stroke-width="22" stroke-linecap="round"/>
+        <path id="lace-cyan" fill="none" stroke="url(#lace-grad-cyan)" stroke-width="6.6" stroke-linecap="round"/>
+        <path id="lace-magenta-glow" fill="none" stroke="url(#lace-grad-mag-glow)" stroke-width="20" stroke-linecap="round"/>
+        <path id="lace-magenta" fill="none" stroke="url(#lace-grad-mag)" stroke-width="6" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
 
   <!-- DECORATIVE BACKGROUND (disabled – remove outer comment to restore)
   <div class="bg-effects" aria-hidden="true">
@@ -428,6 +491,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js" defer></script>
+  <script src="assets/js/main.min.js" defer></script>
 </body>
 </html>

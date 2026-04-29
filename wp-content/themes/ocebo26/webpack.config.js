@@ -10,6 +10,7 @@ const blocks = [
   'logos-slider',
   'faq',
   'contact-cta',
+  'slider-simple',
 ];
 
 const entry = {};

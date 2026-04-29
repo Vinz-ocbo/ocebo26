@@ -1,0 +1,131 @@
+/* Slider Simple — Block styles
+   Animation par step : 1 slide vers la gauche, easing ease-out, dwell 5s.
+   Active 100% / latéraux 20%.
+   Desktop : bord gauche du slide actif aligné sur le bord gauche du H1 hero
+            (= container content + section-number 56px + gap 24px).
+   Mobile : carte active centrée horizontalement par rapport au viewport. */
+
+.slider-simple {
+  --slide-w: 758px;
+  --slide-gap: 80px;
+  --slide-aspect: 758 / 450;
+  --slide-radius: 8px;
+  --container-w: min(1024px, 100%);
+  --container-pad: 24px;       /* .container padding-inline (--space-3) */
+  --h1-offset: 80px;            /* .section-number(56) + .section-header gap(24) */
+  --transition-ms: 700ms;
+  --transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
+
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slider-simple__track {
+  display: flex;
+  gap: var(--slide-gap);
+  align-items: flex-start;
+  padding-block: 8px;
+  /* Desktop : bord gauche du slide actif aligné au bord gauche du H1 hero */
+  padding-inline-start: calc(50% - var(--container-w) / 2 + var(--container-pad) + var(--h1-offset));
+  will-change: transform;
+}
+
+/* Position initiale (pré-JS) : place le 1er slide du set du milieu à l'ancrage actif.
+   --orig-count est injecté par render.php. JS prendra ensuite le relais via inline style. */
+.slider-simple[data-loop="1"] .slider-simple__track {
+  transform: translateX(calc(-1 * var(--orig-count, 0) * (var(--slide-w) + var(--slide-gap))));
+}
+
+.slider-simple__slide {
+  flex: 0 0 var(--slide-w);
+  width: var(--slide-w);
+  opacity: 0.2;
+  transition: opacity var(--transition-ms) var(--transition-easing);
+}
+
+.slider-simple__slide.is-center {
+  opacity: 1;
+}
+
+.slider-simple__link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.slider-simple__media {
+  width: 100%;
+  aspect-ratio: var(--slide-aspect);
+  border-radius: var(--slide-radius);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.slider-simple__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Titre H3 — repris du bloc 2 (.card-service__title) */
+.slider-simple__title {
+  margin-top: 16px;
+  font-family: var(--font-heading);
+  font-size: var(--text-heading-md);
+  line-height: var(--lh-heading-md);
+  font-weight: var(--fw-regular);
+  color: var(--color-accent-magenta);
+  /* opacité héritée de .slider-simple__slide */
+}
+
+/* --- Cas 1 image : statique, centrée, 100% --- */
+.slider-simple.is-single .slider-simple__track {
+  justify-content: center;
+  padding-inline: 24px;
+}
+.slider-simple.is-single .slider-simple__slide {
+  opacity: 1;
+}
+
+/* --- Tablette : on réduit la carte pour qu'elle tienne après l'offset H1 --- */
+@media (max-width: 1023px) {
+  .slider-simple {
+    /* card ≤ container_content - h1_offset = (100vw - 48) - 80 = 100vw - 128 */
+    --slide-w: min(758px, calc(100vw - 128px));
+    --slide-gap: 48px;
+  }
+}
+
+/* --- Mobile : carte active centrée par rapport au viewport, peek symétrique --- */
+@media (max-width: 767px) {
+  .slider-simple {
+    --slide-w: calc(100vw - 80px);
+    --slide-gap: 16px;
+  }
+  .slider-simple__track {
+    padding-inline-start: calc(50% - var(--slide-w) / 2);
+  }
+  .slider-simple.is-single .slider-simple__track {
+    padding-inline: 24px;
+  }
+  .slider-simple__title {
+    margin-top: 12px;
+  }
+}
+
+/* --- Aperçu éditeur : pas de carrousel, slides empilées en grille --- */
+.slider-simple--editor {
+  overflow: visible;
+}
+.slider-simple--editor .slider-simple__track {
+  flex-wrap: wrap;
+  padding-inline: 0;
+  gap: 24px;
+}
+.slider-simple--editor .slider-simple__slide {
+  flex: 0 1 320px;
+  width: 320px;
+  opacity: 1;
+}

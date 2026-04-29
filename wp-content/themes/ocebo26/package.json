@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "wp-scripts build",
+    "build": "wp-scripts build && npm run build:js",
+    "build:js": "terser assets/js/main.js -o assets/js/main.min.js -c passes=2 -m --comments=false",
     "start": "wp-scripts start"
   },
   "devDependencies": {

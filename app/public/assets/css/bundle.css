@@ -185,7 +185,9 @@ h6 {
   overflow-wrap: break-word;
 }
 
-a {
+a,
+a:link,
+a:visited {
   color: inherit;
   text-decoration: none;
 }

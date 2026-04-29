@@ -30,6 +30,5 @@
   },
   "editorScript": "file:../../build/blocks/chiffres/index.js",
   "render": "file:./render.php",
-  "style": "file:./style.css",
-  "viewScript": "file:./view.js"
+  "style": "file:./style.css"
 }
