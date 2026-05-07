@@ -43,3 +43,5 @@ SOURCES/figmaToken.md
 # Misc
 .vercel
 .claude/
+.tmp/
+app/public/wp-content/debug.log
