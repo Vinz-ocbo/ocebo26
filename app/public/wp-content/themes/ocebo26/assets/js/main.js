@@ -1,26 +1,18 @@
 /**
- * OCEBO 2026 — Main JavaScript (light bundle)
+ * OCEBO 2026 — Main JavaScript (interactivité critique)
  *
- * Interactivité critique uniquement : nav, header, mobile menu, dropdowns,
- * accordions, FAQ, counters, scroll reveal, logos slider.
+ * Nav, header, mobile menu, dropdowns, accordions, FAQ, counters,
+ * scroll reveal, logos slider.
  *
  * Les effets cosmétiques (Parallax, DotMesh, ScrollLace) vivent dans
- * main-fx.js et sont chargés à la première interaction utilisateur via
- * loadFx() (cf. fin de fichier). Cela garantit que la fenêtre TBT de
- * Lighthouse ne contient jamais ces effets.
+ * main-fx.js, chargé en parallèle via <script defer> dans le HTML/WP
+ * enqueue. Init chunkée côté main-fx.js pour ne pas créer de long task
+ * malgré le chargement eager.
  *
  * Vanilla JS — no dependencies.
  */
 (function () {
   "use strict";
-
-  // Capture l'URL de main-fx.min.js depuis l'attribut data-ocebo-fx du
-  // <script> qui charge ce fichier. document.currentScript n'est valide
-  // qu'au top-level — on le lit à l'init de l'IIFE et on le mémoïse.
-  var THIS_SCRIPT = document.currentScript;
-  var FX_SRC = THIS_SCRIPT && THIS_SCRIPT.dataset && THIS_SCRIPT.dataset.oceboFx
-    ? THIS_SCRIPT.dataset.oceboFx
-    : null;
 
   /* ============================================
      SCROLL REVEAL (IntersectionObserver)
@@ -642,15 +634,9 @@
   }
 
   /* ============================================
-     INIT — light immédiat, FX en lazy interaction
+     INIT — exécution à DOMContentLoaded
      ============================================ */
-  function prefersReducedMotion() {
-    return window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }
-
-  // Modules légers — exécutés à DOMContentLoaded
-  function initLight() {
+  function init() {
     addRevealClasses();
     initScrollReveal();
     initHeaderScroll();
@@ -661,48 +647,6 @@
     initFaqIndicator();
     initCounters();
     initLogosSlider();
-  }
-
-  // Charge main-fx.min.js (Parallax + DotMesh + ScrollLace) à la première
-  // interaction utilisateur. Ne charge jamais si prefers-reduced-motion :
-  // ces effets sont purement décoratifs et coûteux. Fallback setTimeout
-  // pour les agents qui n'interagissent pas (Lighthouse, mais après la
-  // fenêtre TBT — d'où les 4000ms).
-  function loadFx() {
-    if (loadFx._done) return;
-    loadFx._done = true;
-
-    if (prefersReducedMotion()) return;
-    if (!FX_SRC) return; // garde-fou si data-ocebo-fx manquant côté HTML/PHP
-
-    var s = document.createElement("script");
-    s.src = FX_SRC;
-    s.defer = true;
-    document.head.appendChild(s);
-  }
-
-  function armFxLoader() {
-    // Triggers d'engagement : pointermove (souris desktop) charge dès le
-    // moindre mouvement, scroll (intent clair), touchstart (mobile),
-    // keydown (Tab, navigation clavier). pointermove avait été retiré
-    // brièvement car l'init main-fx était synchrone et freezait la page —
-    // mais maintenant que l'init est chunké via rIC, ce n'est plus un
-    // problème, et ça donne le halo bien plus vite à l'utilisateur.
-    var opts = { once: true, passive: true };
-    window.addEventListener("scroll", loadFx, opts);
-    window.addEventListener("pointermove", loadFx, opts);
-    window.addEventListener("touchstart", loadFx, opts);
-    window.addEventListener("keydown", loadFx, { once: true });
-
-    // Filet de sécurité : si l'utilisateur n'interagit pas dans les 1.5s,
-    // on charge quand même. 1500ms est confortablement APRÈS le TTI mesuré
-    // (0,8s desktop sur Vercel) donc l'impact TBT Lighthouse reste nul.
-    window.setTimeout(loadFx, 1500);
-  }
-
-  function init() {
-    initLight();
-    armFxLoader();
   }
 
   if (document.readyState === "loading") {

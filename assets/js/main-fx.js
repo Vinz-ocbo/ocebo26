@@ -1,18 +1,17 @@
 /**
- * OCEBO 2026 — Main FX (lazy-loaded bundle)
+ * OCEBO 2026 — Main FX (eager-loaded bundle)
  *
- * Effets cosmétiques différés au-delà de la fenêtre TBT de Lighthouse :
+ * Effets cosmétiques visibles au plus tôt :
  *   - Parallax (cards Chiffres clefs)
- *   - DotMesh (canvas particles)
+ *   - DotMesh (canvas particles, halo de la page)
  *   - ScrollLace (SVG laces)
  *
- * Chargé par main.js via injection <script> sur première interaction
- * utilisateur (scroll / touchstart / keydown) ou setTimeout safety.
- * Les 3 inits sont chunkés sur plusieurs idle callbacks pour ne jamais
- * bloquer le main thread plus de ~50ms — la page reste cliquable même
+ * Chargé en parallèle de main.js via <script defer> (HTML statique +
+ * WP enqueue). Les 3 inits sont chunkés sur des idle callbacks pour ne
+ * jamais bloquer le main thread plus de ~50ms — la page reste cliquable
  * pendant que les effets se mettent en place.
- * Skip si prefers-reduced-motion (le loader main.js fait déjà cette
- * check, on la double ici en defense in depth).
+ *
+ * Skip si prefers-reduced-motion.
  *
  * Vanilla JS — no dependencies.
  */
@@ -741,19 +740,30 @@
   // traiter les clics et scrolls utilisateur ENTRE chaque chunk. Sans ce
   // chunking, les 3 inits + le premier paint canvas formaient une long task
   // de 200-500ms qui bloquait l'interactivité de la page.
+  // Timeouts faibles (5-30ms) car on charge eager : on veut le halo vite.
   function defer(fn, timeout) {
     if ("requestIdleCallback" in window) {
-      window.requestIdleCallback(fn, { timeout: timeout || 1500 });
+      window.requestIdleCallback(fn, { timeout: timeout || 100 });
     } else {
       window.setTimeout(fn, 16); // une frame ~60fps
     }
   }
 
-  defer(function () {
-    initParallax();
+  function bootstrap() {
     defer(function () {
-      initDotMesh();
-      defer(initScrollLace, 100);
-    }, 50);
-  }, 30);
+      initParallax();
+      defer(function () {
+        initDotMesh();
+        defer(initScrollLace, 30);
+      }, 10);
+    }, 5);
+  }
+
+  // Attend DOMContentLoaded si le HTML n'est pas encore parsé
+  // (defer scripts s'exécutent normalement après, mais defense in depth).
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootstrap);
+  } else {
+    bootstrap();
+  }
 })();
