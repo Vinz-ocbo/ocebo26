@@ -26,9 +26,16 @@ const CheckSVG = () => (
 	</svg>
 );
 
+// Backward-compat: brief stint when items were {text, ctaUrl}.
+const normalizeItems = ( items ) =>
+	( items || [] ).map( ( it ) =>
+		typeof it === 'string' ? it : ( it?.text ?? '' )
+	);
+
 registerBlockType( metadata.name, {
 	edit( { attributes, setAttributes } ) {
-		const { sectionNumber, title, items } = attributes;
+		const { sectionNumber, title } = attributes;
+		const items = normalizeItems( attributes.items );
 
 		const blockProps = useBlockProps( {
 			className: 'section section--liste',
@@ -45,8 +52,9 @@ registerBlockType( metadata.name, {
 		};
 
 		const removeItem = ( index ) => {
-			const newItems = items.filter( ( _, i ) => i !== index );
-			setAttributes( { items: newItems } );
+			setAttributes( {
+				items: items.filter( ( _, i ) => i !== index ),
+			} );
 		};
 
 		return (

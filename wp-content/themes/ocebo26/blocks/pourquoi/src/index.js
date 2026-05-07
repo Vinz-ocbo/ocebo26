@@ -7,9 +7,30 @@ import {
 import { PanelBody, Button, TextControl } from '@wordpress/components';
 import metadata from '../block.json';
 
+const ArrowSVG = () => (
+	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+		<path
+			d="M4 12L12 4M12 4H5M12 4V11"
+			stroke="currentColor"
+			strokeWidth="1.5"
+			strokeLinecap="round"
+			strokeLinejoin="round"
+		/>
+	</svg>
+);
+
+// Backward-compat: items used to be {title, text}; ensure ctaUrl exists.
+const normalizeItems = ( items ) =>
+	( items || [] ).map( ( it ) => ( {
+		title: it?.title ?? '',
+		text: it?.text ?? '',
+		ctaUrl: it?.ctaUrl ?? '',
+	} ) );
+
 registerBlockType( metadata.name, {
 	edit( { attributes, setAttributes } ) {
-		const { sectionNumber, title, items } = attributes;
+		const { sectionNumber, title } = attributes;
+		const items = normalizeItems( attributes.items );
 
 		const blockProps = useBlockProps( {
 			className: 'section section--pourquoi',
@@ -24,13 +45,14 @@ registerBlockType( metadata.name, {
 
 		const addItem = () => {
 			setAttributes( {
-				items: [ ...items, { title: '', text: '' } ],
+				items: [ ...items, { title: '', text: '', ctaUrl: '' } ],
 			} );
 		};
 
 		const removeItem = ( index ) => {
-			const newItems = items.filter( ( _, i ) => i !== index );
-			setAttributes( { items: newItems } );
+			setAttributes( {
+				items: items.filter( ( _, i ) => i !== index ),
+			} );
 		};
 
 		return (
@@ -45,7 +67,7 @@ registerBlockType( metadata.name, {
 							}
 						/>
 					</PanelBody>
-					<PanelBody title="Items" initialOpen={ true }>
+					<PanelBody title="Items + CTA" initialOpen={ true }>
 						<Button
 							variant="primary"
 							onClick={ addItem }
@@ -53,25 +75,40 @@ registerBlockType( metadata.name, {
 						>
 							Ajouter un item
 						</Button>
-						{ items.map( ( _, index ) => (
+						{ items.map( ( item, index ) => (
 							<div
 								key={ index }
 								style={ {
-									display: 'flex',
-									alignItems: 'center',
-									marginBottom: '4px',
+									borderTop: '1px solid #ddd',
+									paddingTop: '8px',
+									marginTop: '8px',
 								} }
 							>
-								<span style={ { flex: 1 } }>
-									Item { index + 1 }
-								</span>
-								<Button
-									isDestructive
-									variant="tertiary"
-									onClick={ () => removeItem( index ) }
+								<div
+									style={ {
+										display: 'flex',
+										alignItems: 'center',
+										marginBottom: '4px',
+									} }
 								>
-									Supprimer
-								</Button>
+									<strong style={ { flex: 1 } }>
+										Item { index + 1 }
+									</strong>
+									<Button
+										isDestructive
+										variant="tertiary"
+										onClick={ () => removeItem( index ) }
+									>
+										Supprimer
+									</Button>
+								</div>
+								<TextControl
+									label="URL du CTA (vide = pas de bouton)"
+									value={ item.ctaUrl }
+									onChange={ ( val ) =>
+										updateItem( index, 'ctaUrl', val )
+									}
+								/>
 							</div>
 						) ) }
 					</PanelBody>
@@ -145,6 +182,14 @@ registerBlockType( metadata.name, {
 										allowedFormats={ [] }
 										placeholder="Texte..."
 									/>
+									{ item.ctaUrl && (
+										<span
+											className="pourquoi__cta"
+											aria-hidden="true"
+										>
+											<ArrowSVG />
+										</span>
+									) }
 								</article>
 							) ) }
 						</div>
