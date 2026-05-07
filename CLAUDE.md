@@ -28,11 +28,66 @@ Thème WordPress **classique** (pas FSE malgré l'ancien tag) :
 - **Conventional Commits + commits atomiques** (cf. `.clinerules`)
 - Réponses : posture senior, alternatives format "Option retenue X — Alternative Y (avantages/inconvénients)", estimation effort S/M/L
 
-## Chantier en cours — Performance "bases solides" (in progress, démarré 2026-05-07)
+## Chantier en cours — Performance "bases solides"
 
-Plan complet validé par user 2026-05-07 sur branche `chore/perf-foundations`.
+Démarré 2026-05-07 sur branche `chore/perf-foundations` (cible : Mobile ≥ 96, Desktop ≥ 90). Plan **Option Excellence** (validé par user) : Phases 1 → 2 → 4 → mesure finale.
 
-### Cibles ambitieuses
+### URLs Vercel testées
+- **Production alias** : `https://ocebo26-testdesign.vercel.app/`
+- **Preview branch** : `https://ocebo26-testdesign-26q0y6k8o-vbaliva-2335s-projects.vercel.app/` (a une auth Vercel — 401 si requested sans cookie)
+
+### Statut Phase 1 (code-split JS) — fonctionnel sur Lighthouse, **PAS satisfaisant côté UX user**
+
+**Lighthouse Phase 1 (v1.4.0)** : Desktop 53 → 98, Mobile 92 → 93, TBT desktop 2 220ms → 0ms. Tous les scores au vert.
+
+**Mais le user signale UX dégradée** :
+1. ❌ Halo apparaît trop tard ("rendu pas convaincant")
+2. ❌ Page perçue comme freezée pendant le chargement
+3. ❌ Dots déformés + freeze pendant le drag de fenêtre
+
+**Tentatives de fix successives** (ordre chrono, du plus ancien au plus récent) :
+- v1.4.1 (`fa04cf2`) — DotMesh resize : clear immédiat + SPACING adaptatif (cap dotCount ~30K)
+- v1.4.2 (`29f4c17`) — Init FX chunké via rIC + rAF avant 1er paint canvas + retrait `pointermove`
+- (`c42e1da`) — Retrait des `<link rel="preload">` Google Fonts qui 404'aient
+- v1.4.3 (`7f4bbe6`) — Halo plus rapide : ré-introduit pointermove + setTimeout 4000→1500ms + chunks rIC accélérés (200/800/1500→30/50/100)
+- v1.5.0 (`b1d9234`) — **Bascule chargement eager** : main-fx.js chargé en parallèle de main.js via `<script defer>` séparé, plus de loader d'engagement. Init reste chunké pour éviter long task.
+
+### 🔴 Pause 2026-05-07 — Mystère à résoudre prochaine session
+
+**Le user dit "je ne vois pas de différence" entre v1.4.3 et v1.5.0**, alors qu'on a fait basculer le mode de chargement de lazy-on-interaction → eager-parallèle. Le code change est réel et déployé. Soit :
+- Le user teste un déploiement caché (vérifier la chaîne complète : commit local → push → Vercel deploy → CDN edge → cache navigateur)
+- Le bottleneck n'est PAS le timing du JS mais ailleurs (CSS render-blocking, fonts, animations `.reveal`)
+- Le user ne voit pas la différence parce que objectivement il y en a très peu (le browser cache la deuxième visite, etc.)
+- Sa perception du "halo tout de suite" est sous le plancher physique (HTML+CSS render-blocking = ~500-1000ms minimum incompressible sans critical CSS)
+
+### À investiguer en priorité au reboot
+
+1. **VÉRIFIER la chaîne de déploiement** :
+   - Commits poussés : `git log origin/chore/perf-foundations -5`
+   - Quel commit Vercel a effectivement build (dashboard Vercel > Deployments)
+   - Quelle URL exacte le user teste (préférer l'alias branche `git-chore-perf-foundations` qui pointe sur le dernier commit)
+   - Hard reload + Network tab > main-fx.min.js : taille reçue, headers Cache-Control, age
+
+2. **MESURER au lieu de se baser sur la perception** :
+   - Demander un Performance trace Chrome (record reload, 5s)
+   - Identifier précisément quand le canvas DotMesh fait son 1er paint (rechercher "Paint" dans la timeline)
+   - Comparer baseline vs courant — si vraiment "pas de différence" sur cette métrique, alors le mode chargement n'est pas le bottleneck
+
+3. **Questionner les hypothèses** :
+   - Le "halo" qu'il décrit, est-ce bien le DotMesh canvas ? (Faire confirmer visuellement — il y a aussi le pulse halo sur les CTA, le glow magenta des laces, etc.)
+   - Le perçu "freeze" est-il la fenêtre `.reveal` qui anime opacity 0→1 et donne l'illusion d'un chargement progressif ?
+   - Les fonts qui swappent (FOUT) après le CSS ?
+
+4. **Si après mesure on confirme que le timing JS n'est pas le levier** :
+   - **Phase 2 (critical CSS) devient le vrai prochain pas** — c'est ce qui peut compresser le ~500-1000ms incompressible HTML+CSS
+   - Option Excellence reste valide, juste qu'on a passé du temps sur Phase 1 sans gagner ce qu'on espérait côté ressenti
+
+### Phases restantes du plan
+- **Phase 2 — Critical CSS automatisé** (Penthouse) — pousse FCP mobile 2,7s → ~1,2s, score → 96+. C'est probablement LE levier pour le ressenti "page chargée immédiatement"
+- **Phase 4 — Fonts solides** (self-host Cabin/Kanit, preload LCP) — élimine FOUT et le bordel des URLs Google qui changent
+- Mesure finale Lighthouse + comparaison historique
+
+### Cibles ambitieuses (rappel)
 | Métrique | Cible |
 |---|---|
 | LCP mobile | ≤ 1,5s |
@@ -42,98 +97,46 @@ Plan complet validé par user 2026-05-07 sur branche `chore/perf-foundations`.
 | Lighthouse mobile | ≥ 95 |
 | Poids total above-fold | ≤ 250 KB |
 
-### Baseline 2026-05-07
+### Baseline 2026-05-07 (référence pour comparer)
+- Lighthouse desktop : 53 / SI 4,3s / TBT 2 220 ms / bfcache cancelled
+- Lighthouse mobile : 92 / FCP 2,7s (score 0.59 — point faible) / LCP 2,7s / TBT 0ms / SI 2,7s
+- Inventaire : `bundle.css` 37 KB raw / 6,8 KB gzip render-blocking ; main.min.js 16,8 KB / 5,6 KB gzip ; main-fx.min.js (v1.4+) 8 KB / 3,3 KB gzip
+- DOM : 527 nodes home, 470 accueil. Slider clones ses slides ×3.
 
-**Lighthouse desktop sur Vercel : 53 / SI 4,3s / TBT 2 220 ms / bfcache cancelled** (URL et mobile à confirmer par user).
+## État Git (au moment de la pause 2026-05-07)
 
-**Inventaire assets (gzipped, Brotli sera plus petit) :**
-| Asset | Raw | Gzip | Bloquant ? |
-|---|---|---|---|
-| `index.html` | 35 KB | 6,7 KB | — |
-| `accueil.html` | 31 KB | 6,0 KB | — |
-| `assets/css/bundle.css` | 37 KB | 6,8 KB | ✅ render-blocking |
-| `slider-simple/style.css` | 4 KB | 1,6 KB | ✅ render-blocking |
-| `assets/js/main.min.js` | 16,8 KB | 5,6 KB | deferred |
-| `slider-simple/view.js` | 10,2 KB | 3,0 KB | deferred |
-| **CSS render-blocking total** | 41 KB | **8,4 KB** | sous budget critical 14 KB ✓ |
-| **JS total** | 27 KB | **8,6 KB** | très bas ✓ |
+**Branche active : `chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`, **pushée sur `origin`**)
 
-**Images slider :** `barreau_lyon3.jpeg` 114 KB, `invest2.jpeg` 131 KB, `guiti3-1.jpg` 143 KB. Lazy-loaded mais pas WebP/AVIF, pas de srcset.
+**14 commits sur la branche** :
+```
+1e0c568 chore: CLAUDE.md historique - eager FX (v1.5.0)
+b1d9234 feat(perf): chargement eager main-fx.js — halo visible immédiatement (v1.5.0)
+60efb34 chore: CLAUDE.md historique - fix halo tardif (v1.4.3)
+7f4bbe6 fix(perf): halo apparaît plus vite — pointermove + setTimeout 1500ms (v1.4.3)
+c42e1da fix(perf): retire preload des fonts Google obsolètes (404)
+d8b523b chore: CLAUDE.md historique - fix unfreeze UX (v1.4.2)
+29f4c17 fix(perf): unfreeze page during FX init — chunked + drop pointermove (v1.4.2)
+adee35e chore: CLAUDE.md historique enrichi (Phase 1 résultats + fix resize)
+fa04cf2 fix(perf): DotMesh resize freeze + dot deformation (v1.4.1)
+d2d1be5 chore: ignore Lighthouse/WebPageTest reports + update CLAUDE.md history
+4311e18 feat(perf): code-split JS — main-fx.js lazy-loaded on first interaction
+f586f80 chore(perf): document Phase 0 baseline (assets inventory + targets)
+fd21e9b chore: add CLAUDE.md project memory (living history)
+5fab0e2 chore: corrige description thème (pas FSE, juste theme.json + blocs dynamiques)
+```
 
-**DOM :** 527 nodes (`index.html`), 470 (`accueil.html`). Slider contient ses slides ×3 (clones).
+**Working tree** : `.clinerules` modifié par user (laissé pour commit user). Tout le reste committed + pushed.
 
-**Conclusion baseline :** poids OK, problème = **CPU/render** : DotMesh 32K dots → TBT, fonts async + bundle bloquant → SI dégradé.
+`main` reste propre, à `b532ec3` (synchro `origin/main`). **Pas de PR ouverte** — la branche stagne tant que le ressenti UX user n'est pas validé.
 
-### Données baseline manquantes (à fournir par user)
-- Lighthouse **mobile** sur `/` et `/accueil` (cible `.clinerules` est mobile, score 53 connu = desktop seulement)
-- Confirmation de l'URL Vercel testée (`/` ou `/accueil`)
-- WebPageTest filmstrip + waterfall sur `/` mobile (idéalement profil "Moto G4 — 4G — Cable" ou équivalent)
-
-### Plan révisé — Option Excellence (validé 2026-05-07)
-
-**Constat baseline mobile** : 92/100 déjà, dépasse cible `.clinerules`. Le 9-phase plan initial était surdimensionné. Scope réduit aux 3 phases à plus haut ROI :
-
-0. Baseline ✅ (terminé)
-1. **Code-split JS** (DotMesh/ScrollLace/Parallax → main-fx.js lazy) — débloque desktop (53 → ~80-85)
-2. **Critical CSS automatisé** (Penthouse) — pousse FCP mobile 2,7s → ~1,2s, score → 96+
-4. **Fonts solides** (self-host Cabin/Kanit, preload LCP) — pousse encore FCP/LCP
-
-**Mesure finale** : Lighthouse desktop+mobile, doc résultats dans historique.
-
-**Phases écartées** (déprioritaires given baseline) :
-- Phase 3 CSS purge — bundle.css 6,8 KB gzip déjà sous budget critical
-- Phase 5 Images — toutes lazy, pas dans LCP (LCP = texte)
-- Phase 6 bfcache — déjà score 1 sur mobile
-- Phase 7 Refacto `/inc/` — pertinent pour `.clinerules`-compliance, à traiter en chantier qualité séparé hors-perf
-- Phase 8 Tests/monitoring — recommandé mais hors-scope perf
-- Phase 9 Itérations — à voir après mesure finale
-
-Cibles révisées : **Mobile ≥ 96 / Desktop ≥ 90**.
-
-### Diagnostic posé
-**Cause primaire TBT** : `initDotMesh()` dans `wp-content/themes/ocebo26/assets/js/main.js:737` génère ~32 000 dots (SPACING=8 sur 1920×1080) animés via canvas 2D. Différé via `requestIdleCallback({ timeout: 5000 })` mais Vercel sert la page si vite que `idle` arrive **dans** la fenêtre TBT de Lighthouse → l'init se mesure.
-
-**Speed Index 4,3s** : polices async (Cabin/Kanit/Bookmania `media=print/onload`) + `bundle.css` (37 KB) render-blocking.
-
-**bfcache** : aucun `unload`/`beforeunload`/`pagehide` listener trouvé en grep. Cause probable côté headers Vercel — faible gain de score, traiter après.
-
-### Plan retenu
-**Option retenue (effort S, ~30-60min)** — combinaison de 3 sub-fixes pour passer ~53 → ~80 :
-
-1. **Tie DotMesh à la première interaction** : remplacer `requestIdleCallback` par déclenchement sur `scroll` ou `pointermove` (premier des deux), avec `setTimeout(3500)` en filet. Sortir DotMesh de la fenêtre TBT garantie.
-2. **Réduire densité** : `SPACING=8 → 16` (4× moins de dots, 8K au lieu de 32K). Tester rendu visuel — si trop différent, retomber sur `SPACING=12`.
-3. **Skip DotMesh sur CPU faible** : `navigator.hardwareConcurrency < 4` ou `navigator.deviceMemory < 4`.
-
-Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner sur **Option B** : critical CSS inline ≤ 14 KB + `bundle.css` non-blocking. Plus risqué (FOUC).
-
-### Questions ouvertes (à poser au user au reboot)
-- Tu testes Lighthouse sur **`/`** ou **`/accueil`** côté Vercel ? (deux pages différentes)
-- Tu valides toujours l'option retenue (3 sub-fixes), ou tu veux d'abord remesurer ?
-
-### Fichiers à toucher pour Option retenue
-- `wp-content/themes/ocebo26/assets/js/main.js` lignes ~737 (DotMesh) et ~1351 (init)
-- Build : `npm run build:js` depuis `wp-content/themes/ocebo26/` régénère `main.min.js`
-- Sync miroirs : copier `main.js` + `main.min.js` vers `assets/js/`, `app/public/assets/js/`, `app/public/wp-content/themes/ocebo26/assets/js/`
-
-## État Git (en cours)
-
-- Branche active : **`chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`)
-- Commits sur la branche (non pushés) :
-  - `5fab0e2` chore: corrige description thème (pas FSE, juste theme.json + blocs dynamiques)
-  - `fd21e9b` chore: add CLAUDE.md project memory (living history)
-  - `f586f80` chore(perf): document Phase 0 baseline (assets inventory + targets)
-  - `4311e18` feat(perf): code-split JS — main-fx.js lazy-loaded on first interaction
-  - `d2d1be5` chore: ignore Lighthouse/WebPageTest reports + update CLAUDE.md history
-  - `fa04cf2` fix(perf): DotMesh resize freeze + dot deformation (v1.4.1)
-- **Working tree** : `.clinerules` modifié par user, laissé pour commit user
-- `main` reste propre, à `b532ec3` (synchro `origin/main`)
-- Stratégie : tout le chantier perf reste sur `chore/perf-foundations`, merge vers `main` quand stable et validé par mesure
+**Stratégie** : tout le chantier perf reste sur `chore/perf-foundations`, merge vers `main` quand user valide visuellement ET les Lighthouse sont aux cibles. Si Phase 2/4 résolvent le ressenti, on poursuit ; sinon on documente la limite et on merge ce qui est gagné quand même.
 
 ## Historique des chantiers
 
 Format : *date · résumé 1 ligne · commits clés ou statut*. Les chantiers en cours restent en haut ; les terminés/abandonnés s'accumulent par ordre chrono inverse.
 
-- **2026-05-07** · Bascule chargement eager main-fx.js (priorité user : halo immédiat) ; main.js -15% sans loader ; init reste chunké pour éviter long task ; trade-off score Lighthouse 98→~90 attendu ; commit `b1d9234` ; v1.5.0
+- **2026-05-07** · 🔴 Pause perf — user pas satisfait du ressenti UX malgré 5 itérations de fix · v1.4.0→v1.5.0, à reprendre par mesure objective avant de continuer (cf. "Mystère à résoudre" ci-dessus)
+- **2026-05-07** · Bascule chargement eager main-fx.js (priorité user : halo immédiat) ; main.js -15% sans loader ; init reste chunké pour éviter long task ; trade-off score Lighthouse 98→~90 attendu mais user dit "pas de différence" ; commit `b1d9234` ; v1.5.0
 - **2026-05-07** · Fix halo trop tardif · ré-introduit pointermove + setTimeout 4000→1500ms + chunks rIC accélérés (200/800/1500→30/50/100) ; commit `7f4bbe6` ; v1.4.3
 - **2026-05-07** · Fix preload fonts Google obsolètes (404) ; commit `c42e1da`
 - **2026-05-07** · Fix UX page freeze pendant FX init · init chunké rIC + rAF avant 1er paint + retrait pointermove du loader ; commit `29f4c17` ; v1.4.2
