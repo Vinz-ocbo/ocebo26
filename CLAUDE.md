@@ -123,6 +123,8 @@ Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner 
   - `fd21e9b` chore: add CLAUDE.md project memory (living history)
   - `f586f80` chore(perf): document Phase 0 baseline (assets inventory + targets)
   - `4311e18` feat(perf): code-split JS — main-fx.js lazy-loaded on first interaction
+  - `d2d1be5` chore: ignore Lighthouse/WebPageTest reports + update CLAUDE.md history
+  - `fa04cf2` fix(perf): DotMesh resize freeze + dot deformation (v1.4.1)
 - **Working tree** : `.clinerules` modifié par user, laissé pour commit user
 - `main` reste propre, à `b532ec3` (synchro `origin/main`)
 - Stratégie : tout le chantier perf reste sur `chore/perf-foundations`, merge vers `main` quand stable et validé par mesure
@@ -131,6 +133,8 @@ Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner 
 
 Format : *date · résumé 1 ligne · commits clés ou statut*. Les chantiers en cours restent en haut ; les terminés/abandonnés s'accumulent par ordre chrono inverse.
 
+- **2026-05-07** · Fix DotMesh resize · clear immédiat + SPACING adaptatif (cap dotCount à ~30K) ; commit `fa04cf2` ; v1.4.1
+- **2026-05-07** · Phase 1 perf — résultats Vercel : **desktop 53→98 (+45)**, mobile 92→93, TBT desktop 2 220ms→0ms, LCP desktop 0,8s, SI desktop 0,8s
 - **2026-05-07** · Phase 1 perf code-split JS · main-fx.js lazy-loadé sur première interaction, main.min.js -44%/-50% gzip (commit `4311e18`) ; v1.4.0
 - **2026-05-07** · Plan révisé Option Excellence · baseline mobile = 92 (déjà ≥ 90), scope réduit aux 3 phases ROI (1, 2, 4)
 - **2026-05-07** · Pause perf · Diagnostic posé (DotMesh → TBT 2,2s), plan retenu, en attente reprise — voir "Chantier en cours" ci-dessus
