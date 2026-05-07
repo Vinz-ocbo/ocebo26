@@ -66,6 +66,15 @@
   line-height: var(--lh-small);
 }
 
+/* Italic in display titles → auto cyan (matches the <em class="text-cyan">
+   convention used in default block titles, but also catches plain RichText
+   italic from the editor). */
+.display-xl em,
+.display-lg em {
+  color: var(--color-accent-cyan);
+  font-style: normal;
+}
+
 /* ---- Color modifiers ---- */
 .text-cyan {
   color: var(--color-accent-cyan);

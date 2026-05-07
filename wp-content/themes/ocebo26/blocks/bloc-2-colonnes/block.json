@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/bloc-2-colonnes",
+  "version": "1.0.0",
+  "title": "Bloc 2 colonnes",
+  "category": "ocebo26",
+  "icon": "columns",
+  "description": "Section avec titre H2 et 2 colonnes (titre, image, texte, CTA — tout optionnel par colonne). Fond sombre par défaut, fond blanc en option.",
+  "keywords": ["2 colonnes", "two columns", "highlight", "distingue", "bloc"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "1" },
+    "title": { "type": "string", "default": "Ce qui nous <em>distingue</em>" },
+    "whiteBackground": { "type": "boolean", "default": false },
+    "columns": {
+      "type": "array",
+      "default": [
+        { "title": "", "imageId": 0, "imageUrl": "", "imageAlt": "", "text": "", "ctaLabel": "", "ctaUrl": "" },
+        { "title": "", "imageId": 0, "imageUrl": "", "imageAlt": "", "text": "", "ctaLabel": "", "ctaUrl": "" }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/bloc-2-colonnes/index.js",
+  "render": "file:./render.php"
+}

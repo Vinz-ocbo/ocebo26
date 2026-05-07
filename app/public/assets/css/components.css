@@ -7,12 +7,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
+  gap: 50px;
+  white-space: nowrap;
   padding: var(--space-1-5) 12px;
   font-family: var(--font-heading);
   font-size: var(--text-label);
   line-height: var(--lh-label);
   font-weight: var(--fw-regular);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
@@ -28,12 +31,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   width: 24px;
   height: 24px;
   border-radius: 4px;
   background: var(--color-surface-dark);
   color: var(--color-accent-cyan);
-  margin-left: var(--space-1);
   overflow: hidden;
   position: relative;
 }
@@ -149,6 +152,13 @@
 
 .section-number.is-haloed {
   background: rgba(0, 0, 0, 1);
+}
+
+.section-number--solid {
+  background-image: none;
+  background-color: #000;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* ---- NAVIGATION ---- */
@@ -616,6 +626,7 @@
   margin-top: 2px;
 }
 
+
 .check-list__separator {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -706,11 +717,36 @@
 }
 
 .pourquoi__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 144px;
+  display: grid;
+  grid-template-columns: 280px 1fr 38px;
+  gap: 90px;
+  align-items: start;
   padding: var(--space-4) 72px;
   border-radius: var(--radius-sm);
+}
+
+a.pourquoi__cta {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-cyan);
+  color: #000;
+  border-radius: 0;
+  text-decoration: none;
+  align-self: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.pourquoi__cta svg {
+  display: block;
+}
+
+.pourquoi__cta:hover svg,
+.pourquoi__cta:focus-visible svg {
+  animation: btn-arrow-shuffle 520ms cubic-bezier(0.6, 0, 0.2, 1) 1;
 }
 
 .pourquoi__item:nth-of-type(even) {
@@ -729,8 +765,6 @@
   line-height: var(--lh-heading-md);
   color: var(--color-accent-magenta);
   font-weight: var(--fw-regular);
-  flex-shrink: 0;
-  width: 280px;
   text-align: right;
 }
 
@@ -739,20 +773,84 @@
 }
 
 .pourquoi__text {
-  flex: 1;
+  min-width: 0;
   color: var(--color-text-primary);
+  text-align: justify;
 }
 
 @media (max-width: 767px) {
   .pourquoi__item {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-2);
   }
 
   .pourquoi__title {
-    width: auto;
     text-align: left;
+  }
+}
+
+/* ---- BLOC 2 COLONNES ---- */
+.section--bloc2col .bloc2col__columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  padding-left: calc(56px + var(--space-3));
+  margin-top: var(--space-4);
+}
+
+.bloc2col__column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.bloc2col__col-title {
+  font-family: var(--font-heading);
+  color: var(--color-accent-cyan);
+  margin: 0;
+}
+
+.bloc2col__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
+.bloc2col__text {
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.bloc2col__title em,
+.bloc2col__title i {
+  color: var(--color-accent-cyan);
+  font-style: italic;
+}
+
+/* Variante fond blanc */
+.section--bloc2col.section--white {
+  background-color: #fff;
+}
+
+.section--bloc2col.section--white .bloc2col__title,
+.section--bloc2col.section--white .bloc2col__col-title,
+.section--bloc2col.section--white .bloc2col__text {
+  color: #000;
+}
+
+.section--bloc2col.section--white .bloc2col__title em,
+.section--bloc2col.section--white .bloc2col__title i {
+  color: var(--color-accent-cyan);
+}
+
+@media (max-width: 767px) {
+  .section--bloc2col .bloc2col__columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding-left: 0;
   }
 }
 
@@ -828,7 +926,11 @@
   backdrop-filter: none;
   overflow: hidden;
   border-bottom: 2px solid var(--color-bg);
-  transition: background-color var(--transition-base);
+  transition: background-color var(--transition-slow);
+}
+
+.accordion[open] {
+  background-color: rgba(21, 255, 214, 0.1);
 }
 
 .accordion:last-child {
@@ -914,6 +1016,38 @@
 
 .accordion__body-inner {
   max-width: 640px;
+}
+
+/* Wrapper créé par JS autour de .faq__list pour isoler l'indicateur du
+   flux .reveal-stagger qui sinon écrase sa transition. */
+.faq__wrap {
+  position: relative;
+  z-index: 0;
+}
+
+/* Indicateur de hover cyan qui glisse d'une question à l'autre.
+   Position calculée et appliquée par JS (initFaqIndicator). */
+.faq__indicator {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(21, 255, 214, 0.1);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  z-index: -1;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transition:
+    opacity 180ms ease,
+    left 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    top 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    width 280ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.faq__indicator.is-active {
+  opacity: 1;
 }
 
 /* ---- LOGOS SLIDER ---- */

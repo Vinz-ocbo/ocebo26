@@ -3,6 +3,7 @@ const path = require('path');
 
 const blocks = [
   'hero',
+  'hero-inner',
   'checklist',
   'services-grid',
   'pourquoi',
@@ -11,6 +12,8 @@ const blocks = [
   'faq',
   'contact-cta',
   'slider-simple',
+  'chronologie',
+  'bloc-2-colonnes',
 ];
 
 const entry = {};

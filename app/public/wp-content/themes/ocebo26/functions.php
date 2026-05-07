@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.0.99');
+define('OCEBO26_VERSION', '1.3.4');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
@@ -131,6 +131,11 @@ add_action('wp_default_scripts', function ($scripts) {
    DEFER tous les scripts frontend (sauf admin-bar)
    ============================================ */
 add_filter('script_loader_tag', function ($tag, $handle) {
+    // Never defer in wp-admin: breaks Gutenberg's wp.apiFetch.use(...) inline
+    // setup which assumes api-fetch.js is already executed.
+    if (is_admin()) {
+        return $tag;
+    }
     if (is_admin_bar_showing() && in_array($handle, ['admin-bar', 'jquery', 'jquery-core'], true)) {
         return $tag;
     }
@@ -178,9 +183,9 @@ add_action('enqueue_block_editor_assets', function () {
    ============================================ */
 add_action('init', function () {
     $blocks = [
-        'hero', 'checklist', 'services-grid', 'pourquoi',
+        'hero', 'hero-inner', 'checklist', 'services-grid', 'pourquoi',
         'chiffres', 'logos-slider', 'faq', 'contact-cta',
-        'slider-simple',
+        'slider-simple', 'chronologie', 'bloc-2-colonnes',
     ];
 
     foreach ($blocks as $block) {

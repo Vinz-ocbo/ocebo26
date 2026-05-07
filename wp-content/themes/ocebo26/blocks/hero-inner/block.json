@@ -1,0 +1,29 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/hero-inner",
+  "version": "1.0.0",
+  "title": "Hero — Page intérieure",
+  "category": "ocebo26",
+  "icon": "cover-image",
+  "description": "Hero des pages intérieures : nom de page (kicker), titre H1, description et CTAs optionnels.",
+  "keywords": ["hero", "page", "intérieure", "header"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "" },
+    "pageName": { "type": "string", "default": "" },
+    "title": { "type": "string", "default": "" },
+    "text": { "type": "string", "default": "" },
+    "ctaPrimaryLabel": { "type": "string", "default": "" },
+    "ctaPrimaryUrl": { "type": "string", "default": "" },
+    "ctaSecondaryLabel": { "type": "string", "default": "" },
+    "ctaSecondaryUrl": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/hero-inner/index.js",
+  "render": "file:./render.php"
+}

@@ -265,8 +265,59 @@
   }
 
   /* ============================================
+     HOVER INDICATOR (logique partagée)
+     Glissement d'une pastille de fond sous l'item survolé,
+     animée d'un item à l'autre. Utilisé par les dropdowns nav et la FAQ.
+     ============================================ */
+  function initHoverIndicator(container, items, indicator, shouldShow) {
+    let firstShow = true;
+
+    function moveTo(item) {
+      const animate = !firstShow;
+      if (!animate) {
+        indicator.style.transition = "none";
+      }
+      // Calcul via getBoundingClientRect : robuste quelle que soit la profondeur
+      // du DOM et le offsetParent (notamment pour <summary> dans <details>).
+      const itemRect = item.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      indicator.style.left = (itemRect.left - containerRect.left) + "px";
+      indicator.style.top = (itemRect.top - containerRect.top) + "px";
+      indicator.style.width = itemRect.width + "px";
+      indicator.style.height = itemRect.height + "px";
+      if (!animate) {
+        void indicator.offsetHeight;
+        indicator.style.transition = "";
+        firstShow = false;
+      }
+      indicator.classList.add("is-active");
+    }
+
+    function hide() {
+      indicator.classList.remove("is-active");
+    }
+
+    function maybeMove(item) {
+      if (shouldShow && !shouldShow(item)) {
+        hide();
+        return;
+      }
+      moveTo(item);
+    }
+
+    items.forEach(function (item) {
+      item.addEventListener("mouseenter", function () { maybeMove(item); });
+      item.addEventListener("focus", function () { maybeMove(item); });
+    });
+
+    container.addEventListener("mouseleave", hide);
+    container.addEventListener("focusout", function (e) {
+      if (!container.contains(e.relatedTarget)) hide();
+    });
+  }
+
+  /* ============================================
      DROPDOWN HOVER INDICATOR
-     Glissement cyan sous le lien survolé, animé d'un lien à l'autre.
      ============================================ */
   function initDropdownIndicator() {
     document.querySelectorAll(".nav__dropdown-inner").forEach(function (inner) {
@@ -278,37 +329,34 @@
       inner.appendChild(indicator);
 
       const links = inner.querySelectorAll(".nav__dropdown-link");
-      let firstShow = true;
+      initHoverIndicator(inner, links, indicator);
+    });
+  }
 
-      function moveTo(link) {
-        const animate = !firstShow;
-        if (!animate) {
-          indicator.style.transition = "none";
-        }
-        indicator.style.left = link.offsetLeft + "px";
-        indicator.style.top = link.offsetTop + "px";
-        indicator.style.width = link.offsetWidth + "px";
-        indicator.style.height = link.offsetHeight + "px";
-        if (!animate) {
-          void indicator.offsetHeight;
-          indicator.style.transition = "";
-          firstShow = false;
-        }
-        indicator.classList.add("is-active");
-      }
+  /* ============================================
+     FAQ HOVER INDICATOR
+     ============================================ */
+  function initFaqIndicator() {
+    document.querySelectorAll(".faq__list").forEach(function (list) {
+      // .faq__list reçoit .reveal-stagger ailleurs : tout enfant direct hérite
+      // d'une transition opacity/transform qui écrase la nôtre. On encapsule
+      // donc .faq__list dans un wrapper et on place l'indicateur en sibling.
+      const wrap = document.createElement("div");
+      wrap.className = "faq__wrap";
+      list.parentElement.insertBefore(wrap, list);
+      wrap.appendChild(list);
 
-      function hide() {
-        indicator.classList.remove("is-active");
-      }
+      const indicator = document.createElement("div");
+      indicator.className = "faq__indicator";
+      indicator.setAttribute("aria-hidden", "true");
+      wrap.appendChild(indicator);
 
-      links.forEach(function (link) {
-        link.addEventListener("mouseenter", function () { moveTo(link); });
-        link.addEventListener("focus", function () { moveTo(link); });
-      });
-
-      inner.addEventListener("mouseleave", hide);
-      inner.addEventListener("focusout", function (e) {
-        if (!inner.contains(e.relatedTarget)) hide();
+      const headers = list.querySelectorAll(".accordion__header");
+      initHoverIndicator(wrap, headers, indicator, function (header) {
+        // Ne pas afficher l'indicateur sur les questions ouvertes :
+        // elles ont déjà leur propre fond cyan.
+        const accordion = header.closest(".accordion");
+        return !accordion || !accordion.hasAttribute("open");
       });
     });
   }
@@ -1270,88 +1318,6 @@
 
 
   /* ============================================
-     HEADING LETTER REVEAL (H1 / H2)
-     Inspired by Tobias Ahlin's "ml10" effect: each letter rotates
-     in on Y-axis with a 45ms stagger when its heading enters view.
-     Pure CSS transitions — no animation library.
-     ============================================ */
-  function initHeadingLetterReveal() {
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    var headings = document.querySelectorAll("h1, h2");
-    if (!headings.length) return;
-
-    for (var i = 0; i < headings.length; i++) {
-      wrapHeadingLetters(headings[i]);
-    }
-
-    if (!("IntersectionObserver" in window)) return;
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        for (var k = 0; k < entries.length; k++) {
-          if (!entries[k].isIntersecting) continue;
-          var t = entries[k].target;
-          io.unobserve(t);
-          // Prepare (hidden state) then reveal on next frame so the transition plays.
-          t.classList.add("letters-prepared");
-          void t.offsetWidth;
-          requestAnimationFrame(function (el) {
-            return function () { el.classList.add("is-letters-visible"); };
-          }(t));
-        }
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
-    );
-    for (var m = 0; m < headings.length; m++) io.observe(headings[m]);
-  }
-
-  function wrapHeadingLetters(heading) {
-    // Skip if already wrapped
-    if (heading.getAttribute("data-letters-wrapped")) return;
-
-    // Preserve accessible text (letters-as-spans can confuse some screen readers)
-    if (!heading.hasAttribute("aria-label")) {
-      var label = (heading.innerText || heading.textContent || "").replace(/\s+/g, " ").trim();
-      if (label) heading.setAttribute("aria-label", label);
-    }
-
-    var letterIndex = 0;
-
-    function walk(node) {
-      var children = Array.prototype.slice.call(node.childNodes);
-      for (var i = 0; i < children.length; i++) {
-        var child = children[i];
-        if (child.nodeType === 3) {
-          var text = child.nodeValue;
-          if (!text) continue;
-          var frag = document.createDocumentFragment();
-          for (var c = 0; c < text.length; c++) {
-            var ch = text.charAt(c);
-            if (ch === " " || ch === "\u00a0") {
-              frag.appendChild(document.createTextNode(ch));
-            } else {
-              var span = document.createElement("span");
-              span.className = "letter";
-              span.setAttribute("aria-hidden", "true");
-              span.style.transitionDelay = (letterIndex * 45) + "ms";
-              span.textContent = ch;
-              frag.appendChild(span);
-              letterIndex++;
-            }
-          }
-          node.replaceChild(frag, child);
-        } else if (child.nodeType === 1 && child.tagName !== "BR") {
-          walk(child);
-        }
-      }
-    }
-
-    walk(heading);
-    heading.setAttribute("data-letters-wrapped", "1");
-  }
-
-  /* ============================================
      INIT — light immédiat, heavy en idle
      ============================================ */
   function prefersReducedMotion() {
@@ -1368,6 +1334,7 @@
     initDropdownPortal();
     initDropdownIndicator();
     initAccordions();
+    initFaqIndicator();
     initCounters();
     initLogosSlider();
   }
@@ -1377,7 +1344,6 @@
     if (prefersReducedMotion()) return;
 
     initParallax();
-    initHeadingLetterReveal();
     initDotMesh();
     initScrollLace();
   }

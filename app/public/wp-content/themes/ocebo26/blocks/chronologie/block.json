@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "ocebo26/chronologie",
+  "version": "1.0.0",
+  "title": "Chronologie",
+  "category": "ocebo26",
+  "icon": "list-view",
+  "description": "Bloc chronologie / timeline verticale (Notre méthode).",
+  "keywords": ["chronologie", "timeline", "méthode", "étapes"],
+  "textdomain": "ocebo26",
+  "attributes": {
+    "sectionNumber": { "type": "string", "default": "3" },
+    "title": { "type": "string", "default": "Notre <em class=\"text-cyan\">méthode</em>" },
+    "items": {
+      "type": "array",
+      "default": [
+        { "title": "Cadrage", "text": "On échange sur vos objectifs, vos cibles et vos contraintes. On pose les bases du projet : périmètre, planning, budget." },
+        { "title": "Conception (UX)", "text": "Arborescence, parcours utilisateurs, wireframes. On structure le site avant de le dessiner." },
+        { "title": "Design (UI)", "text": "Des maquettes sur mesure, pensées pour le responsive et l’accessibilité. Rien de préfabriqué : chaque écran est dessiné pour vous, pas pioché dans une banque de templates." },
+        { "title": "Développement", "text": "Intégration et développement sur WordPress ou Symfony (ou autre selon le projet). Code propre, maintenable, performant." },
+        { "title": "Recettage et formation", "text": "On teste, on corrige, on vous forme à l’administration. Vous êtes autonome pour gérer vos contenus." },
+        { "title": "Mise en ligne", "text": "Déploiement, redirections, vérification. Votre site est en ligne, on reste disponible pour la suite." }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"],
+    "spacing": { "padding": true, "margin": true }
+  },
+  "editorScript": "file:../../build/blocks/chronologie/index.js",
+  "render": "file:./render.php"
+}
