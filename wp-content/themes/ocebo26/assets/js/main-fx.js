@@ -7,9 +7,12 @@
  *   - ScrollLace (SVG laces)
  *
  * Chargé par main.js via injection <script> sur première interaction
- * utilisateur (scroll / pointermove) ou setTimeout safety. Skip si
- * prefers-reduced-motion (le loader main.js fait déjà cette check, on
- * la double ici en defense in depth).
+ * utilisateur (scroll / touchstart / keydown) ou setTimeout safety.
+ * Les 3 inits sont chunkés sur plusieurs idle callbacks pour ne jamais
+ * bloquer le main thread plus de ~50ms — la page reste cliquable même
+ * pendant que les effets se mettent en place.
+ * Skip si prefers-reduced-motion (le loader main.js fait déjà cette
+ * check, on la double ici en defense in depth).
  *
  * Vanilla JS — no dependencies.
  */
@@ -476,12 +479,14 @@
         clearTimeout(idleTimer);
         hoverActive = false;
         buildGrid();
-        animate();
+        requestAnimationFrame(animate);
       }, 150);
     });
 
     buildGrid();
-    animate(); // single initial paint; rAF won't reschedule because nothing is transitioning
+    // requestAnimationFrame avant le 1er paint : laisse le browser traiter
+    // les events en attente (clics, scrolls) avant d'itérer ~30K dots.
+    requestAnimationFrame(animate);
   }
 
   /* ============================================
@@ -730,9 +735,25 @@
   }
 
   /* ============================================
-     INIT
+     INIT — chunked sur plusieurs idle callbacks
      ============================================ */
-  initParallax();
-  initDotMesh();
-  initScrollLace();
+  // Chaque init s'exécute dans un idle callback distinct → le browser peut
+  // traiter les clics et scrolls utilisateur ENTRE chaque chunk. Sans ce
+  // chunking, les 3 inits + le premier paint canvas formaient une long task
+  // de 200-500ms qui bloquait l'interactivité de la page.
+  function defer(fn, timeout) {
+    if ("requestIdleCallback" in window) {
+      window.requestIdleCallback(fn, { timeout: timeout || 1500 });
+    } else {
+      window.setTimeout(fn, 16); // une frame ~60fps
+    }
+  }
+
+  defer(function () {
+    initParallax();
+    defer(function () {
+      initDotMesh();
+      defer(initScrollLace, 1500);
+    }, 800);
+  }, 200);
 })();

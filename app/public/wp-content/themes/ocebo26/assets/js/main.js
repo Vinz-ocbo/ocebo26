@@ -682,10 +682,13 @@
   }
 
   function armFxLoader() {
-    // once: true → un seul listener déclenchera, les autres seront nettoyés
+    // Triggers d'engagement réel : scroll (intent clair), touchstart (mobile),
+    // keydown (Tab, navigation clavier). On a délibérément RETIRÉ pointermove
+    // qui se déclenchait sur le moindre survol de souris (même un twitch en
+    // passant), ce qui chargeait main-fx.min.js trop tôt et freezait la page
+    // avant que l'utilisateur ne s'engage vraiment.
     var opts = { once: true, passive: true };
     window.addEventListener("scroll", loadFx, opts);
-    window.addEventListener("pointermove", loadFx, opts);
     window.addEventListener("touchstart", loadFx, opts);
     window.addEventListener("keydown", loadFx, { once: true });
 
