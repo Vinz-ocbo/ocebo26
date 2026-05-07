@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.3.4');
+define('OCEBO26_VERSION', '1.4.0');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
@@ -68,8 +68,22 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     // Frontend JS (minifié via terser, cf. npm run build:js)
+    // main.min.js (light, ~3 KB gzip) charge à DOMContentLoaded.
+    // main-fx.min.js (Parallax/DotMesh/ScrollLace) est lazy-loadé par main.js
+    // sur première interaction utilisateur — l'URL est passée via data-ocebo-fx.
     wp_enqueue_script('ocebo26-main', OCEBO26_URI . '/assets/js/main.min.js', [], OCEBO26_VERSION, ['strategy' => 'defer']);
 });
+
+/* ============================================
+   Expose l'URL versionnée de main-fx.min.js au loader JS via data-ocebo-fx
+   ============================================ */
+add_filter('script_loader_tag', function ($tag, $handle) {
+    if (is_admin() || $handle !== 'ocebo26-main') {
+        return $tag;
+    }
+    $fx_url = OCEBO26_URI . '/assets/js/main-fx.min.js?ver=' . OCEBO26_VERSION;
+    return str_replace(' src=', ' data-ocebo-fx="' . esc_url($fx_url) . '" src=', $tag);
+}, 9, 2); // priorité 9 → s'exécute AVANT le filtre defer (priorité 10)
 
 /* ============================================
    RESOURCE HINTS — preconnect aux serveurs de fonts

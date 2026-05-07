@@ -69,20 +69,26 @@ Plan complet validé par user 2026-05-07 sur branche `chore/perf-foundations`.
 - Confirmation de l'URL Vercel testée (`/` ou `/accueil`)
 - WebPageTest filmstrip + waterfall sur `/` mobile (idéalement profil "Moto G4 — 4G — Cable" ou équivalent)
 
-### Plan en 9 phases
-Voir TaskList pour détail. Phase 0 baseline en cours, 1-9 dépendantes en chaîne :
-0. Baseline propre (en cours)
-1. Code-split JS (DotMesh/ScrollLace/Parallax/Logos en bundle lazy) — **gros gain TBT**
-2. Critical CSS automatisé (Penthouse) — **gros gain SI/FCP**
-3. CSS purge & dedup (PurgeCSS sur bundle.css)
-4. Fonts solides (self-host Cabin/Kanit, subset, preload LCP)
-5. Images & médias (AVIF/WebP, srcset/sizes, fetchpriority)
-6. bfcache + headers Vercel (vercel.json Cache-Control)
-7. Refacto WP `.clinerules`-compliance (`/inc/` + lint pre-commit)
-8. Tests & monitoring (Lighthouse CI + Playwright + Vercel Speed Insights)
-9. Itérations finales (audit ciblé, vrai matériel, doc)
+### Plan révisé — Option Excellence (validé 2026-05-07)
 
-Mesure Lighthouse entre chaque phase pour valider le gain.
+**Constat baseline mobile** : 92/100 déjà, dépasse cible `.clinerules`. Le 9-phase plan initial était surdimensionné. Scope réduit aux 3 phases à plus haut ROI :
+
+0. Baseline ✅ (terminé)
+1. **Code-split JS** (DotMesh/ScrollLace/Parallax → main-fx.js lazy) — débloque desktop (53 → ~80-85)
+2. **Critical CSS automatisé** (Penthouse) — pousse FCP mobile 2,7s → ~1,2s, score → 96+
+4. **Fonts solides** (self-host Cabin/Kanit, preload LCP) — pousse encore FCP/LCP
+
+**Mesure finale** : Lighthouse desktop+mobile, doc résultats dans historique.
+
+**Phases écartées** (déprioritaires given baseline) :
+- Phase 3 CSS purge — bundle.css 6,8 KB gzip déjà sous budget critical
+- Phase 5 Images — toutes lazy, pas dans LCP (LCP = texte)
+- Phase 6 bfcache — déjà score 1 sur mobile
+- Phase 7 Refacto `/inc/` — pertinent pour `.clinerules`-compliance, à traiter en chantier qualité séparé hors-perf
+- Phase 8 Tests/monitoring — recommandé mais hors-scope perf
+- Phase 9 Itérations — à voir après mesure finale
+
+Cibles révisées : **Mobile ≥ 96 / Desktop ≥ 90**.
 
 ### Diagnostic posé
 **Cause primaire TBT** : `initDotMesh()` dans `wp-content/themes/ocebo26/assets/js/main.js:737` génère ~32 000 dots (SPACING=8 sur 1920×1080) animés via canvas 2D. Différé via `requestIdleCallback({ timeout: 5000 })` mais Vercel sert la page si vite que `idle` arrive **dans** la fenêtre TBT de Lighthouse → l'init se mesure.
