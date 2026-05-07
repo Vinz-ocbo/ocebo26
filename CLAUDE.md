@@ -118,9 +118,11 @@ Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner 
 ## État Git (en cours)
 
 - Branche active : **`chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`)
-- Commits sur la branche (non pushé) :
+- Commits sur la branche (non pushés) :
   - `5fab0e2` chore: corrige description thème (pas FSE, juste theme.json + blocs dynamiques)
   - `fd21e9b` chore: add CLAUDE.md project memory (living history)
+  - `f586f80` chore(perf): document Phase 0 baseline (assets inventory + targets)
+  - `4311e18` feat(perf): code-split JS — main-fx.js lazy-loaded on first interaction
 - **Working tree** : `.clinerules` modifié par user, laissé pour commit user
 - `main` reste propre, à `b532ec3` (synchro `origin/main`)
 - Stratégie : tout le chantier perf reste sur `chore/perf-foundations`, merge vers `main` quand stable et validé par mesure
@@ -129,6 +131,8 @@ Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner 
 
 Format : *date · résumé 1 ligne · commits clés ou statut*. Les chantiers en cours restent en haut ; les terminés/abandonnés s'accumulent par ordre chrono inverse.
 
+- **2026-05-07** · Phase 1 perf code-split JS · main-fx.js lazy-loadé sur première interaction, main.min.js -44%/-50% gzip (commit `4311e18`) ; v1.4.0
+- **2026-05-07** · Plan révisé Option Excellence · baseline mobile = 92 (déjà ≥ 90), scope réduit aux 3 phases ROI (1, 2, 4)
 - **2026-05-07** · Pause perf · Diagnostic posé (DotMesh → TBT 2,2s), plan retenu, en attente reprise — voir "Chantier en cours" ci-dessus
 - **2026-05-07** · Architecture clarifiée · style.css ne revendique plus FSE, archi "PHP classique + theme.json + blocs dynamiques" actée comme déviation assumée à `.clinerules` (working tree, non commité)
 - **2026-05-07** · 3 nouveaux blocs · `hero-inner`, `chronologie`, `bloc-2-colonnes` ajoutés et intégrés (commit `7058179`) ; v1.3.4
