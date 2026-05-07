@@ -138,10 +138,13 @@
 
     var ctx = canvas.getContext("2d");
 
+    // SPACING + GROWTH sont recalculés dans buildGrid() pour cap dotCount à
+    // ~30K même sur des écrans 4K — sinon le rebuild post-resize bloque le
+    // main thread plusieurs secondes (Float32Array allocs + repaint full grid).
     var SPACING     = 8;
     var BASE_RADIUS = 0.5;
     var PROXIMITY   = 250;
-    var GROWTH      = SPACING / 2 - BASE_RADIUS; // 3.5 — dots never overlap
+    var GROWTH      = SPACING / 2 - BASE_RADIUS; // 3.5 — dots never overlap (recalculé en buildGrid)
     var EASE        = 0.15;
     var BASE_ALPHA  = 0.12;
     var ACTIVE_EXTRA_ALPHA = 0.30;
@@ -168,6 +171,13 @@
     function buildGrid() {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
+
+      // Cap dotCount à ~30K via SPACING adaptatif. Sur 1080p (~32K natifs)
+      // SPACING reste 8-9, peu perceptible. Sur 4K (~130K natifs sans cap)
+      // SPACING monte à ~17 pour limiter le coût de rebuild à ~30K dots.
+      var area = canvas.width * canvas.height;
+      SPACING = Math.max(8, Math.ceil(Math.sqrt(area / 30000)));
+      GROWTH = SPACING / 2 - BASE_RADIUS;
 
       cols = Math.ceil(canvas.width / SPACING) + 1;
       var rows = Math.ceil(canvas.height / SPACING) + 1;
@@ -443,8 +453,13 @@
 
     var resizeTimer;
     window.addEventListener("resize", function () {
-      // Tout est débouncé : on évitait avant un freeze pendant le drag de fenêtre
-      // (chaque event resize relançait une boucle sur ~30K dots + un canvas fullscreen)
+      // Clear immédiat à chaque event : sans ça, pendant un drag de fenêtre
+      // la canvas backing store garde ses dimensions originales mais le CSS
+      // l'étire à 100% du window — les dots apparaissent déformés.
+      // Effacer rend la zone blanche le temps du drag (mieux que stretch).
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Le rebuild lui-même reste débouncé pour éviter de relancer une boucle
+      // sur ~30K dots + un canvas fullscreen à chaque event resize du drag.
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         canvas.width = window.innerWidth;
