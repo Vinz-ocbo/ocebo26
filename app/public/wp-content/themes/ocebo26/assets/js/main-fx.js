@@ -753,7 +753,7 @@
     initParallax();
     defer(function () {
       initDotMesh();
-      defer(initScrollLace, 1500);
-    }, 800);
-  }, 200);
+      defer(initScrollLace, 100);
+    }, 50);
+  }, 30);
 })();

@@ -682,19 +682,22 @@
   }
 
   function armFxLoader() {
-    // Triggers d'engagement réel : scroll (intent clair), touchstart (mobile),
-    // keydown (Tab, navigation clavier). On a délibérément RETIRÉ pointermove
-    // qui se déclenchait sur le moindre survol de souris (même un twitch en
-    // passant), ce qui chargeait main-fx.min.js trop tôt et freezait la page
-    // avant que l'utilisateur ne s'engage vraiment.
+    // Triggers d'engagement : pointermove (souris desktop) charge dès le
+    // moindre mouvement, scroll (intent clair), touchstart (mobile),
+    // keydown (Tab, navigation clavier). pointermove avait été retiré
+    // brièvement car l'init main-fx était synchrone et freezait la page —
+    // mais maintenant que l'init est chunké via rIC, ce n'est plus un
+    // problème, et ça donne le halo bien plus vite à l'utilisateur.
     var opts = { once: true, passive: true };
     window.addEventListener("scroll", loadFx, opts);
+    window.addEventListener("pointermove", loadFx, opts);
     window.addEventListener("touchstart", loadFx, opts);
     window.addEventListener("keydown", loadFx, { once: true });
 
-    // Filet de sécurité : si l'utilisateur n'interagit pas dans les 4s,
-    // on charge quand même (au-delà de la fenêtre TBT de Lighthouse desktop).
-    window.setTimeout(loadFx, 4000);
+    // Filet de sécurité : si l'utilisateur n'interagit pas dans les 1.5s,
+    // on charge quand même. 1500ms est confortablement APRÈS le TTI mesuré
+    // (0,8s desktop sur Vercel) donc l'impact TBT Lighthouse reste nul.
+    window.setTimeout(loadFx, 1500);
   }
 
   function init() {
