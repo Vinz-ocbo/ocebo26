@@ -28,11 +28,61 @@ Thème WordPress **classique** (pas FSE malgré l'ancien tag) :
 - **Conventional Commits + commits atomiques** (cf. `.clinerules`)
 - Réponses : posture senior, alternatives format "Option retenue X — Alternative Y (avantages/inconvénients)", estimation effort S/M/L
 
-## Chantier en cours — Performance (paused 2026-05-07)
+## Chantier en cours — Performance "bases solides" (in progress, démarré 2026-05-07)
 
-### État
-Lighthouse **desktop sur Vercel : 53** / SI 4,3s / **TBT 2 220 ms** / bfcache cancelled.
-Cible `.clinerules` : Lighthouse mobile ≥ 90.
+Plan complet validé par user 2026-05-07 sur branche `chore/perf-foundations`.
+
+### Cibles ambitieuses
+| Métrique | Cible |
+|---|---|
+| LCP mobile | ≤ 1,5s |
+| INP | ≤ 100ms |
+| TBT (Lighthouse) | ≤ 100ms |
+| CLS | ≤ 0,05 |
+| Lighthouse mobile | ≥ 95 |
+| Poids total above-fold | ≤ 250 KB |
+
+### Baseline 2026-05-07
+
+**Lighthouse desktop sur Vercel : 53 / SI 4,3s / TBT 2 220 ms / bfcache cancelled** (URL et mobile à confirmer par user).
+
+**Inventaire assets (gzipped, Brotli sera plus petit) :**
+| Asset | Raw | Gzip | Bloquant ? |
+|---|---|---|---|
+| `index.html` | 35 KB | 6,7 KB | — |
+| `accueil.html` | 31 KB | 6,0 KB | — |
+| `assets/css/bundle.css` | 37 KB | 6,8 KB | ✅ render-blocking |
+| `slider-simple/style.css` | 4 KB | 1,6 KB | ✅ render-blocking |
+| `assets/js/main.min.js` | 16,8 KB | 5,6 KB | deferred |
+| `slider-simple/view.js` | 10,2 KB | 3,0 KB | deferred |
+| **CSS render-blocking total** | 41 KB | **8,4 KB** | sous budget critical 14 KB ✓ |
+| **JS total** | 27 KB | **8,6 KB** | très bas ✓ |
+
+**Images slider :** `barreau_lyon3.jpeg` 114 KB, `invest2.jpeg` 131 KB, `guiti3-1.jpg` 143 KB. Lazy-loaded mais pas WebP/AVIF, pas de srcset.
+
+**DOM :** 527 nodes (`index.html`), 470 (`accueil.html`). Slider contient ses slides ×3 (clones).
+
+**Conclusion baseline :** poids OK, problème = **CPU/render** : DotMesh 32K dots → TBT, fonts async + bundle bloquant → SI dégradé.
+
+### Données baseline manquantes (à fournir par user)
+- Lighthouse **mobile** sur `/` et `/accueil` (cible `.clinerules` est mobile, score 53 connu = desktop seulement)
+- Confirmation de l'URL Vercel testée (`/` ou `/accueil`)
+- WebPageTest filmstrip + waterfall sur `/` mobile (idéalement profil "Moto G4 — 4G — Cable" ou équivalent)
+
+### Plan en 9 phases
+Voir TaskList pour détail. Phase 0 baseline en cours, 1-9 dépendantes en chaîne :
+0. Baseline propre (en cours)
+1. Code-split JS (DotMesh/ScrollLace/Parallax/Logos en bundle lazy) — **gros gain TBT**
+2. Critical CSS automatisé (Penthouse) — **gros gain SI/FCP**
+3. CSS purge & dedup (PurgeCSS sur bundle.css)
+4. Fonts solides (self-host Cabin/Kanit, subset, preload LCP)
+5. Images & médias (AVIF/WebP, srcset/sizes, fetchpriority)
+6. bfcache + headers Vercel (vercel.json Cache-Control)
+7. Refacto WP `.clinerules`-compliance (`/inc/` + lint pre-commit)
+8. Tests & monitoring (Lighthouse CI + Playwright + Vercel Speed Insights)
+9. Itérations finales (audit ciblé, vrai matériel, doc)
+
+Mesure Lighthouse entre chaque phase pour valider le gain.
 
 ### Diagnostic posé
 **Cause primaire TBT** : `initDotMesh()` dans `wp-content/themes/ocebo26/assets/js/main.js:737` génère ~32 000 dots (SPACING=8 sur 1920×1080) animés via canvas 2D. Différé via `requestIdleCallback({ timeout: 5000 })` mais Vercel sert la page si vite que `idle` arrive **dans** la fenêtre TBT de Lighthouse → l'init se mesure.
@@ -59,14 +109,15 @@ Si après ces 3 fixes on est ≥ 75 et l'utilisateur vise ≥ 90 → enchaîner 
 - Build : `npm run build:js` depuis `wp-content/themes/ocebo26/` régénère `main.min.js`
 - Sync miroirs : copier `main.js` + `main.min.js` vers `assets/js/`, `app/public/assets/js/`, `app/public/wp-content/themes/ocebo26/assets/js/`
 
-## État Git (au moment de la pause)
+## État Git (en cours)
 
-- Branche : `main`, à jour avec `origin/main`
-- 3 commits récents poussés : gitignore, 3 nouveaux blocs + admin defer guard, checklist/pourquoi tweaks
-- **Working tree non commité** :
-  - `.clinerules` (modifs user, à lui de commiter)
-  - `wp-content/themes/ocebo26/style.css` + miroir `app/public/...` (chantier "Option B archi" — description thème corrigée, plus FSE)
-- Suggestion de message si user veut commiter ces 2 derniers : `chore: corrige description thème (pas FSE, juste theme.json + blocs dynamiques)`
+- Branche active : **`chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`)
+- Commits sur la branche (non pushé) :
+  - `5fab0e2` chore: corrige description thème (pas FSE, juste theme.json + blocs dynamiques)
+  - `fd21e9b` chore: add CLAUDE.md project memory (living history)
+- **Working tree** : `.clinerules` modifié par user, laissé pour commit user
+- `main` reste propre, à `b532ec3` (synchro `origin/main`)
+- Stratégie : tout le chantier perf reste sur `chore/perf-foundations`, merge vers `main` quand stable et validé par mesure
 
 ## Historique des chantiers
 
