@@ -45,3 +45,7 @@ SOURCES/figmaToken.md
 .claude/
 .tmp/
 app/public/wp-content/debug.log
+
+# Lighthouse / WebPageTest reports (artifacts, peuvent être lourds)
+SOURCES/tests-lighthouse*/
+SOURCES/tests-webpagetest*/

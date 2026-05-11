@@ -6,24 +6,179 @@
   <title>Ocebo | Agence web et studio digital depuis 2004</title>
   <meta name="description" content="Agence web spécialisée dans la création de sites internet, applications web, emailing et production digitale. Sur-mesure, conseil et expertise depuis 2004. Lyon, Lille, Nancy.">
 
-  <!-- Preconnect to font servers -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preconnect Adobe Typekit (Bookmania, hero H1) — Cabin/Kanit sont self-hostés -->
   <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 
-  <!-- Preload critical font files -->
-  <link rel="preload" href="https://fonts.gstatic.com/s/cabin/v27/u-4i0qWljRw-PfU81xCKCpdpbgZJl6XFpfEd7eA9BIxxkV2EH7alx0Ds.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="https://fonts.gstatic.com/s/kanit/v15/nKKZ-Go6G5tXcoaSEQGodLxA.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Pas de preload font ici : testé en v1.7.0, régression Local Sites HTTP/1.1
+       (preloads priorité haute retardaient main.min.js → halo/reveals décalés).
+       Les @font-face vivent dans bundle.min.css avec font-display:swap. -->
 
-  <!-- Bundle CSS (1 request instead of 7) -->
-  <link rel="stylesheet" href="assets/css/bundle.css">
-  <link rel="stylesheet" href="wp-content/themes/ocebo26/blocks/slider-simple/style.css">
+  <!-- CRITICAL:BEGIN — auto-injecté par build/inject-critical-static.js, ne pas éditer à la main -->
+  <style id="critical-css">
+  /* ============================================
+   CRITICAL CSS — Above-fold mobile + desktop
+   ============================================
+   Inlined dans <head> pour éliminer le render-blocking
+   du bundle CSS principal. Couvre : reset, tokens, body,
+   skip-link, header/nav, mobile-menu (état fermé), hero,
+   utilities typographiques utilisées au-dessus du pli.
 
-  <!-- Fonts loaded non-blocking -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap" media="print" onload="this.media='all'">
+   ⚠ Si tu modifies un sélecteur ici, sync aussi le fichier
+   source correspondant (reset/tokens/theme/layout/components/
+   utilities/sections/animations.css) sinon divergence.
+
+   Dernière maj : 2026-05-11 (v1.6.0)
+   ============================================ */
+
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;-moz-text-size-adjust:100%;text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+body{min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+img,picture,video,canvas,svg{display:block;max-width:100%}
+input,button,textarea,select{font:inherit;color:inherit}
+p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}
+a,a:link,a:visited{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+button{cursor:pointer;border:none;background:none}
+
+/* ===== DESIGN TOKENS ===== */
+:root{
+  --color-bg:#000;--color-surface-dark:#030217;--color-surface-light:#f2f2f2;--color-surface-input:#f5f5f5;
+  --color-text-primary:#fff;--color-text-secondary:#697077;--color-text-body:#383b4d;
+  --color-accent-cyan:#15ffd6;--color-accent-magenta:#d74ed7;--color-accent-yellow:#ffee00;--color-accent-red:#ed3a31;
+  --color-border-default:#e0e0e0;--color-border-light:#dde1e6;
+  --gradient-glow-cyan:radial-gradient(circle,#66edd866,transparent 70%);
+  --gradient-glow-magenta:radial-gradient(circle,#d74ed74d,transparent 70%);
+  --gradient-glow-yellow:radial-gradient(circle,#ffee0033,transparent 70%);
+  --gradient-overlay:linear-gradient(180deg,#7a90c81a,#7a90c84d);
+  --font-display:"bookmania",Georgia,serif;--font-heading:"Kanit",sans-serif;--font-body:"Cabin",sans-serif;
+  --text-display-xl:56px;--text-display-lg:40px;--text-number-xl:100px;--text-number-lg:38px;
+  --text-heading-md:26px;--text-heading-sm:20px;--text-body-lg:18px;--text-body-md:16px;
+  --text-label:16px;--text-body-sm:14px;--text-caption:13px;--text-small:11px;
+  --lh-display-xl:1;--lh-display-lg:1;--lh-number-xl:1;--lh-number-lg:1;
+  --lh-heading-md:1.38;--lh-heading-sm:1.3;--lh-body-lg:1.6;--lh-body-md:1.6;
+  --lh-label:1;--lh-body-sm:1.6;--lh-caption:1.54;--lh-small:1.45;
+  --fw-black:900;--fw-regular:400;
+  --space-1:8px;--space-1-5:10px;--space-2:16px;--space-3:24px;--space-4:32px;--space-5:40px;--space-7:56px;--space-8:64px;--space-10:80px;
+  --grid-viewport:1440px;--grid-content:1024px;--grid-content-wide:1090px;--grid-columns:12;--grid-gutter:16px;--section-gap:80px;
+  --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:24px;--radius-pill:9999px;
+  --blur-card:blur(8px);--blur-menu:blur(40px);
+  --shadow-card:0 0 3px #00000099;--shadow-hard:2px 2px 0 var(--color-surface-dark);--shadow-drop:0 3px 3px #00000040;--shadow-glow-cyan:0 0 14px #15ffd64d;
+  --transition-fast:150ms ease;--transition-base:300ms ease;--transition-slow:500ms ease-out;
+  --bp-mobile:320px;--bp-tablet:768px;--bp-desktop:1024px;--bp-wide:1440px
+}
+
+/* ===== WP CONTAINER NEUTRALISATION (theme.css) ===== */
+body .is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width:none;margin-left:auto;margin-right:auto}
+body .is-layout-flow > * + *{margin-block-start:0}
+body .wp-site-blocks{padding:0}
+
+/* ===== BODY + BG CANVAS + LACE + SKIP + CONTAINER + SECTION (layout.css) ===== */
+body{font-family:var(--font-body);font-size:var(--text-body-md);font-weight:var(--fw-regular);line-height:var(--lh-body-md);color:var(--color-text-primary);background-color:#06070a;background-image:linear-gradient(to bottom,#13161d 0,#06070a 300px);background-repeat:no-repeat;overflow-x:hidden;position:relative}
+#dot-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:-2}
+#lace-wrap{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden;filter:blur(3px);opacity:0}
+#lace-svg{width:100%;height:100%}
+.skip-link{position:absolute;top:-100%;left:16px;z-index:1000;padding:var(--space-1) var(--space-2);background:var(--color-accent-cyan);color:var(--color-bg);font-family:var(--font-heading);font-weight:500;border-radius:var(--radius-sm)}
+.skip-link:focus{top:16px}
+.container{width:100%;max-width:var(--grid-content);margin-inline:auto;padding-inline:var(--space-3)}
+.container--wide{max-width:var(--grid-content-wide)}
+.container--full{max-width:var(--grid-viewport)}
+.section{padding-block:var(--section-gap)}
+
+/* ===== BUTTONS (components.css) ===== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:50px;white-space:nowrap;padding:var(--space-1-5) 12px;font-family:var(--font-heading);font-size:var(--text-label);line-height:var(--lh-label);font-weight:var(--fw-regular);text-transform:uppercase;letter-spacing:.04em;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:background-color var(--transition-fast),color var(--transition-fast),transform var(--transition-fast),box-shadow var(--transition-fast);position:relative}
+.btn__icon-right{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:24px;height:24px;border-radius:4px;background:var(--color-surface-dark);color:var(--color-accent-cyan);overflow:hidden;position:relative}
+.btn__icon-right svg{display:block}
+.btn.btn--primary{background-color:var(--color-accent-cyan);color:var(--color-surface-dark)}
+.btn.btn--secondary{background-color:transparent;background-image:radial-gradient(ellipse at center,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--color-text-primary)}
+.btn--sm{padding:var(--space-1) var(--space-2);font-size:var(--text-caption)}
+.nav__cta.btn--sm{padding:var(--space-1) var(--space-2)!important;font-size:var(--text-caption)!important;line-height:1!important}
+
+/* ===== SECTION HEADER + NUMBER (components.css base) ===== */
+.section-header{display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-5);--title-line-h:40px}
+.section-body-indent{padding-left:calc(56px + var(--space-3))}
+.section-number{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:56px;height:56px;font-family:var(--font-heading);font-size:var(--text-number-lg);line-height:1;color:var(--color-text-primary);background-color:transparent;background-image:radial-gradient(ellipse at center,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:var(--radius-sm);align-self:flex-start;margin-top:calc((var(--title-line-h,40px) - 56px) / 2)}
+
+/* ===== HEADER / NAV (components.css) ===== */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;transition:background-color var(--transition-base),transform var(--transition-base)}
+.nav{position:relative;z-index:100}
+.nav__inner{display:flex;align-items:center;justify-content:space-between;max-width:var(--grid-content);margin-inline:auto;padding:var(--space-2) var(--space-3)}
+.nav__logo{display:flex;align-items:center}
+.nav__logo-image{display:block;height:32px;width:auto}
+.nav__menu{display:flex;align-items:center;gap:var(--space-4)}
+.nav__link{display:inline-flex;align-items:center;gap:4px;font-family:var(--font-heading);font-size:var(--text-label);color:var(--color-text-primary);transition:color var(--transition-fast);padding:var(--space-1) 0;position:relative}
+.nav__chevron{transition:transform var(--transition-fast)}
+.nav__item{position:relative}
+.nav__dropdown{position:fixed;top:0;left:0;width:340px;opacity:0;visibility:hidden;transition:opacity var(--transition-base);pointer-events:none;z-index:99}
+
+/* Burger : caché desktop, visible mobile (média query plus bas) */
+.nav__burger{display:none;flex-direction:column;gap:5px;padding:var(--space-1)}
+.nav__burger-line{display:block;width:24px;height:2px;background:var(--color-text-primary);border-radius:2px;transition:transform var(--transition-base),opacity var(--transition-fast)}
+
+/* Mobile menu fermé par défaut (clip-path:0%) — critique pour éviter flash */
+.mobile-menu{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;background-color:transparent;background-image:radial-gradient(ellipse at center,rgba(3,2,23,.7) 0%,rgba(3,2,23,.4) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:96px var(--space-3) var(--space-5);overflow-y:auto;z-index:99;text-align:left;display:flex;flex-direction:column;justify-content:center;clip-path:circle(0% at 100% 0%);-webkit-clip-path:circle(0% at 100% 0%);pointer-events:none;transition:clip-path 600ms cubic-bezier(.16,1,.3,1),-webkit-clip-path 600ms cubic-bezier(.16,1,.3,1)}
+.mobile-menu__list{display:flex;flex-direction:column;gap:var(--space-2);align-items:flex-start;margin:0;padding:0;list-style:none}
+.mobile-menu__item{list-style:none;opacity:0;transform:translateX(-24px);transition:opacity 200ms ease,transform 200ms ease}
+
+/* ===== UTILITIES (above-fold) ===== */
+.display-xl{font-family:var(--font-display);font-size:var(--text-display-xl);font-weight:var(--fw-black);line-height:var(--lh-display-xl)}
+.body-lg{font-size:var(--text-body-lg);line-height:var(--lh-body-lg)}
+.display-xl em,.display-lg em{color:var(--color-accent-cyan);font-style:normal}
+.text-cyan{color:var(--color-accent-cyan)}
+em{font-style:normal}
+:focus-visible{outline:2px solid var(--color-accent-cyan);outline-offset:3px}
+
+/* ===== HERO (sections.css) ===== */
+.hero{padding-top:calc(82px + var(--section-gap) + 40px)}
+.hero__inner{display:flex;align-items:flex-start}
+.hero__content{max-width:780px}
+.hero__title{margin-bottom:var(--space-3)}
+.hero .section-header{margin-bottom:var(--space-3);--title-line-h:56px}
+.hero__body{padding-left:calc(56px + var(--space-3))}
+.hero__text{color:var(--color-text-primary);margin-bottom:var(--space-4)}
+.hero__ctas{display:flex;gap:var(--space-2);flex-wrap:nowrap}
+
+/* ===== SECTION-NUMBER ANIMATION (animations.css) ===== */
+/* Override la transition de components.css + start state opacity:0 + scale(0.5).
+   Le JS ajoute .is-visible sur un ancêtre pour révéler. */
+.section-number{opacity:0;transform:scale(.5);transition:opacity var(--transition-slow),transform var(--transition-slow),background-color 1200ms cubic-bezier(.4,0,.2,1)}
+.is-visible .section-number,.reveal.is-visible .section-number{opacity:1;transform:scale(1)}
+
+/* ===== RESPONSIVE TOKENS + LAYOUT (layout.css media queries) ===== */
+@media (max-width:767px){
+  :root{--text-display-xl:44px;--text-display-lg:36px;--text-number-xl:56px;--text-number-lg:28px;--text-heading-md:22px;--text-heading-sm:18px;--section-gap:48px}
+  .section-header{--title-line-h:36px}
+  .hero .section-header{--title-line-h:44px}
+  .container{padding-inline:var(--space-2)}
+  .section-body-indent,.hero__body{padding-left:0}
+  .nav__menu,.nav__cta{display:none}
+  .nav__burger{display:flex}
+  .hero{min-height:auto;padding-top:calc(70px + var(--space-5))}
+  .hero__ctas{flex-direction:column}
+  .hero__ctas .btn{width:100%;justify-content:space-between}
+}
+@media (min-width:768px) and (max-width:1023px){
+  :root{--text-display-xl:44px;--text-display-lg:44px;--text-number-xl:72px;--section-gap:64px}
+  .section-header{--title-line-h:44px}
+  .hero .section-header{--title-line-h:44px}
+}
+  </style>
+  
+  <!-- Bundle CSS complet (non-blocking via media=print swap) -->
+  <link rel="stylesheet" href="assets/css/bundle.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="wp-content/themes/ocebo26/blocks/slider-simple/style.css" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="assets/css/bundle.min.css">
+    <link rel="stylesheet" href="wp-content/themes/ocebo26/blocks/slider-simple/style.css">
+  </noscript>
+  <!-- CRITICAL:END -->
+
+  <!-- Adobe Typekit (Bookmania, hero H1) — async via media=print swap.
+       Cabin/Kanit sont self-hostés et déclarés dans bundle.min.css. -->
   <link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css" media="print" onload="this.media='all'">
   <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap">
     <link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css">
   </noscript>
 </head>
@@ -553,5 +708,6 @@
 
   <script src="wp-content/themes/ocebo26/blocks/slider-simple/view.js" defer></script>
   <script src="assets/js/main.min.js" defer></script>
+  <script src="assets/js/main-fx.min.js" defer></script>
 </body>
 </html>
