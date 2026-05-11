@@ -6,13 +6,13 @@
   <title>Ocebo | Agence web et studio digital depuis 2004</title>
   <meta name="description" content="Agence web spécialisée dans la création de sites internet, applications web, emailing et production digitale. Sur-mesure, conseil et expertise depuis 2004. Lyon, Lille, Nancy.">
 
-  <!-- Preconnect to font servers -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preconnect Adobe Typekit (Bookmania, hero H1) — Cabin/Kanit sont self-hostés -->
   <link rel="preconnect" href="https://p.typekit.net" crossorigin>
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 
-  <!-- Pas de preload font ici : les URLs woff2 versionnées changent côté
-       Google et 404 régulièrement. Phase 4 self-host = preload stable. -->
+  <!-- Pas de preload font ici : testé en v1.7.0, régression Local Sites HTTP/1.1
+       (preloads priorité haute retardaient main.min.js → halo/reveals décalés).
+       Les @font-face vivent dans bundle.min.css avec font-display:swap. -->
 
   <!-- CRITICAL:BEGIN — auto-injecté par build/inject-critical-static.js, ne pas éditer à la main -->
   <style id="critical-css">
@@ -175,11 +175,10 @@ em{font-style:normal}
   </noscript>
   <!-- CRITICAL:END -->
 
-  <!-- Fonts loaded non-blocking -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap" media="print" onload="this.media='all'">
+  <!-- Adobe Typekit (Bookmania, hero H1) — async via media=print swap.
+       Cabin/Kanit sont self-hostés et déclarés dans bundle.min.css. -->
   <link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css" media="print" onload="this.media='all'">
   <noscript>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap">
     <link rel="stylesheet" href="https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css">
   </noscript>
 </head>

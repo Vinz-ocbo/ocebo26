@@ -1,0 +1,47 @@
+/* ============================================
+   FONTS — Self-hosted Google webfonts (v1.7.0)
+   ============================================
+   Cabin et Kanit téléchargés depuis fonts.gstatic.com et servis
+   localement depuis assets/fonts/. Élimine la dépendance Google CDN
+   et le bordel des URLs qui changent (v15→v17, v27→v35) sans préavis.
+
+   Bookmania reste sur Adobe Typekit (license self-host non triviale).
+
+   font-display: swap → texte visible immédiatement avec fallback
+   serif/sans-serif, puis swap quand la webfont est chargée.
+
+   Les URLs woff2 utilisent un chemin relatif au CSS lui-même
+   (`../fonts/`), ce qui résout correctement aussi bien depuis
+   `wp-content/themes/ocebo26/assets/css/bundle.min.css` que depuis
+   `assets/css/bundle.min.css` (statique Vercel).
+
+   Subset latin uniquement (suffit pour le français + chars Latin-1).
+   Si besoin de cyrillique/grec/vietnamien/thaï, étendre.
+   ============================================ */
+
+/* Cabin — Variable font (weights 400-600 dans un seul fichier) */
+@font-face {
+  font-family: 'Cabin';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('../fonts/cabin-variable-latin.woff2') format('woff2-variations'),
+       url('../fonts/cabin-variable-latin.woff2') format('woff2');
+}
+
+/* Kanit — fichiers séparés par weight (pas variable) */
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/kanit-400-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/kanit-500-latin.woff2') format('woff2');
+}

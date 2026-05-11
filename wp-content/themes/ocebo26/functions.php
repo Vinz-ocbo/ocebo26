@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.6.0');
+define('OCEBO26_VERSION', '1.7.0');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
@@ -36,24 +36,19 @@ add_action('after_setup_theme', function () {
    ENQUEUE — FRONTEND
    ============================================ */
 add_action('wp_enqueue_scripts', function () {
-    // Fonts — Google Fonts
-    wp_enqueue_style('ocebo26-google-fonts',
-        'https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap',
-        [], null
-    );
-
-    // Fonts — Adobe Typekit (Bookmania)
+    // Fonts — Adobe Typekit (Bookmania, hero H1 display font)
+    // Reste render-blocking car utilisé en LCP. Cabin + Kanit sont self-hostés
+    // (cf. assets/fonts/ + fonts.css inclus dans bundle.min.css).
     wp_enqueue_style('ocebo26-typekit',
         'https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css',
         [], null
     );
 
-    // CSS bundle unique — concaténation des 8 fichiers source dans l'ordre
-    // cascade (tokens → reset → layout → components → sections → animations →
-    // utilities → theme), généré par `npm run build:css` (cf. build/build-css.js).
+    // CSS bundle unique — concaténation des 9 fichiers source dans l'ordre
+    // cascade (fonts → tokens → reset → layout → components → sections →
+    // animations → utilities → theme), généré par `npm run build:css`.
     // L'above-fold est couvert par critical.css inliné en <head> (voir wp_head
-    // action plus bas), ce bundle est chargé non-bloquant via media=print swap
-    // dans le filtre style_loader_tag.
+    // action plus bas), ce bundle est chargé non-bloquant via media=print swap.
     wp_enqueue_style('ocebo26-bundle', OCEBO26_URI . '/assets/css/bundle.min.css', ['ocebo26-typekit'], OCEBO26_VERSION);
 
     // Frontend JS (minifié via terser, cf. npm run build:js)
@@ -70,8 +65,8 @@ add_action('wp_enqueue_scripts', function () {
    ============================================ */
 add_filter('wp_resource_hints', function ($hints, $relation) {
     if ($relation === 'preconnect') {
-        $hints[] = [ 'href' => 'https://fonts.googleapis.com' ];
-        $hints[] = [ 'href' => 'https://fonts.gstatic.com', 'crossorigin' => 'anonymous' ];
+        // Cabin + Kanit sont self-hostés (cf. assets/fonts/), plus besoin de
+        // preconnect aux Google CDN. Typekit reste pour Bookmania (hero H1).
         $hints[] = [ 'href' => 'https://p.typekit.net', 'crossorigin' => 'anonymous' ];
         $hints[] = [ 'href' => 'https://use.typekit.net', 'crossorigin' => 'anonymous' ];
     }
@@ -90,6 +85,18 @@ add_action('wp_head', function () {
     if (is_admin()) {
         return;
     }
+
+    // NOTE : pas de <link rel="preload"> pour les webfonts. Testé en v1.7.0,
+    // ça provoquait une régression sur Local Sites HTTP/1.1 (les preloads
+    // priorité haute grabbaient des connexions parallèles, retardant
+    // main.min.js / main-fx.min.js → halo DotMesh + reveal animations
+    // décalés). Les @font-face vivent dans bundle.min.css avec
+    // font-display:swap : le texte est visible immédiatement en fallback
+    // (sans-serif système) puis swap à Cabin/Kanit quand le bundle est
+    // chargé. Sur HTTP/2 (Vercel) ce serait OK de préloader, mais la
+    // divergence WP/statique n'en vaut pas la peine.
+
+    // Inline critical CSS (above-fold) — élimine le render-blocking du bundle.
     $critical_path = OCEBO26_DIR . '/assets/css/critical.css';
     if (!is_readable($critical_path)) {
         return;
@@ -101,18 +108,17 @@ add_action('wp_head', function () {
 }, 1);
 
 /* ============================================
-   ASYNC LOAD — Google Fonts CSS + bundle CSS principal (typekit reste sync)
+   ASYNC LOAD — bundle CSS principal (typekit reste sync pour LCP)
    ============================================
    Note : typekit (Bookmania) reste sync car le H1 hero l'utilise et
-   l'async retardait le LCP. Google Fonts (Cabin/Kanit) et le bundle CSS
-   complet passent en media=print swap, le critical inline gère l'above-fold. */
+   l'async retardait le LCP. Cabin/Kanit sont self-hostés et leurs
+   @font-face vivent dans bundle.min.css avec font-display:swap. */
 add_filter('style_loader_tag', function ($tag, $handle) {
     // Admin (Gutenberg) : ne jamais defer un style, sinon casse l'éditeur.
     if (is_admin()) {
         return $tag;
     }
-    $async_handles = ['ocebo26-google-fonts', 'ocebo26-bundle'];
-    if (!in_array($handle, $async_handles, true)) {
+    if ($handle !== 'ocebo26-bundle') {
         return $tag;
     }
     $async = preg_replace(
@@ -182,16 +188,14 @@ add_action('wp_enqueue_scripts', function () {
    ============================================ */
 add_action('enqueue_block_editor_assets', function () {
     // Load the same CSS stack as frontend so ServerSideRender previews match
-    wp_enqueue_style('ocebo26-google-fonts-editor',
-        'https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600&family=Kanit:wght@400;500&display=swap',
-        [], null
-    );
     wp_enqueue_style('ocebo26-typekit-editor',
         'https://p.typekit.net/p.css?s=1&k=nmz1tbi&ht=tk&f=14719.39512.39519.39521.39523&a=40567368&app=typekit&e=css',
         [], null
     );
 
-    $css_files = ['tokens', 'reset', 'layout', 'components', 'sections', 'animations', 'utilities', 'theme', 'editor'];
+    // fonts.css (self-hosted Cabin/Kanit) en premier pour que les @font-face
+    // soient déclarés avant que tokens.css/utilities.css les référencent.
+    $css_files = ['fonts', 'tokens', 'reset', 'layout', 'components', 'sections', 'animations', 'utilities', 'theme', 'editor'];
     $prev = 'ocebo26-typekit-editor';
     foreach ($css_files as $file) {
         $handle = 'ocebo26-editor-' . $file;

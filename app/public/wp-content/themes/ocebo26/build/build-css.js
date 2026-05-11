@@ -20,6 +20,7 @@ const path = require('path');
 
 const CSS_DIR = path.join(__dirname, '..', 'assets', 'css');
 const ORDER = [
+  'fonts.css',
   'tokens.css',
   'reset.css',
   'layout.css',
