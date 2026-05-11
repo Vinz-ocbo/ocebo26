@@ -9,7 +9,7 @@
 
 defined('ABSPATH') || exit;
 
-define('OCEBO26_VERSION', '1.5.0');
+define('OCEBO26_VERSION', '1.6.0');
 define('OCEBO26_DIR', get_template_directory());
 define('OCEBO26_URI', get_template_directory_uri());
 
@@ -48,24 +48,13 @@ add_action('wp_enqueue_scripts', function () {
         [], null
     );
 
-    // Original CSS stack — in order
-    $css_files = [
-        'tokens'     => 'tokens.css',
-        'reset'      => 'reset.css',
-        'layout'     => 'layout.css',
-        'components' => 'components.css',
-        'sections'   => 'sections.css',
-        'animations' => 'animations.css',
-        'utilities'  => 'utilities.css',
-        'theme'      => 'theme.css',
-    ];
-
-    $prev = 'ocebo26-typekit';
-    foreach ($css_files as $handle => $file) {
-        $full_handle = 'ocebo26-' . $handle;
-        wp_enqueue_style($full_handle, OCEBO26_URI . '/assets/css/' . $file, [$prev], OCEBO26_VERSION);
-        $prev = $full_handle;
-    }
+    // CSS bundle unique — concaténation des 8 fichiers source dans l'ordre
+    // cascade (tokens → reset → layout → components → sections → animations →
+    // utilities → theme), généré par `npm run build:css` (cf. build/build-css.js).
+    // L'above-fold est couvert par critical.css inliné en <head> (voir wp_head
+    // action plus bas), ce bundle est chargé non-bloquant via media=print swap
+    // dans le filtre style_loader_tag.
+    wp_enqueue_style('ocebo26-bundle', OCEBO26_URI . '/assets/css/bundle.min.css', ['ocebo26-typekit'], OCEBO26_VERSION);
 
     // Frontend JS (minifié via terser, cf. npm run build:js)
     // Deux bundles deferred chargés en parallèle :
@@ -90,12 +79,40 @@ add_filter('wp_resource_hints', function ($hints, $relation) {
 }, 10, 2);
 
 /* ============================================
-   ASYNC LOAD — Google Fonts CSS uniquement (typekit reste sync pour LCP)
-   ============================================ */
+   CRITICAL CSS INLINE — above-fold rendu sans render-blocking
+   ============================================
+   On inline critical.css en tout début de <head> via wp_head priority 1,
+   AVANT que les <link> CSS soient imprimés. Le browser peut peindre
+   l'above-fold dès que le HTML+critical sont parsés, sans attendre
+   le bundle.min.css (qui est chargé non-bloquant ci-dessous). */
+add_action('wp_head', function () {
+    // Pas d'inline critical en admin (Gutenberg gère sa propre stack).
+    if (is_admin()) {
+        return;
+    }
+    $critical_path = OCEBO26_DIR . '/assets/css/critical.css';
+    if (!is_readable($critical_path)) {
+        return;
+    }
+    $critical = file_get_contents($critical_path);
+    if ($critical !== false && $critical !== '') {
+        echo "<style id=\"ocebo26-critical\">" . $critical . "</style>\n";
+    }
+}, 1);
+
+/* ============================================
+   ASYNC LOAD — Google Fonts CSS + bundle CSS principal (typekit reste sync)
+   ============================================
+   Note : typekit (Bookmania) reste sync car le H1 hero l'utilise et
+   l'async retardait le LCP. Google Fonts (Cabin/Kanit) et le bundle CSS
+   complet passent en media=print swap, le critical inline gère l'above-fold. */
 add_filter('style_loader_tag', function ($tag, $handle) {
-    // Note : typekit (Bookmania) reste sync car le H1 hero l'utilise et
-    // l'async retardait le LCP. Seul Google Fonts (Cabin/Kanit) est async.
-    if ($handle !== 'ocebo26-google-fonts') {
+    // Admin (Gutenberg) : ne jamais defer un style, sinon casse l'éditeur.
+    if (is_admin()) {
+        return $tag;
+    }
+    $async_handles = ['ocebo26-google-fonts', 'ocebo26-bundle'];
+    if (!in_array($handle, $async_handles, true)) {
         return $tag;
     }
     $async = preg_replace(
