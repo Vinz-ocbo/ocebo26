@@ -52,60 +52,60 @@ Démarré 2026-05-07 sur branche `chore/perf-foundations` (cible : Mobile ≥ 96
 - v1.4.3 (`7f4bbe6`) — Halo plus rapide : ré-introduit pointermove + setTimeout 4000→1500ms
 - v1.5.0 (`b1d9234`) — **Bascule chargement eager** : main-fx.js parallèle via `<script defer>` séparé
 
-### 🟡 Phase 2 (critical CSS + bundle WP) — IMPLÉMENTÉE 2026-05-11, en attente de test user
+### ✅ Phase 2 (critical CSS + bundle WP) — VALIDÉE LOCAL 2026-05-11
 
-**Option B retenue** (vs Penthouse automatisé) : critical manuel + defer bundle. Ratio effort/gain meilleur, pas de Puppeteer fragile sur Windows.
+Committée en `8918087` (feat) + `758e281` (chore CLAUDE.md). User a confirmé en local "tout est ok pour l'affichage du hero". Bug minifier intermédiaire (espaces autour de `+` dans `calc()`) résolu, hero correctement positionné à 202px sous le menu en desktop.
 
-**Ce qui a été fait cette session (working tree, pas encore committé)** :
+### 🟡 Phase 4 (fonts solides) — IMPLÉMENTÉE 2026-05-11, en attente test user
 
-1. **`critical.css`** (148 lignes, 11.8 KB raw / ~4 KB gzip) — créé dans `wp-content/themes/ocebo26/assets/css/` :
-   - Reset + tokens + body + canvas/lace + skip-link
-   - Header/nav + mobile-menu (état fermé)
-   - Hero complet (.hero, .hero__inner, .hero__title, .hero__ctas)
-   - Buttons (.btn, --primary, --secondary, --sm)
-   - Section-header + section-number + animation start state
-   - Utilities (.display-xl, .body-lg, .text-cyan, :focus-visible)
-   - Media queries responsive
+**Scope** : self-host Cabin (variable, weights 400-600) + Kanit (400, 500), preload des fonts critiques, retrait Google CDN. Bookmania reste sur Adobe Typekit (license self-host non triviale).
 
-2. **`bundle.min.css`** (34.7 KB minifié, vs 49 KB raw — 70.7%) — généré par `build/build-css.js`. Concatène les 8 CSS source dans l'ordre cascade WP (tokens → reset → layout → components → sections → animations → utilities → theme), minification basique (commentaires + whitespaces).
+**Ce qui a été fait** :
 
-3. **`functions.php`** modifié :
-   - Bump `OCEBO26_VERSION` à **1.6.0**
-   - Remplace les 8 `wp_enqueue_style` par 1 seul (`ocebo26-bundle`)
-   - Hook `wp_head` priority 1 : inline `critical.css` en `<style id="ocebo26-critical">` (bypass admin)
-   - Filtre `style_loader_tag` étendu : `media=print` + `onload` swap pour `ocebo26-bundle` ET `ocebo26-google-fonts` (bypass `is_admin()`)
-   - Editor stack (`enqueue_block_editor_assets`) **intacte** — charge toujours les 9 fichiers individuels avec handles `-editor-*`
+1. **3 fichiers woff2 téléchargés** depuis fonts.gstatic.com (subset latin uniquement, suffit pour français) :
+   - `cabin-variable-latin.woff2` (28.3 KB, variable font 400-600)
+   - `kanit-400-latin.woff2` (19.3 KB)
+   - `kanit-500-latin.woff2` (19.2 KB)
+   Synchronisés aux 4 emplacements (`wp-content/themes/.../assets/fonts/`, idem `app/public/wp-content/...`, `assets/fonts/`, `app/public/assets/fonts/`).
 
-4. **HTML statique** (`index.html` racine + `app/public/index.html`) :
-   - `<style>` critical inline entre sentinelles `<!-- CRITICAL:BEGIN -->` / `<!-- CRITICAL:END -->`
-   - `bundle.min.css` et `slider-simple/style.css` en `media=print onload="this.media='all'"`
-   - `<noscript>` fallback pour les deux
-   - Injection automatisée par `build/inject-critical-static.js` (idempotent)
+2. **`assets/css/fonts.css`** — nouveau fichier avec 3 `@font-face` (1 Cabin variable + 2 Kanit séparés), `font-display: swap`, URLs `url('../fonts/...')` qui résolvent correctement WP comme statique.
 
-5. **Build pipeline** (`package.json`) :
-   - `npm run build:css` — bundle WP
-   - `npm run build:critical` — re-inject critical dans les statiques
-   - `npm run build` enchaîne wp-scripts + build:css + build:critical + build:js
+3. **`bundle.min.css` (1.7.0)** — concat de 9 fichiers maintenant (fonts.css inclus en premier), 50.8 KB raw → 35.2 KB minifié (69.4%).
 
-6. **Sync miroir** : tous les fichiers copiés vers `app/public/wp-content/themes/ocebo26/` (functions.php, critical.css, bundle.min.css, package.json, build/*.js). Checksums MD5 vérifiés identiques.
+4. **`functions.php`** :
+   - Bump 1.6.0 → **1.7.0**
+   - `wp_enqueue_style('ocebo26-google-fonts', ...)` retiré
+   - `wp_resource_hints` : retiré `fonts.googleapis.com` + `fonts.gstatic.com` du preconnect, gardé typekit
+   - `style_loader_tag` : retiré `'ocebo26-google-fonts'` du filtre async (n'existe plus)
+   - `wp_head` priority 1 : **PAS de preload font** (testé puis retiré — voir Note ci-dessous)
+   - Editor `enqueue_block_editor_assets` : retiré `ocebo26-google-fonts-editor`, ajouté `fonts` en tête de la liste `$css_files`
 
-**Gain attendu mobile** : +8-12 pts (FCP 2,7s → ~1,2-1,5s estimé). À mesurer après push + build Vercel.
+5. **HTML statique** (`index.html` racine + `app/public/index.html`) :
+   - Preconnect : retiré `fonts.googleapis.com` + `fonts.gstatic.com`, gardé `p.typekit.net` + `use.typekit.net`
+   - **PAS de preload font** (testé puis retiré — voir Note ci-dessous)
+   - Bloc post-critical : retiré le `<link>` Google Fonts CSS + son noscript, conservé typekit (async via media=print swap)
 
-### À faire prochaine étape (avant fin session)
+**Note régression preload (2026-05-11)** : v1.7.0 initiale incluait `<link rel="preload">` pour Cabin variable + Kanit 400. User a signalé sur local WP que le halo DotMesh et les reveals des sections sous le slider apparaissaient plus tard qu'en Phase 2. Diagnostic : sur Local Sites HTTP/1.1 (max 6 connexions parallèles/origine), les preloads priorité haute grabbaient des slots au détriment de `main.min.js` / `main-fx.min.js` (defer, priorité medium). Solution : preloads retirés des 3 fichiers (functions.php + 2 index.html), behaviour restauré. Fonts maintenant via `@font-face` dans bundle.min.css avec `font-display:swap` — brief fallback Cabin/Kanit puis swap. Mémoire : `feedback_font_preload_http1.md`.
 
-1. **Test local** par user sur Local Sites (`http://ocebo26.local`) :
-   - Hard reload home en viewport mobile (DevTools 414×896)
-   - Vérifier qu'il n'y a **pas de FOUC** above-fold (le hero doit apparaître stylé d'emblée)
-   - Vérifier qu'aucun élément ne "saute" quand le bundle.min.css finit de charger
-   - Tester une page intérieure (services, références) pour vérifier que le hero `--inner` (qui N'EST PAS dans critical) n'a pas de FOUC inacceptable
+**Gain attendu** :
+- 1 HTTP request en moins (Google Fonts CSS éliminé)
+- 1 preconnect en moins (`fonts.googleapis.com`)
+- Fonts disponibles ~100-200ms plus tôt (preload + same-origin)
+- LCP body/buttons : meilleur (Cabin/Kanit chargés en parallèle du critical au lieu d'attendre)
+- FOUT visible MAIS court (font-display: swap)
+- URLs stables (plus de versionnement aléatoire Google v15→v17, v27→v35)
+- Côté WP : pas de gain sur typekit (toujours sync, intentionnel pour LCP H1)
+- Côté statique Vercel : où Lighthouse mesure, devrait pousser le mobile 81 vers 90+
 
-2. **Si OK localement** : push + tester sur preview branch Vercel + Lighthouse mobile
+**À faire prochaine étape** :
+1. Test user local WP (Local Sites, hard reload) : pas de FOUT inacceptable sur body/CTAs hero, pas de 404 dans Network tab sur les woff2
+2. Si OK → push (les 2 commits Phase 2 + commits Phase 4 à venir)
+3. Lighthouse mobile sur preview branch Vercel
+4. Si encore en-dessous de 95 → identifier le bottleneck restant (typekit sync ? DOM size ? slider clones ?)
 
-3. **Si FOUC visible** : identifier le sélecteur manquant, l'ajouter à `critical.css`, re-run `npm run build:critical`
-
-### Phases restantes du plan (après validation Phase 2)
-- **Phase 4 — Fonts solides** (self-host Cabin/Kanit, preload LCP) — élimine FOUT et le bordel des URLs Google qui changent
-- Mesure finale Lighthouse + comparaison historique
+### Phase finale restante (après Phase 4 validée)
+- Mesure Lighthouse finale + comparaison historique (vs baseline 53/92, vs Phase 1 99/81)
+- Si mobile encore < 95 : analyse Performance trace pour identifier bottleneck restant (typekit sync ? DOM size 527 nodes ? slider clones ×3 ?)
 
 ### Cibles ambitieuses (rappel)
 | Métrique | Cible |
@@ -123,55 +123,56 @@ Démarré 2026-05-07 sur branche `chore/perf-foundations` (cible : Mobile ≥ 96
 - Inventaire : `bundle.css` 37 KB raw / 6,8 KB gzip render-blocking ; main.min.js 16,8 KB / 5,6 KB gzip ; main-fx.min.js (v1.4+) 8 KB / 3,3 KB gzip
 - DOM : 527 nodes home, 470 accueil. Slider clones ses slides ×3.
 
-## État Git (au moment de la pause 2026-05-11, mi-Phase 2)
+## État Git (au moment de la pause 2026-05-11, mi-Phase 4)
 
 **Branche active : `chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`).
 
-**Dernier commit poussé** : `1e0c568` (CLAUDE.md eager FX). Le commit local `57ed488` (chore CLAUDE.md - pause session mystère v1.5.0) n'a pas été poussé — juste de la doc.
-
-**Working tree (NON committé)** — Phase 2 implémentée cette session :
+**Commits locaux (NON poussés)** :
 ```
-M  .clinerules                                                       (laissé par user pré-existant)
-M  CLAUDE.md                                                          (cette mise à jour Phase 2)
-M  wp-content/themes/ocebo26/functions.php                            (bundle + critical inline + media=print swap, version 1.6.0)
-M  wp-content/themes/ocebo26/package.json                             (build:css + build:critical scripts)
-A  wp-content/themes/ocebo26/assets/css/critical.css                  (148 lignes, above-fold)
-A  wp-content/themes/ocebo26/assets/css/bundle.min.css                (34.7 KB minifié)
-A  wp-content/themes/ocebo26/build/build-css.js                       (concat + minif des 8 CSS source)
-A  wp-content/themes/ocebo26/build/inject-critical-static.js          (injection idempotente dans index.html)
-M  app/public/wp-content/themes/ocebo26/functions.php                 (sync miroir)
-A  app/public/wp-content/themes/ocebo26/assets/css/critical.css       (sync miroir)
-A  app/public/wp-content/themes/ocebo26/assets/css/bundle.min.css     (sync miroir)
-M  app/public/wp-content/themes/ocebo26/package.json                  (sync miroir)
-A  app/public/wp-content/themes/ocebo26/build/build-css.js            (sync miroir)
-A  app/public/wp-content/themes/ocebo26/build/inject-critical-static.js (sync miroir)
-M  index.html                                                          (critical inline + bundle.min.css media=print swap)
-M  app/public/index.html                                               (sync miroir)
-A  assets/css/critical.css                                             (sync miroir statique)
-A  assets/css/bundle.min.css                                           (sync miroir statique)
-A  app/public/assets/css/critical.css                                  (sync miroir Local)
-A  app/public/assets/css/bundle.min.css                                (sync miroir Local)
+758e281 chore: CLAUDE.md historique - Phase 2 critical CSS (v1.6.0)
+8918087 feat(perf): critical CSS inline + bundle CSS non-blocking — Phase 2 (v1.6.0)
+57ed488 chore: CLAUDE.md - pause session, mystère "pas de différence" v1.5.0 documenté
+```
+Dernier poussé sur origin : `1e0c568` (CLAUDE.md eager FX v1.5.0).
+
+**Working tree (NON committé)** — Phase 4 implémentée, à valider visuellement puis commiter :
+```
+M  .clinerules                                                          (pré-existant user)
+M  CLAUDE.md                                                             (Phase 4 ajoutée)
+M  wp-content/themes/ocebo26/functions.php                               (1.7.0, removeGoogle, add font preload)
+M  wp-content/themes/ocebo26/build/build-css.js                          (ajout fonts.css à ORDER)
+A  wp-content/themes/ocebo26/assets/css/fonts.css                        (3 @font-face self-hostés)
+M  wp-content/themes/ocebo26/assets/css/bundle.min.css                   (regénéré avec fonts.css)
+A  wp-content/themes/ocebo26/assets/fonts/cabin-variable-latin.woff2     (28 KB)
+A  wp-content/themes/ocebo26/assets/fonts/kanit-400-latin.woff2          (19 KB)
+A  wp-content/themes/ocebo26/assets/fonts/kanit-500-latin.woff2          (19 KB)
+[+ sync miroirs : app/public/wp-content/themes/ocebo26/{functions.php, build/build-css.js, assets/css/fonts.css, assets/css/bundle.min.css, assets/fonts/*.woff2}]
+[+ sync statiques : index.html, app/public/index.html (preload local au lieu de gstatic + retrait Google Fonts CSS)]
+[+ sync statiques : assets/css/{fonts.css, bundle.min.css}, app/public/assets/css/{fonts.css, bundle.min.css}, assets/fonts/*.woff2, app/public/assets/fonts/*.woff2]
 ```
 
-**À NE PAS oublier au moment de commit** : 1 commit Phase 2 atomique. Suggestion message :
+**Commit Phase 4 à préparer après validation user**. Suggestion message :
 ```
-feat(perf): critical CSS inline + bundle CSS non-blocking — Phase 2 (v1.6.0)
+feat(perf): self-host Cabin/Kanit + preload LCP fonts — Phase 4 (v1.7.0)
 
-- Extrait above-fold mobile + desktop dans assets/css/critical.css (~12 KB raw)
-- Concatène les 8 CSS source en un bundle.min.css (34.7 KB) via build/build-css.js
-- WP: inline critical via wp_head priority 1, bundle async via media=print swap (filtre style_loader_tag étendu, bypass admin)
-- Statique: critical inliné entre sentinelles dans index.html par build/inject-critical-static.js (idempotent)
-- Editor (Gutenberg) inchangé — charge toujours les 8 CSS individuels
-- Bump 1.5.0 → 1.6.0
+- Télécharge 3 woff2 subset latin (Cabin variable 28 KB, Kanit 400/500 19 KB chacun) dans assets/fonts/
+- assets/css/fonts.css : 3 @font-face avec font-display:swap, URLs relatives ../fonts/
+- bundle.min.css : fonts.css concaténé en premier (9 fichiers, 35.2 KB minifié)
+- WP : wp_enqueue_style ocebo26-google-fonts retiré, preconnect googleapis/gstatic retirés, wp_head priority 1 imprime aussi les <link rel=preload> pour Cabin variable + Kanit 400 avant le critical inline
+- Statique : preconnect googleapis/gstatic retirés, link rel=preload local ajoutés, Google Fonts CSS link retiré
+- Bookmania reste sur Adobe Typekit (license self-host non triviale)
+- Bump 1.6.0 → 1.7.0
 ```
 
-`main` reste propre. **Pas de PR ouverte** — Phase 2 à valider visuellement avant push + Lighthouse.
+`main` reste propre. **Pas de PR ouverte** — push prévu après validation user de Phase 4 (les 2 commits Phase 2 + nouveau commit Phase 4 partiront ensemble).
 
 ## Historique des chantiers
 
 Format : *date · résumé 1 ligne · commits clés ou statut*. Les chantiers en cours restent en haut ; les terminés/abandonnés s'accumulent par ordre chrono inverse.
 
-- **2026-05-11** · 🟡 Phase 2 implémentée — critical CSS inline (148 lignes) + bundle CSS WP (34.7 KB) non-blocking via media=print swap ; build/build-css.js + build/inject-critical-static.js ; v1.6.0 ; en attente test user local + Lighthouse mobile (cible : 81→95+)
+- **2026-05-11** · 🟡 Phase 4 implémentée — self-host Cabin (variable 28 KB) + Kanit 400/500 (19 KB chacun), retrait Google CDN, preload local des fonts LCP ; v1.7.0 ; en attente test user local
+- **2026-05-11** · ✅ Phase 2 validée local + commitée — `8918087` (feat) + `758e281` (chore CLAUDE.md) ; user a confirmé "tout est ok pour l'affichage du hero" après fix bug minifier calc() ; v1.6.0
+- **2026-05-11** · Bug minifier `calc()` corrigé · regex stripait les espaces autour de `+` même dans `calc()`, browser parsait comme 0, hero collé en haut ; fix : retiré `+` du char class du regex ; mémoire `feedback_css_minifier_calc.md`
 - **2026-05-11** · ✅ Phase 1 v1.5.0 validée objectivement — user testait l'alias prod (= main, avant v1.5.0) ; sur preview branch URL il voit bien la différence, halo immédiat, main-fx.min.js chargé ; Lighthouse desktop 99 / mobile 81
 - **2026-05-07** · 🔴 Pause perf — user pas satisfait du ressenti UX malgré 5 itérations de fix · v1.4.0→v1.5.0, à reprendre par mesure objective avant de continuer (cf. "Mystère à résoudre" ci-dessus)
 - **2026-05-07** · Bascule chargement eager main-fx.js (priorité user : halo immédiat) ; main.js -15% sans loader ; init reste chunké pour éviter long task ; trade-off score Lighthouse 98→~90 attendu mais user dit "pas de différence" ; commit `b1d9234` ; v1.5.0
