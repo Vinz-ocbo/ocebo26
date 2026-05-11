@@ -28,9 +28,20 @@ Thème WordPress **classique** (pas FSE malgré l'ancien tag) :
 - **Conventional Commits + commits atomiques** (cf. `.clinerules`)
 - Réponses : posture senior, alternatives format "Option retenue X — Alternative Y (avantages/inconvénients)", estimation effort S/M/L
 
-## Chantier en cours — Performance "bases solides"
+## ✅ Chantier clos — Performance "bases solides"
 
-Démarré 2026-05-07 sur branche `chore/perf-foundations` (cible : Mobile ≥ 96, Desktop ≥ 90). Plan **Option Excellence** (validé par user) : Phases 1 → 2 → 4 → mesure finale.
+Démarré 2026-05-07, clos 2026-05-11 sur branche `chore/perf-foundations` (merge vers `main` à venir). Plan **Option Excellence** : Phases 1 → 2 → 4 toutes implémentées et validées.
+
+### 🏁 Résultats finaux Lighthouse Vercel (2026-05-11)
+
+| Métrique | Baseline | Phase 1 v1.5.0 | **Phase 4 v1.7.0** | Δ baseline |
+|---|---|---|---|---|
+| Desktop | 53 | 99 | **100** | **+47** |
+| Mobile | 92 | 81 | **90** | **-2** |
+
+**Lecture** : Desktop atteint la perfection (100). Mobile : on récupère +9 pts depuis la chute Phase 1 (81→90) en gardant l'UX halo eager. On est juste sous la cible ≥95 ambitieuse mais au-dessus de la baseline standard ≥90, et le ressenti UX est conforme aux attentes user (halo immédiat sur Vercel HTTP/2, reveals fonctionnelles).
+
+**Cible ≥95 non atteinte mobile** : les 5 pts restants demanderaient des changements plus invasifs (typekit async risqué pour LCP H1, ou DOM reduction des slider clones ×3). Trade-off jugé acceptable par user.
 
 ### URLs Vercel testées
 - **Production alias** (sert `main` → AVANT v1.5.0/v1.6.0) : `https://ocebo26-testdesign.vercel.app/`
@@ -56,7 +67,7 @@ Démarré 2026-05-07 sur branche `chore/perf-foundations` (cible : Mobile ≥ 96
 
 Committée en `8918087` (feat) + `758e281` (chore CLAUDE.md). User a confirmé en local "tout est ok pour l'affichage du hero". Bug minifier intermédiaire (espaces autour de `+` dans `calc()`) résolu, hero correctement positionné à 202px sous le menu en desktop.
 
-### 🟡 Phase 4 (fonts solides) — IMPLÉMENTÉE 2026-05-11, en attente test user
+### ✅ Phase 4 (fonts solides) — VALIDÉE VERCEL 2026-05-11
 
 **Scope** : self-host Cabin (variable, weights 400-600) + Kanit (400, 500), preload des fonts critiques, retrait Google CDN. Bookmania reste sur Adobe Typekit (license self-host non triviale).
 
@@ -97,15 +108,7 @@ Committée en `8918087` (feat) + `758e281` (chore CLAUDE.md). User a confirmé e
 - Côté WP : pas de gain sur typekit (toujours sync, intentionnel pour LCP H1)
 - Côté statique Vercel : où Lighthouse mesure, devrait pousser le mobile 81 vers 90+
 
-**À faire prochaine étape** :
-1. Test user local WP (Local Sites, hard reload) : pas de FOUT inacceptable sur body/CTAs hero, pas de 404 dans Network tab sur les woff2
-2. Si OK → push (les 2 commits Phase 2 + commits Phase 4 à venir)
-3. Lighthouse mobile sur preview branch Vercel
-4. Si encore en-dessous de 95 → identifier le bottleneck restant (typekit sync ? DOM size ? slider clones ?)
-
-### Phase finale restante (après Phase 4 validée)
-- Mesure Lighthouse finale + comparaison historique (vs baseline 53/92, vs Phase 1 99/81)
-- Si mobile encore < 95 : analyse Performance trace pour identifier bottleneck restant (typekit sync ? DOM size 527 nodes ? slider clones ×3 ?)
+**Mesure Vercel** : Desktop 100, Mobile 90 (cf. tableau plus haut). User a confirmé le halo immédiat sur HTTP/2, validant le diagnostic de contention HTTP/1.1.
 
 ### Cibles ambitieuses (rappel)
 | Métrique | Cible |
@@ -123,19 +126,25 @@ Committée en `8918087` (feat) + `758e281` (chore CLAUDE.md). User a confirmé e
 - Inventaire : `bundle.css` 37 KB raw / 6,8 KB gzip render-blocking ; main.min.js 16,8 KB / 5,6 KB gzip ; main-fx.min.js (v1.4+) 8 KB / 3,3 KB gzip
 - DOM : 527 nodes home, 470 accueil. Slider clones ses slides ×3.
 
-## État Git (au moment de la pause 2026-05-11, mi-Phase 4)
+## État Git (2026-05-11, post-validation Vercel)
 
-**Branche active : `chore/perf-foundations`** (partie de `main` à HEAD `b532ec3`).
+**Branche `chore/perf-foundations`** poussée sur origin à `c4c83f6`. Working tree clean sauf `.clinerules` (user-owned).
 
-**Commits locaux (NON poussés)** :
+**Commits de la branche depuis `main` (b532ec3)** :
 ```
+c4c83f6 chore: CLAUDE.md historique - Phase 4 fonts self-hostées (v1.7.0)
+3c3f2ef feat(perf): self-host Cabin/Kanit + retrait Google Fonts CDN — Phase 4 (v1.7.0)
 758e281 chore: CLAUDE.md historique - Phase 2 critical CSS (v1.6.0)
 8918087 feat(perf): critical CSS inline + bundle CSS non-blocking — Phase 2 (v1.6.0)
 57ed488 chore: CLAUDE.md - pause session, mystère "pas de différence" v1.5.0 documenté
+1e0c568 chore: CLAUDE.md historique - eager FX (v1.5.0)
+b1d9234 feat(perf): chargement eager main-fx.js — halo visible immédiatement (v1.5.0)
++ 8 commits antérieurs Phase 0/1 (cf. git log)
 ```
-Dernier poussé sur origin : `1e0c568` (CLAUDE.md eager FX v1.5.0).
 
-**Working tree (NON committé)** — Phase 4 implémentée, à valider visuellement puis commiter :
+**Prochaine action** : merge vers `main` (--no-ff pour préserver la chronologie du chantier).
+
+### Working tree archivé pour mémoire (avant clôture) :
 ```
 M  .clinerules                                                          (pré-existant user)
 M  CLAUDE.md                                                             (Phase 4 ajoutée)
@@ -170,7 +179,9 @@ feat(perf): self-host Cabin/Kanit + preload LCP fonts — Phase 4 (v1.7.0)
 
 Format : *date · résumé 1 ligne · commits clés ou statut*. Les chantiers en cours restent en haut ; les terminés/abandonnés s'accumulent par ordre chrono inverse.
 
-- **2026-05-11** · 🟡 Phase 4 implémentée — self-host Cabin (variable 28 KB) + Kanit 400/500 (19 KB chacun), retrait Google CDN, preload local des fonts LCP ; v1.7.0 ; en attente test user local
+- **2026-05-11** · ✅ Chantier perf clos — Lighthouse Vercel final : **Desktop 100 / Mobile 90** (vs baseline 53/92, +47/-2) ; user valide ressenti halo immédiat HTTP/2 ; cible ≥95 mobile non atteinte mais 90 acceptable (trade-off accepté) ; merge `chore/perf-foundations` vers `main` à faire
+- **2026-05-11** · Régression preload font fixée — sur Local Sites HTTP/1.1, `<link rel=preload as=font>` saturait connexions parallèles et retardait main.min.js/main-fx.min.js (halo + reveals décalés) ; preloads retirés des 3 fichiers, fonts via @font-face dans bundle.min.css avec font-display:swap ; mémoire `feedback_font_preload_http1.md`
+- **2026-05-11** · Phase 4 implémentée + commit `3c3f2ef` + `c4c83f6` — self-host Cabin (variable 28 KB) + Kanit 400/500 (19 KB chacun), retrait Google Fonts CDN, bundle 9 fichiers ; v1.7.0
 - **2026-05-11** · ✅ Phase 2 validée local + commitée — `8918087` (feat) + `758e281` (chore CLAUDE.md) ; user a confirmé "tout est ok pour l'affichage du hero" après fix bug minifier calc() ; v1.6.0
 - **2026-05-11** · Bug minifier `calc()` corrigé · regex stripait les espaces autour de `+` même dans `calc()`, browser parsait comme 0, hero collé en haut ; fix : retiré `+` du char class du regex ; mémoire `feedback_css_minifier_calc.md`
 - **2026-05-11** · ✅ Phase 1 v1.5.0 validée objectivement — user testait l'alias prod (= main, avant v1.5.0) ; sur preview branch URL il voit bien la différence, halo immédiat, main-fx.min.js chargé ; Lighthouse desktop 99 / mobile 81
